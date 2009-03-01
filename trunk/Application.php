@@ -156,35 +156,18 @@ class Oops_Application extends Oops_Object {
 	*/
 	function InitController() {
 		if(strlen($this->_controller)) {
-			__autoload($this->_controller);
-			if(!class_exists($this->_controller)) {
+			if(!Oops_Loader::Check($this->_controller)) {
 				Oops_Error::Raise("Error/Application/MissingConroller",$this->_controller);
 				$this->_controller=false;
 			}
 		}
 		if(!strlen($this->_controller)) {
-			__autoload("Oops_Controller");
+			require_once("Oops/Controller.php");
+			$this->_controller = "Oops_Controller";
 			$this->_controller_instance = new Oops_Controller();
-		} else {
-			$ctrlClass = $this->_controller;
-			$this->_controller_instance = new $ctrlClass();
 		}
-
-		$this->_controller = get_class($this->_controller_instance);
-	}
-
-	function _getContentType($extension) {
-		switch($extension) {
-			case 'php':
-			case 'popup':
-			case 'debug':
-				return 'text/html';
-			case 'xml':
-				return 'text/xml';
-			case 'json':
-				return 'application/javascript';
-			
-		}
+		$ctrlClass = $this->_controller;
+		$this->_controller_instance = new $ctrlClass();
 	}
 
 	/**

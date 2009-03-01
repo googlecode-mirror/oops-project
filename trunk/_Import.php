@@ -12,16 +12,23 @@
 define("OOPS_PATH",dirname(__FILE__));
 define("OOPS_Loaded",true);
 
-__autoload("OOPS_Object");
-__autoload("OOPS_Sql");
-__autoload("OOPS_Template");
-__autoload("OOPS_Error");
-__autoload("Oops_Factory");
+$pathParts = explode(DIRECTORY_SEPARATOR,OOPS_PATH);
+array_pop($pathParts);
+set_include_path(get_include_path().PATH_SEPARATOR.join('/',$pathParts));
+
+require_once("Oops/Object.php");
+require_once("Oops/Loader.php");
+require_once("Oops/Factory.php");
+require_once("Oops/Sql.php");
+require_once("Oops/Template.php");
+require_once("Oops/Error.php");
+
 
 /**
 * Funciton for loading OOPS classes. FALSE is returned if error occurs.
 *
 * @param string class name
+* @deprecated
 *
 * <code><?php
 *   __autoload("Oops_Some_Class.php"); // OOPS_PATH/Some/Class.php will be loaded.
@@ -29,16 +36,7 @@ __autoload("Oops_Factory");
 * ?></code>
 */
 function __autoload($class) {
-	if(class_exists($class)) return true;
-	$c = strtolower($class);
-	if(substr($c,0,5)!='oops_') return false;
-	$parts = explode('_',$c);
-	$fname = OOPS_PATH . DIRECTORY_SEPARATOR;
-	for($i=1,$cnt=sizeof($parts);$i<$cnt-1;$i++) $fname .= (ucfirst($parts[$i]) . DIRECTORY_SEPARATOR);
-	$fname .= (ucfirst($parts[$i]).'.php');
-	if(file_exists($fname)) {
-		include_once($fname);
-	} else return false;
+	return Oops_Loader::find($class);
 }
 
 function isDebug() {
@@ -55,12 +53,10 @@ function isDebug() {
 * Just like mysql_query, but connects to mysql server on demand and dies on mysql error
 */
 function db_query($query,$skiperrors=false) {
-	static $b=false;
-	if(!$b) __autoload('Oops_Sql');
-	$b=true;
+	require_once('Oops/Sql.php');
 	if(false && !$skiperrors) {
-		__autoload('Oops_Db_Logger');
-		$l =& Oops_Db_Logger::getInstance();
+		require_once('Oops/Sql/Logger.php');
+		$l =& Oops_Sql_Logger::getInstance();
 		return $l->Analyze($query);
 	}
 	return Oops_Sql::Query($query,$skiperrors);

@@ -31,7 +31,7 @@ class Oops_Template extends Oops_Object {
 	*/
 	function __construct($tplname) {
 		$this->_tplname = $tplname;
-		__autoload("Oops_Template_Helper");
+		require_once("Oops/Template/Helper.php");
 		if(($this->_tplfile = Oops_Template_Helper::getTemplateFilename($tplname))!==false) $this->_valid = true;
 	}
 

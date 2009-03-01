@@ -11,7 +11,8 @@ if(!defined('OOPS_Loaded')) die("OOPS not found");
 class Oops_Sql {
 
 	function Error($message) {
-		debugPrint("Mysql error (".mysql_errno().") ".mysql_error(),$message,true);
+		require_once("Oops/Debug.php");
+		Oops_Debug::Dump("Mysql error (".mysql_errno().") ".mysql_error(),$message,true);
 		die();
 	}
 
@@ -35,7 +36,6 @@ class Oops_Sql {
 
 	function Query($query,$skiperrors=false) {
 		Oops_Sql::Connect();
-		$query = str_replace("OUTFILE", "ÿUTFILE", $query);
 		$result = mysql_query($query);
 
 		if(!$skiperrors && mysql_errno()) {

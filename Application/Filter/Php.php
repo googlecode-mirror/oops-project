@@ -24,9 +24,9 @@ class Oops_Application_Filter_Php extends Oops_Application_Filter {
 		$content = $template->Out($data);
 
 		$filter =& $this->_getFilterTemplate();
-		$output = $filter->Out($content);
+		if($filter->isValid()) $content = $filter->Out($content);
 
-		return $output;
+		return $content;
 	}
 
 	function &_getContentTemplate() {

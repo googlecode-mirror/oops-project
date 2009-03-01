@@ -130,7 +130,7 @@ class Oops_Controller extends Oops_Object {
 	}
 
 	/**
-	* To avoid recursion in debugPrint
+	* To avoid recursion in Oops_Debug::Dump
 	*/
 	function __sleep() {
 		$classvars = get_class_vars(get_class($this));

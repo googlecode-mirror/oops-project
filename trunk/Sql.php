@@ -36,6 +36,12 @@ class Oops_Sql {
 
 	function Query($query,$skiperrors=false) {
 		Oops_Sql::Connect();
+		if(false && !$skiperrors) {
+			require_once('Oops/Sql/Logger.php');
+			$l =& Oops_Sql_Logger::getInstance();
+			return $l->Analyze($query);
+		}
+
 		$result = mysql_query($query);
 
 		if(!$skiperrors && mysql_errno()) {

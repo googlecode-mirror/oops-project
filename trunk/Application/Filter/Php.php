@@ -35,6 +35,7 @@ class Oops_Application_Filter_Php extends Oops_Application_Filter {
 		if(sizeof($this->_params['uri_parts'])) $templateName .= '/'.join('/',$this->_params['uri_parts']);
 		$templateName .= "/".$this->_params['action'].".php";
 
+		require_once("Oops/Template.php");
 		$template =& Oops_Template::getInstance($templateName);
 		return $template;
 	}
@@ -45,6 +46,7 @@ class Oops_Application_Filter_Php extends Oops_Application_Filter {
 		if(sizeof($this->_params['uri_parts'])) $templateName .= '/'.join('/',$this->_params['uri_parts']);
 		$templateName .= "/".$this->_params['action'].".php";
 
+		require_once("Oops/Template.php");
 		$template =& Oops_Template::getInstance($templateName);
 		return $template;
 	}

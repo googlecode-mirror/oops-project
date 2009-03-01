@@ -70,7 +70,8 @@ class Oops_Application extends Oops_Object {
 		$this->InitOutputFilter();
 
 		if(!is_object($this->_output_filter)) {
-			debugPrint($this->_controller_instance,"No output filter specified");
+			require_once("Oops/Debug.php");
+			Oops_Debug::Dump($this->_controller_instance,"No output filter specified");
 			return;
 		}
 

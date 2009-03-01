@@ -53,7 +53,7 @@ class Oops_Error {
 
 	function Debug() {
 		$err =& Oops_Error::getInstance();
-		debugPrint($err->_errors);
+		Oops_Debug::Dump($err->_errors);
 	}
 
 	/**
@@ -64,7 +64,8 @@ class Oops_Error {
 		static $o;
 		if(!isset($o)) {
 			$o = new Oops_Error();
-			if(isDebug()) register_shutdown_function(array("Oops_Error","Debug"));
+			require_once("Oops/Debug.php");
+			if(Oops_Debug::allow()) register_shutdown_function(array("Oops_Error","Debug"));
 		}
 		return $o;
 	}

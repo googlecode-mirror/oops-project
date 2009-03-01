@@ -15,7 +15,7 @@ class Oops_Application_Filter_Debug extends Oops_Application_Filter {
 	function Out() {
 		$data = $this->_in->getData();
 		ob_start();
-		debugPrint($data);
+		Oops_Debug::Dump($data);
 		return ob_get_clean();
 	}
 }

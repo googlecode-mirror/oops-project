@@ -61,8 +61,6 @@ class Oops_Application_Filter {
 		}
 		else {
 			return false;
-			__autoload("Oops_Application_Filter_None");
-			$ret = new Oops_Application_Filter_None();
 		}
 		return $ret;
 	}
@@ -71,8 +69,7 @@ class Oops_Application_Filter {
 		static $checked = array();
 		if(!isset($checked[$type])) {
 			$class = "Oops_Application_Filter_".ucfirst($type);
-			__autoload($class);
-			if(class_exists($class)) $checked[$type] = $class;
+			if(Oops_Loader::find($class)) $checked[$type] = $class;
 			else $checked[$type] = false;
 		}
 		return $checked[$type];

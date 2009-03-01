@@ -16,7 +16,7 @@ class Oops_Factory {
 	function &getApplication($name='site') {
 		static $instance;
 		if(!is_object($instance)) {
-			__autoload("Oops_Application");
+			require_once("Oops/Application.php");
 			$instance = new Oops_Application($name);
 		}
 		return $instance;
@@ -28,7 +28,7 @@ class Oops_Factory {
 	function &getApplicationMap() {
 		static $instance;
 		if(!is_object($instance)) {
-			__autoload("Oops_Application_Map");
+			require_once("Oops/Application/Map.php");
 			$instance = new Oops_Application_Map();
 		}
 		return $instance;
@@ -38,11 +38,11 @@ class Oops_Factory {
 	*
 	*/
 	function &getUser($us_id=false) {
-		__autoload("Oops_User");
-		__autoload("Oops_User_Helper");
+		require_once("Oops/User.php");
+		require_once("Oops/User/Helper.php");
 		if($us_id===false) $us_id = Oops_User_Helper::GetID();
 		if(!$us_id) {
-			__autoload("Oops_User_Guest");
+			require_once("Oops/User/Guest.php");
 			return Oops_User_Guest::getInstance();
 		}
 		return Oops_User::getInstance($us_id);
@@ -52,12 +52,12 @@ class Oops_Factory {
 	* 
 	*/
 	function initSession() {
-		__autoload("Oops_Session");
+		require_once("Oops/Session.php");
 		Oops_Session::getInstance();
 	}
 
 	function &getRequest($url = false) {
-		__autoload("Oops_Server_Request_Stack");
+		require_once("Oops/Server/Request/Stack.php");
 		$stack =& Oops_Server_Request_Stack::getInstance();
 		return $stack->getRequest($url);
 	}

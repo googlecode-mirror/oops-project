@@ -54,15 +54,15 @@ class Oops_Controller extends Oops_Object {
 			case 'decimal':
 				return (float) $value;
 			case 'array':
-				__autoload("Oops_Utils");
+				require_once("Oops/Utils.php");
 				Oops_Utils::ToArray($value);
 				return $value;
 			case 'arrayint':
-				__autoload("Oops_Utils");
+				require_once("Oops/Utils.php");
 				Oops_Utils::ToIntArray($value);
 				return $value;
 			case 'arraysql':
-				__autoload("Oops_Utils");
+				require_once("Oops/Utils.php");
 				Oops_Utils::ToIntArray($value);
 				return $value;
 			case 'sql':

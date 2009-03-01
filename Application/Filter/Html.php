@@ -3,7 +3,7 @@
 * @package Oops
 */
 
-__autoload("Oops_Application_Filter_Php");
+require_once("Oops/Application/Filter/Php.php");
 /**
 * Application HTML output filter
 */

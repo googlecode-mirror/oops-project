@@ -53,8 +53,7 @@ class Oops_Application extends Oops_Object {
 	var $_controller_instance;
 	
 
-	function __construct($name) {
-		$this->_name = $name;
+	function __construct() {
 	}
 
 	/**
@@ -157,7 +156,7 @@ class Oops_Application extends Oops_Object {
 	*/
 	function InitController() {
 		if(strlen($this->_controller)) {
-			if(!Oops_Loader::Check($this->_controller)) {
+			if(!Oops_Loader::find($this->_controller)) {
 				Oops_Error::Raise("Error/Application/MissingConroller",$this->_controller);
 				$this->_controller=false;
 			}
@@ -197,6 +196,25 @@ class Oops_Application extends Oops_Object {
 	*/
 	function InitOutputFilter() {
 		$this->_output_filter =& Oops_Application_Filter::getInstance($this->_ext);
+	}
+
+	/**
+	*
+	*/
+	function setConfig(&$config) {
+		$this->_config =& $config;
+		$oopsConfig = $this->_config->get("OOPS");
+		if(!is_object($oopsConfig)) return;
+
+		if($incPath = $oopsConfig->get('include_path')) {
+			set_include_path (
+				$incPath . PATH_SEPARATOR . get_include_path()
+			);
+		}
+
+		$routerConfig = $this->_config->get('Router');
+		if(!is_object($routerConfig)) return;
+		Oops_Factory::getApplicationMap($routerConfig->get('class'),$routerConfig->get('source'));
 	}
 }
 ?>

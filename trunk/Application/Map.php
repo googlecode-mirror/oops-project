@@ -3,10 +3,14 @@
 * @package Oops
 */
 
+if(!defined("OOPS_Loaded")) die("OOPS not loaded");
+
+require_once("Oops/Object.php");
+
 /**
 * Application URI mapper
 */
-class Oops_Application_Map {
+class Oops_Application_Map extends Oops_Object {
 	/**
 	* Routing settings, array with URI parts as a key, controller class as a value 
 	*

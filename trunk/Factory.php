@@ -13,11 +13,11 @@ class Oops_Factory {
 	* @param string application name
 	* @return Oops_Application an application object
 	*/
-	function &getApplication($name='site') {
+	function &getApplication() {
 		static $instance;
 		if(!is_object($instance)) {
 			require_once("Oops/Application.php");
-			$instance = new Oops_Application($name);
+			$instance = new Oops_Application();
 		}
 		return $instance;
 	}
@@ -25,11 +25,15 @@ class Oops_Factory {
 	/**
 	* @return Oops_Application_Map an application URI mapper object
 	*/
-	function &getApplicationMap() {
+	function &getApplicationMap($class = null, $source = null) {
 		static $instance;
 		if(!is_object($instance)) {
-			require_once("Oops/Application/Map.php");
-			$instance = new Oops_Application_Map();
+			require_once("Oops/Loader.php");
+			if(!is_null($class) && Oops_Loader::find($class)) $instance = new $class($source);
+			else {
+				require_once("Oops/Application/Map.php");
+				$instance = new Oops_Application_Map();
+			}
 		}
 		return $instance;
 	}

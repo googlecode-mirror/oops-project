@@ -29,16 +29,11 @@ if(!defined('OOPS_Loaded')) die("OOPS not found");
 *
 */
 class Oops_Object {
-	/**
-	* @access protected
-	*/
-	var $_gotErrors=false;
-
-
 	function Oops_Object() {
 		$args = func_get_args();
 		call_user_func_array(array(&$this, '__construct'), $args);
 	}
+
 	function __construct() {}
 }
 ?>

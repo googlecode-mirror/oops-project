@@ -10,18 +10,6 @@ if(!defined('OOPS_Loaded')) die("OOPS not found");
 class Oops_Template_Helper extends Oops_Object {
 
 	/**
-	* Suggests native template name to output object of a given class
-	* 
-	* @static
-	* @param string class name
-	* @return string template name, f.e. 
-	*/
-	function getClassTemplate($class) {
-		if(strlen($class)) return "/classes/".str_replace('_','/',strtolower($class));
-		else return "/classes/_default.php";
-	}
-
-	/**
 	* Points a filename for a given template name. If not found uses _default.php files;
 	*
 	* @static
@@ -29,8 +17,19 @@ class Oops_Template_Helper extends Oops_Object {
 	* @return string local php file name
 	*/
 	function getTemplateFilename($name) {
-		if(!defined("TEMPLATES_PATH")) return Oops_Error::Raise("Error/Template/PathNotDefined");
-		if(!is_dir(TEMPLATES_PATH)) return Oops_Error::Raise("Error/Template/PathIsNotDir");
+		static $templatesPath;
+		if(!isset($templatesPath)) {
+			if(defined("TEMPLATES_PATH")) $templatesPath = TEMPLATES_PATH;
+			elseif(isset($_SERVER) && isset($_SERVER['DOCUMENT_ROOT'])) $templatesPath = $_SERVER['DOCUMENT_ROOT'].DIRECTORY_SEPARATOR.'.templates';
+			else $templatesPath = '.templates';
+
+			if(!is_dir($templatesPath)) {
+				trigger_error("Invalid templates path", E_USER_ERROR);
+				return false;
+			}
+		}
+
+		/* From now, templates path must be defined */
 
 		$name = trim($name,'/');
 		if(!strlen($name)) return Oops_Error::Raise("Error/Template/EmptyTemplateName");
@@ -41,7 +40,7 @@ class Oops_Template_Helper extends Oops_Object {
 		$dirparts = explode('/',$dirname);
 
 		while(sizeof($dirparts)) {
-			$try = TEMPLATES_PATH.DIRECTORY_SEPARATOR . join(DIRECTORY_SEPARATOR,$dirparts).DIRECTORY_SEPARATOR . $basename;
+			$try = $templatePath . DIRECTORY_SEPARATOR . join(DIRECTORY_SEPARATOR, $dirparts) . DIRECTORY_SEPARATOR . $basename;
 			if(file_exists($try)) return $try;
 			array_pop($dirparts);
 		}
@@ -49,4 +48,3 @@ class Oops_Template_Helper extends Oops_Object {
 		return false;
 	}
 }
-?>

@@ -9,6 +9,10 @@ if(!defined('OOPS_Loaded')) die("OOPS not found");
 * Error handling class
 */
 class Oops_Error {
+	/**
+	* @access protected
+	*/
+	var $_gotErrors=false;
 
 	/**
 	* @ignore

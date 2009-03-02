@@ -1,6 +1,7 @@
 <?
 /**
 * @author Dmitry Ivanov rockmagic@yandex.ru
+* @license GNUv3
 */
 
 if(!defined('OOPS_Loaded')) die("OOPS not loaded");
@@ -8,7 +9,6 @@ if(!defined('OOPS_Loaded')) die("OOPS not loaded");
 /**
 * Loader class
 */
-
 class Oops_Loader {
 	/**
 	* @static
@@ -18,7 +18,6 @@ class Oops_Loader {
 	function find($class) {
 		if(class_exists($class)) return true;
 		$c = strtolower($class);
-		if(substr($c,0,5)!='oops_') return false;
 		$parts = explode('_',$c);
 		for($i=0,$cnt=sizeof($parts);$i<$cnt-1;$i++) $fname .= (ucfirst($parts[$i]) . DIRECTORY_SEPARATOR);
 		$fname .= (ucfirst($parts[$i]).'.php');

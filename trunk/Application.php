@@ -51,9 +51,52 @@ class Oops_Application extends Oops_Object {
 	* @access protected
 	*/
 	var $_controller_instance;
+
+	/**
+	*
+	*/
+	var $_config;
 	
 
-	function __construct() {
+	function &getInstance($config = null) {
+		static $instance;
+		if(!isset($instance)) {
+			$instance = new Oops_Application();
+			$instance->configure($config);
+		}
+		return $instance;
+	}
+
+	function &getConfig() {
+		$application =& Oops_Application::getInstance();
+		if(!is_object($application->_config)) {
+			require_once("Oops/Config.php");
+			$application->configure(new Oops_Config);
+		}
+		return $application->_config;
+	}
+
+	function configure(&$config) {
+		$this->_config = $config;
+
+		$oopsConfig = $this->_config->get('oops');
+
+		if(is_object($oopsConfig) && $incPath = $oopsConfig->get('include_path')) {
+			set_include_path (
+				$incPath . PATH_SEPARATOR . get_include_path()
+			);
+		}
+
+		$routerConfig = $this->_config->get('router');
+		if(is_object($routerConfig)) {
+			$routerClass = $routerConfig->get('class');
+			require_once("Oops/Loader.php");
+			if(Oops_Loader::find($routerClass)) $this->_router = new $routerClass($routerConfig->get('source'));
+		}
+		if(!is_object($this->_router)) {
+			require_once("Oops_Application_Map");
+			$this->_router = new Oops_Application_Map();
+		}
 	}
 
 	/**
@@ -144,9 +187,8 @@ class Oops_Application extends Oops_Object {
 	* @uses Oops_Application_Map
 	*/
 	function DetectController() {
-		$map =& Oops_Factory::getApplicationMap();
-		$this->_controller = $map->getController($this->_uri_parts);
-		$level = $map->getFoundLevel();
+		$this->_controller = $this->_router->getController($this->_uri_parts);
+		$level = $this->_router->getFoundLevel();
 		$this->_controller_ident = join('/',array_slice($this->_uri_parts,0,$level));
 		$this->_controller_params = array_slice($this->_uri_parts,$level);
 	}
@@ -198,23 +240,5 @@ class Oops_Application extends Oops_Object {
 		$this->_output_filter =& Oops_Application_Filter::getInstance($this->_ext);
 	}
 
-	/**
-	*
-	*/
-	function setConfig(&$config) {
-		$this->_config =& $config;
-		$oopsConfig = $this->_config->get("OOPS");
-		if(!is_object($oopsConfig)) return;
-
-		if($incPath = $oopsConfig->get('include_path')) {
-			set_include_path (
-				$incPath . PATH_SEPARATOR . get_include_path()
-			);
-		}
-
-		$routerConfig = $this->_config->get('Router');
-		if(!is_object($routerConfig)) return;
-		Oops_Factory::getApplicationMap($routerConfig->get('class'),$routerConfig->get('source'));
-	}
 }
 ?>

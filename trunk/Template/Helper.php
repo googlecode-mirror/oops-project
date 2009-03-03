@@ -19,9 +19,16 @@ class Oops_Template_Helper extends Oops_Object {
 	function getTemplateFilename($name) {
 		static $templatesPath;
 		if(!isset($templatesPath)) {
+			/*
 			if(defined("TEMPLATES_PATH")) $templatesPath = TEMPLATES_PATH;
 			elseif(isset($_SERVER) && isset($_SERVER['DOCUMENT_ROOT'])) $templatesPath = $_SERVER['DOCUMENT_ROOT'].DIRECTORY_SEPARATOR.'.templates';
 			else $templatesPath = '.templates';
+			*/
+			$config =& Oops_Application::getConfig();
+			$oopsConfig = $config->get('oops');
+			if(is_object($oopsConfig)) $templatesPath = $oopsConfig->get('templates_path');
+
+			if(!strlen($templatesPath)) $templatesPath = './application/templates';
 
 			if(!is_dir($templatesPath)) {
 				trigger_error("Invalid templates path", E_USER_ERROR);
@@ -40,7 +47,7 @@ class Oops_Template_Helper extends Oops_Object {
 		$dirparts = explode('/',$dirname);
 
 		while(sizeof($dirparts)) {
-			$try = $templatePath . DIRECTORY_SEPARATOR . join(DIRECTORY_SEPARATOR, $dirparts) . DIRECTORY_SEPARATOR . $basename;
+			$try = $templatesPath . DIRECTORY_SEPARATOR . join(DIRECTORY_SEPARATOR, $dirparts) . DIRECTORY_SEPARATOR . $basename;
 			if(file_exists($try)) return $try;
 			array_pop($dirparts);
 		}

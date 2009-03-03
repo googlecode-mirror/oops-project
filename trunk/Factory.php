@@ -12,6 +12,7 @@ class Oops_Factory {
 	/**
 	* @param string application name
 	* @return Oops_Application an application object
+	* @deprecated
 	*/
 	function &getApplication() {
 		static $instance;
@@ -24,6 +25,7 @@ class Oops_Factory {
 
 	/**
 	* @return Oops_Application_Map an application URI mapper object
+	* @deprecated
 	*/
 	function &getApplicationMap($class = null, $source = null) {
 		static $instance;

@@ -17,7 +17,7 @@ require_once("Oops/Object.php");
 class Oops_Config extends Oops_Object {
 	var $_data = array();
 
-	function __construct($data) {
+	function __construct($data = array()) {
 		if(!is_array($data)) {
 			require_once("Oops/Error.php");
 			Oops_Error::Raise("Error/Config/InvalidConfigData",$data);

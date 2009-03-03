@@ -12,18 +12,15 @@ if(!defined('OOPS_Loaded')) die("OOPS not found");
 */
 class Oops_Controller extends Oops_Object {
 	/**
-	* @access private
+	* @deprecated
 	*/
 	var $_application;
-	/**
-	* @access protected
-	*/
-	var $templateData=array();
 
 	/**
+	*
 	*/
 	function __construct() {
-		$this->_application =& Oops_Factory::getApplication();
+		$this->_application =& Oops_Application::getInstance();
 	}
 
 	/**
@@ -117,27 +114,15 @@ class Oops_Controller extends Oops_Object {
 	function getData() {return $this->Data;}
 	function getTemplate() {return $this->Template;}
 
+	/**
+	*
+	*/
 	function getControllerParams() {
 		if(is_object($this->_application)) return $this->_application->get('controller_params');
 		return array();
 	}
 
 	function Run() {
-		if(is_object($this->_application)) {
-			if($this->_application->get('uri')=='/') $this->Template = 'block/startpagecontent';
-			else $this->Template = 'block/404pagecontent';
-		}
-	}
-
-	/**
-	* To avoid recursion in Oops_Debug::Dump
-	*/
-	function __sleep() {
-		$classvars = get_class_vars(get_class($this));
-		$ret=array();
-		foreach($classvars as $var) if($var != '_application') $ret[]=$var;
-		return $ret;
+		return true;
 	}
 }
-
-?>

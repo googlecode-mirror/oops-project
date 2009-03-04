@@ -1,5 +1,6 @@
 <?
 /**
+* @package Oops
 * @author Dmitry Ivanov rockmagic@yandex.ru
 * @license GNUv3
 */

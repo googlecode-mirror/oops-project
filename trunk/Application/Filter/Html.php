@@ -1,6 +1,7 @@
 <?
 /**
 * @package Oops
+* @subpackage Application
 */
 
 require_once("Oops/Application/Filter/Php.php");

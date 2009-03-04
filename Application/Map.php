@@ -1,6 +1,7 @@
 <?
 /**
 * @package Oops
+* @subpackage Application
 */
 
 if(!defined("OOPS_Loaded")) die("OOPS not loaded");

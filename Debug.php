@@ -14,9 +14,9 @@ class Oops_Debug {
 	*
 	* Usage:
 	* <code><?php
-	* Oops_Debug::Dump($var); //will output complete backtrace
-	* Oops_Debug::Dump($thatvar,"That var"); //will output complete backtrace
-	* Oops_Debug::Dump($var,"Some label",__CLASS__,__FUNCTION__,__FILE__,__LINE__);
+	* Oops_Debug::Dump($var);
+	* Oops_Debug::Dump($thatvar,"That var");
+	* Oops_Debug::Dump($var,"Some label",true); //will output complete backtrace
 	* ?></code>
 	*
 	* @param mixed Value to dump

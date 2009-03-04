@@ -1,6 +1,7 @@
 <?
 /**
 * @package Oops
+* @subpackage Application
 */
 
 if(!defined('OOPS_Loaded')) die("OOPS not found");
@@ -105,7 +106,13 @@ class Oops_Application extends Oops_Object {
 	* @param string Application ID, reserved for future needs
 	* @return void
 	*/
-	function Run() {
+	function Run($request = null) {
+		if(!is_object($request)) {
+			require_once("Oops/Request/Http.php");
+			$request = new Oops_Request_Http();
+		}
+		$this->_request = $request;
+
 		$this->ParseURI();
 		$this->DetectController();
 		$this->InitController();

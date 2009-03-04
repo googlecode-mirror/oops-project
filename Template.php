@@ -33,6 +33,8 @@ class Oops_Template extends Oops_Object {
 		$this->_tplname = $tplname;
 		require_once("Oops/Template/Helper.php");
 		if(($this->_tplfile = Oops_Template_Helper::getTemplateFilename($tplname))!==false) $this->_valid = true;
+		$this->_request =& Oops_Application::getRequest();
+		$this->_response =& Oops_Application::getResponse();
 	}
 
 	/**
@@ -77,5 +79,15 @@ class Oops_Template extends Oops_Object {
 		static $store = array();
 		if(is_null($value)) return isset($store[$key])?$store[$key]:null;
 		else $store[$key] = $value;
+	}
+
+	function _setHeader($key,$value) {
+		return $this->_response->setHeader($key,$value);
+	}
+	function _pushHeader($key,$value) {
+		return $this->_response->pushHeader($key,$value);
+	}
+	function _getHeader($key) {
+		return $this->_response->getHeader($key);
 	}
 }

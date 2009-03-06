@@ -21,21 +21,6 @@ stream_wrapper_register("oops","Oops_Server_Stream_Wrapper");
 
 
 /**
-* Funciton for loading OOPS classes. FALSE is returned if error occurs.
-*
-* @param string class name
-* @deprecated Use Oops_Loader::find($class) to check if class could be loaded or require_once for regular loading
-*
-* <code><?php
-*   __autoload("Oops_Some_Class.php"); // OOPS_PATH/Some/Class.php will be loaded.
-*   $obj = new Oops_Some_Class(); //Now class is available
-* ?></code>
-* /
-function __autoload($class) {
-	return Oops_Loader::find($class);
-}
-
-/**
 * Just like mysql_query, but connects to mysql server on demand and dies on mysql error
 *
 * @deprecated Use Oops_Sql::Query instead

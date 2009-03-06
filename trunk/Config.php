@@ -44,4 +44,19 @@ class Oops_Config extends Oops_Object {
 		}
 		return $this->_data[$key];
 	}
+
+	function mergeConfig(&$config) {
+		if(!is_object($config)) return;
+		foreach($config->_data as $key=>$value) {
+			if(!isset($this->_data[$key])) {
+				$this->_data[$key] = $config->_data[$key];
+			}
+			elseif(is_object($this->_data[$key]) && is_object($value)) {
+				$this->_data[$key]->mergeConfig($config->_data[$key]);
+			}
+			else {
+				$this->_data[$key] = $config->_data[$key];
+			}
+		}
+	}
 }

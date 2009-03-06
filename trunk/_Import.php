@@ -16,11 +16,6 @@ $pathParts = explode(DIRECTORY_SEPARATOR,OOPS_PATH);
 array_pop($pathParts);
 set_include_path(get_include_path().PATH_SEPARATOR.join('/',$pathParts));
 
-require_once("Oops/Object.php");
-require_once("Oops/Loader.php");
-require_once("Oops/Factory.php");
-require_once("Oops/Error.php");
-
 
 /**
 * Funciton for loading OOPS classes. FALSE is returned if error occurs.
@@ -32,7 +27,7 @@ require_once("Oops/Error.php");
 *   __autoload("Oops_Some_Class.php"); // OOPS_PATH/Some/Class.php will be loaded.
 *   $obj = new Oops_Some_Class(); //Now class is available
 * ?></code>
-*/
+* /
 function __autoload($class) {
 	return Oops_Loader::find($class);
 }

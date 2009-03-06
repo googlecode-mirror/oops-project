@@ -14,20 +14,22 @@ class Oops_Controller extends Oops_Object {
 	/**
 	* @deprecated
 	*/
-	var $_application;
+	var $_server;
 
 	/**
 	*
 	*/
 	function __construct() {
-		$this->_application =& Oops_Application::getInstance();
+		$this->_server =& Oops_Server::getInstance();
+		$this->_request =& Oops_Server::getRequest();
+		$this->_response =& Oops_Server::getResponse();
 	}
 
 	/**
-	* Возвращение значение из запроса по заданному ключу, преобразованное к затребованному типу
+	* Get requested value, modified to the requested type
 	*
-	* @param string Ключ в запросе
-	* @param string Требуемый тип значения
+	* @param string Request key
+	* @param string Required value type
 	* @return mixed 
 	* @tutorial Oops/Oops/Controller.cls#handling_request
 	*/
@@ -35,9 +37,9 @@ class Oops_Controller extends Oops_Object {
 		static $filesDone = false;
 		if(!$filesDone) $this->_proceedRequestFiles();
 		if(!strlen($key)) return false;
-		if(!isset($_REQUEST[$key])) return $default;
-		$value = $_REQUEST[$key];
-		if(is_null($type)) return $_REQUEST[$key];
+		if(is_null($value = $this->_request->get($key))) return $default;
+		if(is_null($type)) return $value;
+
 		switch (strtolower($type)) {
 			case 'bool':
 			case 'boolean':
@@ -74,6 +76,9 @@ class Oops_Controller extends Oops_Object {
 		}
 	}
 
+	/**
+	* @todo move this to Oops_Server_Request_Http::__construct
+	*/
 	function _proceedRequestFiles($files = null,$keys=array()) {
 		if(is_null($files)) $files = $_FILES;
 		foreach($files as $k=>$v) {
@@ -107,18 +112,16 @@ class Oops_Controller extends Oops_Object {
 	* Возвращает все ключи запроса
 	*/
 	function getRequestKeys() {
-		if(!isset($_REQUEST)) return array();
-		return array_keys($_REQUEST);
+		return $this->_request->getKeys();
 	}
 
 	function getData() {return $this->Data;}
-	function getTemplate() {return $this->Template;}
 
 	/**
 	*
 	*/
 	function getControllerParams() {
-		if(is_object($this->_application)) return $this->_application->get('controller_params');
+		if(is_object($this->_server)) return $this->_server->get('controller_params');
 		return array();
 	}
 

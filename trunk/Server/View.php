@@ -1,14 +1,14 @@
 <?
 /**
 * @package Oops
-* @subpackage Application
+* @subpackage Server
 */
 
 /**
 * @abstract
-* Application output filter class
+* Server output presentation class
 */
-class Oops_Application_Filter {
+class Oops_Server_View {
 	/**
 	* @ignore
 	*/
@@ -42,7 +42,7 @@ class Oops_Application_Filter {
 	}
 
 	/**
-	* Run the filter
+	* Run the view processing
 	*
 	* @return mixed Output
 	*/
@@ -53,11 +53,11 @@ class Oops_Application_Filter {
 	/**
 	* !!! no singleton implemented here, just don't know yet if it's required
 	*
-	* @param string Filter type
-	* @return Oops_Application_Filter
+	* @param string View type (basically request extension)
+	* @return Oops_Server_View
 	*/
 	function &getInstance($type) {
-		if(($class = Oops_Application_Filter::_getFilterClass($type))!==false) {
+		if(($class = Oops_Server_View::_getViewClass($type))!==false) {
 			$ret = new $class;
 		}
 		else {
@@ -66,18 +66,18 @@ class Oops_Application_Filter {
 		return $ret;
 	}
 
-	function _getFilterClass($type) {
+	function _getViewClass($type) {
 		static $checked = array();
 		if(!isset($checked[$type])) {
-			$class = "Oops_Application_Filter_".ucfirst($type);
+			$class = "Oops_Server_View_".ucfirst($type);
 			if(Oops_Loader::find($class)) $checked[$type] = $class;
 			else $checked[$type] = false;
 		}
 		return $checked[$type];
 	}
 
-	function isValidFilter($type) {
-		return (Oops_Application_Filter::_getFilterClass($type)!==false)?true:false;
+	function isValidView($type) {
+		return (Oops_Server_View::_getViewClass($type)!==false)?true:false;
 	}
 
 

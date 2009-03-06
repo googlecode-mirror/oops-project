@@ -24,7 +24,7 @@ class Oops_Template_Helper extends Oops_Object {
 			elseif(isset($_SERVER) && isset($_SERVER['DOCUMENT_ROOT'])) $templatesPath = $_SERVER['DOCUMENT_ROOT'].DIRECTORY_SEPARATOR.'.templates';
 			else $templatesPath = '.templates';
 			*/
-			$config =& Oops_Application::getConfig();
+			$config =& Oops_Server::getConfig();
 			$oopsConfig = $config->get('oops');
 			if(is_object($oopsConfig)) $templatesPath = $oopsConfig->get('templates_path');
 
@@ -39,7 +39,10 @@ class Oops_Template_Helper extends Oops_Object {
 		/* From now, templates path must be defined */
 
 		$name = trim($name,'/');
-		if(!strlen($name)) return Oops_Error::Raise("Error/Template/EmptyTemplateName");
+		if(!strlen($name)) {
+			require_once("Oops/Error.php");
+			return Oops_Error::Raise("Error/Template/EmptyTemplateName");
+		}
 
 		$dirname = dirname($name);
 		$basename = basename($name);
@@ -51,6 +54,7 @@ class Oops_Template_Helper extends Oops_Object {
 			if(file_exists($try)) return $try;
 			array_pop($dirparts);
 		}
+		require_once("Oops/Error.php");
 		Oops_Error::Raise("Error/Template/NoDefaultTemplate",$name);
 		return false;
 	}

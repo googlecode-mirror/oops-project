@@ -16,6 +16,9 @@ $pathParts = explode(DIRECTORY_SEPARATOR,OOPS_PATH);
 array_pop($pathParts);
 set_include_path(get_include_path().PATH_SEPARATOR.join('/',$pathParts));
 
+require_once("Oops/Server/Stream/Wrapper.php");
+stream_wrapper_register("oops","Oops_Server_Stream_Wrapper");
+
 
 /**
 * Funciton for loading OOPS classes. FALSE is returned if error occurs.

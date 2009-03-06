@@ -14,9 +14,8 @@ class Oops_Server_View_Debug extends Oops_Server_View {
 	}
 
 	function Out() {
-		$data = $this->_in->getData();
 		ob_start();
-		Oops_Debug::Dump($data);
+		Oops_Debug::Dump($this->_in);
 		return ob_get_clean();
 	}
 }

@@ -19,10 +19,8 @@ class Oops_Server_View_Php extends Oops_Server_View {
 	* @return string HTML output
 	*/
 	function Out() {
-		$data = $this->_in->getData();
-
 		$template =& $this->_getContentTemplate();
-		$content = $template->Out($data);
+		$content = $template->Out($this->_in);
 
 		$filter =& $this->_getFilterTemplate();
 		if($filter->isValid()) $content = $filter->Out($content);

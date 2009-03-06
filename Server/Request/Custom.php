@@ -14,18 +14,18 @@ require_once("Oops/Server/Request.php");
 /**
 * Class for HTTP Request object representation
 */
-class Oops_Server_Request_Http extends Oops_Server_Request {
+class Oops_Server_Request_Custom extends Oops_Server_Request {
 	var $uri;
 	var $query_string;
 
-	function __construct() {
-		$this->_get = $_GET;
-		$this->_post = $_POST;
-		$this->_cookie = $_COOKIE;
+	function __construct($url) {
+		$parsed = parse_url($url);
+		$this->uri = $parsed['path'];
+		$this->query_string = $parsed['query'];
+		parse_str($this->query_string,$this->_get);
+		$this->host = $parsed['host'];
 
-		$this->_params = array_merge($this->_post,$this->_get);
-
-		list($this->uri,$this->query_string) = explode('?',$_SERVER['REQUEST_URI'],2);
+		$this->_params = $this->_get;
 	}
 }
 ?>

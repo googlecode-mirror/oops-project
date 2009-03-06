@@ -14,7 +14,7 @@ require_once("Oops/Object.php");
 */
 class Oops_Server extends Oops_Object {
 	/**
-	* @var string Application ID, reserved for future needs
+	* @var string Server instance number, reserved for future needs
 	* @protected
 	*/
 	var $_app;
@@ -99,17 +99,6 @@ class Oops_Server extends Oops_Object {
 				$incPath . PATH_SEPARATOR . get_include_path()
 			);
 		}
-
-		$routerConfig = $this->_config->get('router');
-		if(is_object($routerConfig)) {
-			$routerClass = $routerConfig->get('class');
-			require_once("Oops/Loader.php");
-			if(Oops_Loader::find($routerClass)) $this->_router = new $routerClass($routerConfig->get('source'));
-		}
-		if(!is_object($this->_router)) {
-			require_once("Oops_Server_Router");
-			$this->_router = new Oops_Server_Router();
-		}
 	}
 
 	/**
@@ -121,34 +110,53 @@ class Oops_Server extends Oops_Object {
 	function Run($request = null) {
 		if(!is_object($request)) {
 			require_once("Oops/Server/Request/Http.php");
-			$request = new Oops_Server_Request_Http();
-		}
-		$this->_request = $request;
+			$this->_request = new Oops_Server_Request_Http();
 
+			require_once("Oops/Server/Response/Http.php");
+			$this->_response = new Oops_Server_Response_Http();
+		} else {
+			$this->_request = $request;
+
+			require_once("Oops/Server/Response.php");
+			$this->_response = new Oops_Server_Response();
+		}
+
+		/**
+		* @todo Use exceptions in PHP5 to check if response is ready
+		*/
 		$this->_parseRequest();
+		if($this->_response->isReady()) return $this->_response->toString();
+
 		$this->_initView();
+		if($this->_response->isReady()) return $this->_response->toString();
+/**
 		if(!is_object($this->_view)) {
 			require_once("Oops/Debug.php");
 			Oops_Debug::Dump($this->_request,"No output filter specified");
 			return;
 		}
+*/
 
 		$this->_routeRequest();
+		if($this->_response->isReady()) return $this->_response->toString();
+
 		$this->_initController();
 
-
 		$data = $this->_controller_instance->Run();
+		if($this->_response->isReady()) return $this->_response->toString();
 
 
-		$this->_view->In($this->_controller_instance);
+		$this->_view->In($data);
 		$this->_view->Set('controller',$this->_controller);
 		$this->_view->Set('uri',$this->_uri);
 		$this->_view->Set('ext',$this->_extension);
 		$this->_view->Set('action',$this->_action);
 		$this->_view->Set('uri_parts',$this->_uri_parts);
 
-		header("Content-type: ".$this->_view->getContentType());
-		echo $this->_view->Out();
+		$this->_response->setHeader("Content-type",$this->_view->getContentType());
+		$this->_response->setBody($this->_view->Out());
+
+		return $this->_response->toString();
 	}
 
 
@@ -157,17 +165,6 @@ class Oops_Server extends Oops_Object {
 	*
 	*/
 	function _parseRequest() {
-
-//		$this->_request->verify();
-/*
-		switch($request->getScheme()) {
-			case 'http':
-				$response = new Oops_Server_Response_Http();
-			case 'oops':
-				$response = new Oops_Server_Response_Oops();
-		}
-*/
-
 
 		$oopsConfig = $this->_config->get("oops");
 		$parts = explode("/",$this->_request->uri);
@@ -202,55 +199,24 @@ class Oops_Server extends Oops_Object {
 
 		if($this->_request->uri != $expectedUri) {
 			if(strlen($this->_request->query_string)) $expectedUri .= ('?'.$this->_request->query_string);
-			header("HTTP/1.x 301 Moved Permanently");
-			header("Location: $expectedUri");
-			die();
+			$this->_response->redirect($expectedUri,true);
+			return;
 		}
 
 		$this->_uri_parts = $coolparts;
+	}
 
-		return;
-
-		list($this->_uri,$this->_query_string) = explode('?',$_SERVER['REQUEST_URI'],2);
-
-		$parts = explode("/",$this->_uri);
-		$coolparts = array();
-		//Let's remove any empty parts. path//to/something/ should be turned into path/to/something
-		for($i=0,$cnt = sizeof($parts);$i<$cnt;$i++) {
-			if(strlen($parts[$i])) $coolparts[] = strtolower($parts[$i]);
+	function _initRouter() {
+		$routerConfig = $this->_config->get('router');
+		if(is_object($routerConfig)) {
+			$routerClass = $routerConfig->get('class');
+			require_once("Oops/Loader.php");
+			if(Oops_Loader::find($routerClass)) $this->_router = new $routerClass($routerConfig->get('source'));
 		}
-		if($cnt = sizeof($coolparts)) {
-			$last = $coolparts[$cnt-1];
-			if(($dotpos = strrpos($last,'.')) !== FALSE) {
-				$ext = substr($last,$dotpos+1);
-				if(Oops_Server_View::isValidView($ext)) {
-					$this->_output_content_type = $output_content_type;
-					$this->_action = substr($last,0,$dotpos);
-					$this->_extension = $ext;
-					array_pop($coolparts);
-				}
-			}
+		if(!is_object($this->_router)) {
+			require_once("Oops_Server_Router");
+			$this->_router = new Oops_Server_Router();
 		}
-
-			if(!isset($this->_action)) {
-				//action should be index, content-type - php
-				$this->_action = 'index';
-				$this->_extension = 'php';
-			}
-
-
-		//Let's compile the one-and-only expected request_uri for this kind of request
-		$expectedUri = sizeof($coolparts)?'/'.join('/',$coolparts).'/':'/';
-		if($this->_action != 'index' || $this->_extension != 'php') $expectedUri .= "{$this->_action}.{$this->_extension}";
-
-		if($this->_uri != $expectedUri) {
-			if(strlen($this->_query_string)) $expectedUri .= ('?'.$this->_query_string);
-			header("HTTP/1.x 301 Moved Permanently");
-			header("Location: $expectedUri");
-			die();
-		}
-
-		$this->_uri_parts = $coolparts;
 	}
 
 	/**
@@ -260,6 +226,7 @@ class Oops_Server extends Oops_Object {
 	* @uses Oops_Server_Router
 	*/
 	function _routeRequest() {
+		$this->_initRouter();
 		$this->_controller = $this->_router->getController($this->_uri_parts);
 		$level = $this->_router->getFoundLevel();
 		$this->_controller_ident = join('/',array_slice($this->_uri_parts,0,$level));
@@ -313,6 +280,5 @@ class Oops_Server extends Oops_Object {
 		require_once("Oops/Server/View.php");
 		$this->_view =& Oops_Server_View::getInstance($this->_extension);
 	}
-
 }
 ?>

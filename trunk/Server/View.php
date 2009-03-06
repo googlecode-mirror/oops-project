@@ -70,6 +70,7 @@ class Oops_Server_View {
 		static $checked = array();
 		if(!isset($checked[$type])) {
 			$class = "Oops_Server_View_".ucfirst($type);
+			require_once("Oops/Loader.php");
 			if(Oops_Loader::find($class)) $checked[$type] = $class;
 			else $checked[$type] = false;
 		}

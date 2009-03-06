@@ -28,6 +28,8 @@ class Oops_Controller extends Oops_Object {
 	/**
 	* Get requested value, modified to the requested type
 	*
+	* @todo move to request_http !!!
+	*
 	* @param string Request key
 	* @param string Required value type
 	* @return mixed 
@@ -109,13 +111,11 @@ class Oops_Controller extends Oops_Object {
 	}
 
 	/**
-	* Возвращает все ключи запроса
+	* List all defined request keys
 	*/
 	function getRequestKeys() {
 		return $this->_request->getKeys();
 	}
-
-	function getData() {return $this->Data;}
 
 	/**
 	*
@@ -126,6 +126,6 @@ class Oops_Controller extends Oops_Object {
 	}
 
 	function Run() {
-		return true;
+		return "";
 	}
 }

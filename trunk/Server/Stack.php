@@ -53,7 +53,7 @@ class Oops_Server_Stack {
 	* @static
 	* @return Oops_Server Current server instance
 	*/
-	function &pop(&$server) {
+	function &pop() {
 		$stack =& Oops_Server_Stack::getInstance();
 		return array_pop($stack->_stack);
 	}

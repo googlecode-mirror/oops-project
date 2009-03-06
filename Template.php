@@ -33,8 +33,8 @@ class Oops_Template extends Oops_Object {
 		$this->_tplname = $tplname;
 		require_once("Oops/Template/Helper.php");
 		if(($this->_tplfile = Oops_Template_Helper::getTemplateFilename($tplname))!==false) $this->_valid = true;
-		$this->_request =& Oops_Application::getRequest();
-		$this->_response =& Oops_Application::getResponse();
+		$this->_request =& Oops_Server::getRequest();
+		$this->_response =& Oops_Server::getResponse();
 	}
 
 	/**

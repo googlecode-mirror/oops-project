@@ -1,7 +1,7 @@
 <?
 /**
 * @package Oops
-* @subpackage Application
+* @subpackage Server
 */
 
 if(!defined("OOPS_Loaded")) die("OOPS not loaded");
@@ -9,9 +9,9 @@ if(!defined("OOPS_Loaded")) die("OOPS not loaded");
 require_once("Oops/Object.php");
 
 /**
-* Application URI mapper
+* Server URI router
 */
-class Oops_Application_Map extends Oops_Object {
+class Oops_Server_Router extends Oops_Object {
 	/**
 	* Routing settings, array with URI parts as a key, controller class as a value 
 	*

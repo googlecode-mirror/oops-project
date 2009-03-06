@@ -1,14 +1,14 @@
 <?                                                           	
 /**
 * @package Oops
-* @subpackage Application
+* @subpackage Server
 */
 
 if(!defined("OOPS_Loaded")) die("OOPS not loaded");
 
-require_once("Oops/Application/Map.php");
+require_once("Oops/Server/Router.php");
 
-class Oops_Application_Map_Ini extends Oops_Application_Map {
+class Oops_Server_Router_Ini extends Oops_Server_Router {
 	function __construct($filename) {
 		set_error_handler(array($this,"_parseIniErrorHandler"));
 		$data = parse_ini_file($filename,true);
@@ -16,7 +16,7 @@ class Oops_Application_Map_Ini extends Oops_Application_Map {
 
 		if($this->_parseError) {
 			require_once("Oops/Error.php");
-			Oops_Error::Raise("Error/ApplicationMap/InvalidIniFile",$filename);
+			Oops_Error::Raise("Error/ServerRouter/InvalidIniFile",$filename);
 			return;
 		}
 		foreach($data as $controller => $sections) {

@@ -1,14 +1,14 @@
 <?
 /**
 * @package Oops
-* @subpackage Application
+* @subpackage Server
 */
 
-require_once("Oops/Application/Filter.php");
+require_once("Oops/Server/View.php");
 /**
-* Application HTML output filter
+* Server view HTML output
 */
-class Oops_Application_Filter_Debug extends Oops_Application_Filter {
+class Oops_Server_View_Debug extends Oops_Server_View {
 	function getContentType() {
 		return "text/html";
 	}

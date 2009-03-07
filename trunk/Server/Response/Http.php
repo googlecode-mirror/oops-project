@@ -1,6 +1,23 @@
 <?
+/**
+* @package Oops
+* @subpackage Server
+* @author Dmitry Ivanov <rockmagic@yandex.ru>
+*/
+
+/**
+* Check if Oops is loaded
+*/
+if(!defined("OOPS_Loaded")) die("OOPS not found");
+
+/**
+* Load required classes
+*/
 require_once("Oops/Server/Response.php");
 
+/**
+* Oops server response corresponding to incoming (first) HTTP request
+*/
 class Oops_Server_Response_Http extends Oops_Server_Response {
 	function toString() {
 		$this->getReady();

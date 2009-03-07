@@ -12,11 +12,12 @@ if(!defined("OOPS_Loaded")) die("OOPS not found");
 require_once("Oops/Server/Request.php");
 
 /**
-* Class for HTTP Request object representation
+* HTTP request object representation
 */
 class Oops_Server_Request_Http extends Oops_Server_Request {
-	var $uri;
-	var $query_string;
+	var $_get = array();
+	var $_post = array();
+	var $_cookie = array();
 
 	function __construct() {
 		$this->_get = $_GET;
@@ -25,7 +26,12 @@ class Oops_Server_Request_Http extends Oops_Server_Request {
 
 		$this->_params = array_merge($this->_post,$this->_get);
 
-		list($this->uri,$this->query_string) = explode('?',$_SERVER['REQUEST_URI'],2);
+		list($this->path,$this->query) = explode('?',$_SERVER['REQUEST_URI'],2);
+		$this->host = $_SERVER['HTTP_HOST'];
+		$this->port = $_SERVER['SERVER_PORT'];
+		$this->user = @$_SERVER['PHP_AUTH_USER'];
+		$this->pass = @$_SERVER['PHP_AUTH_PW'];
+		
 	}
 }
 ?>

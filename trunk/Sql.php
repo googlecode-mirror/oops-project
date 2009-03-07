@@ -1,6 +1,7 @@
 <?
 /**
 * @package Oops
+* @subpackage Sql
 */
 
 if(!defined('OOPS_Loaded')) die("OOPS not found");

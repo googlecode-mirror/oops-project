@@ -28,8 +28,6 @@ class Oops_Controller extends Oops_Object {
 	/**
 	* Get requested value, modified to the requested type
 	*
-	* @todo move to request_http !!!
-	*
 	* @param string Request key
 	* @param string Required value type
 	* @return mixed 

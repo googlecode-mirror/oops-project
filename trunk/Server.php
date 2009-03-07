@@ -167,7 +167,7 @@ class Oops_Server extends Oops_Object {
 	function _parseRequest() {
 
 		$oopsConfig = $this->_config->get("oops");
-		$parts = explode("/",$this->_request->uri);
+		$parts = explode("/",$this->_request->path);
 		$coolparts = array();
 		//Let's remove any empty parts. path//to/something/ should be turned into path/to/something
 		for($i=0,$cnt = sizeof($parts);$i<$cnt;$i++) {
@@ -194,12 +194,17 @@ class Oops_Server extends Oops_Object {
 
 
 		//Let's compile the one-and-only expected request_uri for this kind of request
-		$expectedUri = sizeof($coolparts)?'/'.join('/',$coolparts).'/':'/';
-		if($this->_action != $oopsConfig->get('default_action') || $this->_extension != $oopsConfig->get('default_extension')) $expectedUri .= "{$this->_action}.{$this->_extension}";
+		$expectedPath = sizeof($coolparts)?'/'.join('/',$coolparts).'/':'/';
+		if($this->_action != $oopsConfig->get('default_action') || $this->_extension != $oopsConfig->get('default_extension')) $expectedPath .= "{$this->_action}.{$this->_extension}";
 
-		if($this->_request->uri != $expectedUri) {
-			if(strlen($this->_request->query_string)) $expectedUri .= ('?'.$this->_request->query_string);
-			$this->_response->redirect($expectedUri,true);
+		if($this->_request->path != $expectedPath) {
+			$correctRequest = clone($this->_request);
+			$correctRequest->path = $expectedPath;
+debugPrint($correctRequest->getUrl(),"URL");
+			/**
+			* @todo clone a request object, set the expected path then call getUrl method
+			*/
+			$this->_response->redirect($correctRequest->getUrl(),true);
 			return;
 		}
 

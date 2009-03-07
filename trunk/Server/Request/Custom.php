@@ -12,19 +12,15 @@ if(!defined("OOPS_Loaded")) die("OOPS not found");
 require_once("Oops/Server/Request.php");
 
 /**
-* Class for HTTP Request object representation
+* Internal (sub)request representation object (oops://local/path/to/resource/action.view)
 */
 class Oops_Server_Request_Custom extends Oops_Server_Request {
-	var $uri;
-	var $query_string;
 
 	function __construct($url) {
 		$parsed = parse_url($url);
-		$this->uri = $parsed['path'];
-		$this->query_string = $parsed['query'];
-		parse_str($this->query_string,$this->_get);
-		$this->host = $parsed['host'];
+		foreach($parsed as $name=>$value) $this->$name = $value;
 
+		parse_str($this->query,$this->_get);
 		$this->_params = $this->_get;
 	}
 }

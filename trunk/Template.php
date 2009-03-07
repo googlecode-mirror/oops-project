@@ -1,6 +1,7 @@
 <?
 /**
 * @package Oops
+* @subpackage Template
 */
 
 if(!defined('OOPS_Loaded')) die("OOPS not found");
@@ -30,6 +31,8 @@ class Oops_Template extends Oops_Object {
 	* @access private
 	*/
 	function __construct($tplname) {
+		static $num;
+		$this->_num = ++$num;
 		$this->_tplname = $tplname;
 		require_once("Oops/Template/Helper.php");
 		if(($this->_tplfile = Oops_Template_Helper::getTemplateFilename($tplname))!==false) $this->_valid = true;

@@ -1,6 +1,17 @@
 <?
-/*
+/**
+* @package Oops
+* @subpackage Server
+* @author Dmitry Ivanov <rockmagic@yandex.ru>
+*/
 
+/**
+* Check if Oops is loaded
+*/
+if(!defined("OOPS_Loaded")) die("OOPS not found");
+
+/**
+* Stream wrapper to be registered for internal requests (subrequests) schema (i.e. oops://...)
 */
 class Oops_Server_Stream_Wrapper {
 	var $_position = 0;
@@ -69,6 +80,8 @@ class Oops_Server_Stream_Wrapper {
 
 	/**
 	* Handle the request
+	*
+	* @todo proceed 301, 302, 404 and other statuses. Current response object should be used for this, or Oops_Server::Run should return a response object instead of text
 	*
 	* @return void
 	*/

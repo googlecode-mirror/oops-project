@@ -1,6 +1,7 @@
 <?
 /**
 * @package Oops
+* @subpackage Template
 */
 if(!defined('OOPS_Loaded')) die("OOPS not found");
 

@@ -1,9 +1,22 @@
 <?
+/**
+* @package Oops
+* @subpackage Server
+* @author Dmitry Ivanov <rockmagic@yandex.ru>
+*/
 
+/**
+* Check if Oops is loaded
+*/
+if(!defined("OOPS_Loaded")) die("OOPS not found");
+
+/**
+* Oops server response representation
+*/
 class Oops_Server_Response {
 	var $code;
 	var $message;
-	var $version = '1.1';
+	var $version = '1.x';
 	var $headers = array();
 	var $body = '';
 
@@ -78,28 +91,44 @@ class Oops_Server_Response {
 		$this->headers = $headers;
 	}
 
-	function setHeader($key,$value,$replace = true) {
-		$key = ucfirst(strtolower($key));
-		if($replace || !isset($this->headers[$key])) {
-			$this->headers[$key] = $value;
+	function setHeader($name,$value,$replace = true) {
+		$name = ucfirst(strtolower($name));
+		if($replace || !isset($this->headers[$name])) {
+			$this->headers[$name] = $value;
 		} else {
-			if(!is_array($this->headers[$key])) {
+			if(!is_array($this->headers[$name])) {
 				require_once("Oops/Utils.php");
-				Oops_Utils::toArray($this->headers[$key]);
+				Oops_Utils::toArray($this->headers[$name]);
 			}
-			$this->headers[$key][]=$value;
+			$this->headers[$name][]=$value;
 		}
 	}
 
+	/**
+	* Get all headers as array
+	*
+	* @return array
+	*/
 	function getHeaders() {
 		return $this->headers;
 	}
 
-	function getHeader($key) {
-		if(isset($this->headers[$key])) return $this->headers[$key];
-		return null;
+	/**
+	* Get header identified by name
+	*
+	* @param string 
+	* @return string|array
+	*/
+	function getHeader($name) {
+		if(isset($this->headers[$name])) return $this->headers[$name];
+		return '';
 	}
 
+	/**
+	* Get HTTP response status line
+	*
+	* @return string
+	*/
 	function getStatusLine() {
 		return "HTTP/{$this->version} {$this->code} {$this->message}";
 	}

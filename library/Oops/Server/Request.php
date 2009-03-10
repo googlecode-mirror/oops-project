@@ -37,6 +37,10 @@ class Oops_Server_Request extends Oops_Object {
 		return isset($this->_params[$key])?$this->_params[$key]:null;
 	}
 
+	function getKeys() {
+		return array_keys($this->_params);
+	}
+
 	function getBody() {
 		return isset($this->_body)?$this->b_ody:null;
 	}

@@ -200,10 +200,7 @@ class Oops_Server extends Oops_Object {
 		if($this->_request->path != $expectedPath) {
 			$correctRequest = clone($this->_request);
 			$correctRequest->path = $expectedPath;
-debugPrint($correctRequest->getUrl(),"URL");
-			/**
-			* @todo clone a request object, set the expected path then call getUrl method
-			*/
+
 			$this->_response->redirect($correctRequest->getUrl(),true);
 			return;
 		}
@@ -244,6 +241,7 @@ debugPrint($correctRequest->getUrl(),"URL");
 	function _initController() {
 		if(strlen($this->_controller)) {
 			if(!Oops_Loader::find($this->_controller)) {
+				require_once("Oops/Error.php");
 				Oops_Error::Raise("Error/Application/MissingConroller",$this->_controller);
 				$this->_controller=false;
 			}

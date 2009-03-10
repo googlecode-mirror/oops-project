@@ -16,7 +16,7 @@ $pathParts = explode(DIRECTORY_SEPARATOR,OOPS_PATH);
 array_pop($pathParts);
 set_include_path(get_include_path().PATH_SEPARATOR.join('/',$pathParts));
 
-if(version_compare(PHP_VERSION,"5","<")) require_once("Oops/_Php4.php");
+if(version_compare(PHP_VERSION,"5","<") && !function_exists('clone')) require_once("Oops/_Php4.php");
 
 require_once("Oops/Server/Stream/Wrapper.php");
 stream_wrapper_register("oops","Oops_Server_Stream_Wrapper");

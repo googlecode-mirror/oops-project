@@ -1,5 +1,10 @@
 <?php
 /**
+* @package Oops
+* @ignore
+*/
+
+/**
 * Clone an object function for PHP4
 *
 * @param object Object to clone

@@ -20,6 +20,8 @@
 	</code>
 	<?=$this->Data?>
 
+	<?php echo file_get_contents("oops://local/.subrequest/index.html?key=value+from+template");?>
+
 </div>
 <?php
 	echo $this->call("_layout/footer.php");

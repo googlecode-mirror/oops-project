@@ -52,3 +52,8 @@ div.tplfile {
 	margin: 1px;
 	background-color:#bbd;
 }
+
+div.subrequest {
+	font-size: 90%;
+	border-style:dashed;
+}

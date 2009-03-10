@@ -1,0 +1,54 @@
+body {
+	font-family:Verdana,sans-serif;
+	color:#222;
+	font-size:80%;
+	margin:10px;
+	padding:0px;
+}
+
+code {
+	font-size:120%;
+}
+
+div {
+	border: solid 1px;
+	padding: 5px;
+	margin: 5px;
+}
+
+div.filter {
+	border-color:#77b;
+	background-color:#ddf;
+}
+
+div.layout {
+	border-color:#7b7;
+	background-color:#dfd;
+}
+
+div.content {
+	border-color:#b77;
+	background-color:#fdd;
+}
+
+div.indexnumber {
+	border-width: 0px;
+	font-size:90%;
+	padding: 1px;
+	margin: 1px;
+	background-color:#bbc;
+}
+div.tplname {
+	border-width: 0px;
+	font-size:80%;
+	padding: 1px;
+	margin: 1px;
+	background-color:#bbd;
+}
+div.tplfile {
+	border-width: 0px;
+	font-size:80%;
+	padding: 1px;
+	margin: 1px;
+	background-color:#bbd;
+}

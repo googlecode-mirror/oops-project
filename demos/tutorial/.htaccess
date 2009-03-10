@@ -1,0 +1,9 @@
+AddType text/html tab crd pro btab
+
+<IfModule mod_rewrite.c>
+	RewriteEngine on
+	RewriteCond %{REQUEST_FILENAME} !-f
+	RewriteRule .* /index.php [PT]
+</IfModule>
+
+php_value zlib.output_compression 1

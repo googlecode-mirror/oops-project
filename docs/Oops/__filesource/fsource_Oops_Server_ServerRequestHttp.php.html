@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="koi8-r"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  <html xmlns="http://www.w3.org/1999/xhtml">
+		<head>
+			<!-- template designed by Marco Von Ballmoos -->
+			<title>File Source for Http.php</title>
+			<link rel="stylesheet" href="../media/stylesheet.css" />
+			<meta http-equiv='Content-Type' content='text/html; charset=koi8-r'/>
+		</head>
+		<body>
+						<h1>Source for file Http.php</h1>
+<p>Documentation is available at <a href="../Oops/Server/_Server---Request---Http.php.html">Http.php</a></p>
+<div class="src-code">
+<div class="src-code"><ol><li><div class="src-line"><a name="a1"></a><span class="src-php">&lt;?</span></div></li>
+<li><div class="src-line"><a name="a2"></a><span class="src-doc">/**</span></div></li>
+<li><div class="src-line"><a name="a3"></a><span class="src-doc">*&nbsp;</span><span class="src-doc-coretag">@package</span><span class="src-doc">&nbsp;Oops</span></div></li>
+<li><div class="src-line"><a name="a4"></a><span class="src-doc">*&nbsp;</span><span class="src-doc-coretag">@subpackage</span><span class="src-doc">&nbsp;Server</span></div></li>
+<li><div class="src-line"><a name="a5"></a><span class="src-doc">*&nbsp;</span><span class="src-doc-coretag">@author</span><span class="src-doc">&nbsp;Dmitry&nbsp;Ivanov&nbsp;&lt;rockmagic@yandex.ru&gt;</span></div></li>
+<li><div class="src-line"><a name="a6"></a><span class="src-doc">*/</span></div></li>
+<li><div class="src-line"><a name="a7"></a><span class="src-key">if</span><span class="src-sym">(</span><span class="src-sym">!</span><a href="http://www.php.net/defined">defined</a><span class="src-sym">(</span><span class="src-str">&quot;OOPS_Loaded&quot;</span><span class="src-sym">))&nbsp;</span><span class="src-key">die</span><span class="src-sym">(</span><span class="src-str">&quot;OOPS&nbsp;not&nbsp;found&quot;</span><span class="src-sym">)</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a8"></a>&nbsp;</div></li>
+<li><div class="src-line"><a name="a9"></a><span class="src-doc">/**</span></div></li>
+<li><div class="src-line"><a name="a10"></a><span class="src-doc">*&nbsp;Load&nbsp;required&nbsp;classes</span></div></li>
+<li><div class="src-line"><a name="a11"></a><span class="src-doc">*/</span></div></li>
+<li><div class="src-line"><a name="a12"></a><span class="src-inc">require_once</span><span class="src-sym">(</span><span class="src-str">&quot;Oops/Server/Request.php&quot;</span><span class="src-sym">)</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a13"></a>&nbsp;</div></li>
+<li><div class="src-line"><a name="a14"></a><span class="src-doc">/**</span></div></li>
+<li><div class="src-line"><a name="a15"></a><span class="src-doc">*&nbsp;HTTP&nbsp;request&nbsp;object&nbsp;representation</span></div></li>
+<li><div class="src-line"><a name="a16"></a><span class="src-doc">*/</span></div></li>
+<li><div class="src-line"><a name="a17"></a><span class="src-key">class&nbsp;</span><a href="../Oops/Server/Oops_Server_Request_Http.html">Oops_Server_Request_Http</a>&nbsp;<span class="src-key">extends&nbsp;</span><a href="../Oops/Server/Oops_Server_Request.html">Oops_Server_Request</a>&nbsp;<span class="src-sym">{</span></div></li>
+<li><div class="src-line"><a name="a18"></a>&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-key">var&nbsp;</span><a href="../Oops/Server/Oops_Server_Request_Http.html#var$_get">$_get</a>&nbsp;=&nbsp;<span class="src-key">array</span><span class="src-sym">(</span><span class="src-sym">)</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a19"></a>&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-key">var&nbsp;</span><a href="../Oops/Server/Oops_Server_Request_Http.html#var$_post">$_post</a>&nbsp;=&nbsp;<span class="src-key">array</span><span class="src-sym">(</span><span class="src-sym">)</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a20"></a>&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-key">var&nbsp;</span><a href="../Oops/Server/Oops_Server_Request_Http.html#var$_cookie">$_cookie</a>&nbsp;=&nbsp;<span class="src-key">array</span><span class="src-sym">(</span><span class="src-sym">)</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a21"></a>&nbsp;</div></li>
+<li><div class="src-line"><a name="a22"></a>&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-key">function&nbsp;</span><a href="../Oops/Server/Oops_Server_Request_Http.html#method__construct">__construct</a><span class="src-sym">(</span><span class="src-sym">)&nbsp;</span><span class="src-sym">{</span></div></li>
+<li><div class="src-line"><a name="a23"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-var">$this</span><span class="src-sym">-&gt;</span><a href="../Oops/Server/Oops_Server_Request_Http.html#var$_get">_get</a>&nbsp;=&nbsp;<span class="src-var">$_GET</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a24"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-var">$this</span><span class="src-sym">-&gt;</span><a href="../Oops/Server/Oops_Server_Request_Http.html#var$_post">_post</a>&nbsp;=&nbsp;<span class="src-var">$_POST</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a25"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-var">$this</span><span class="src-sym">-&gt;</span><a href="../Oops/Server/Oops_Server_Request_Http.html#var$_cookie">_cookie</a>&nbsp;=&nbsp;<span class="src-var">$_COOKIE</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a26"></a>&nbsp;</div></li>
+<li><div class="src-line"><a name="a27"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-var">$this</span><span class="src-sym">-&gt;</span><a href="../Oops/Server/Oops_Server_Request.html#var$_params">_params</a>&nbsp;=&nbsp;<a href="http://www.php.net/array_merge">array_merge</a><span class="src-sym">(</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><a href="../Oops/Server/Oops_Server_Request_Http.html#var$_post">_post</a><span class="src-sym">,</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><a href="../Oops/Server/Oops_Server_Request_Http.html#var$_get">_get</a><span class="src-sym">)</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a28"></a>&nbsp;</div></li>
+<li><div class="src-line"><a name="a29"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;list<span class="src-sym">(</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><a href="../Oops/Server/Oops_Server_Request.html#var$path">path</a><span class="src-sym">,</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><a href="../Oops/Server/Oops_Server_Request.html#var$query">query</a><span class="src-sym">)&nbsp;</span>=&nbsp;<a href="http://www.php.net/explode">explode</a><span class="src-sym">(</span><span class="src-str">'?'</span><span class="src-sym">,</span><span class="src-var">$_SERVER</span><span class="src-sym">[</span><span class="src-str">'REQUEST_URI'</span><span class="src-sym">]</span><span class="src-sym">,</span><span class="src-num">2</span><span class="src-sym">)</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a30"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-var">$this</span><span class="src-sym">-&gt;</span><a href="../Oops/Server/Oops_Server_Request.html#var$host">host</a>&nbsp;=&nbsp;<span class="src-var">$_SERVER</span><span class="src-sym">[</span><span class="src-str">'HTTP_HOST'</span><span class="src-sym">]</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a31"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-var">$this</span><span class="src-sym">-&gt;</span><a href="../Oops/Server/Oops_Server_Request.html#var$port">port</a>&nbsp;=&nbsp;<span class="src-var">$_SERVER</span><span class="src-sym">[</span><span class="src-str">'SERVER_PORT'</span><span class="src-sym">]</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a32"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-var">$this</span><span class="src-sym">-&gt;</span><a href="../Oops/Server/Oops_Server_Request.html#var$user">user</a>&nbsp;=&nbsp;<span class="src-sym">@</span><span class="src-var">$_SERVER</span><span class="src-sym">[</span><span class="src-str">'PHP_AUTH_USER'</span><span class="src-sym">]</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a33"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-var">$this</span><span class="src-sym">-&gt;</span><a href="../Oops/Server/Oops_Server_Request.html#var$pass">pass</a>&nbsp;=&nbsp;<span class="src-sym">@</span><span class="src-var">$_SERVER</span><span class="src-sym">[</span><span class="src-str">'PHP_AUTH_PW'</span><span class="src-sym">]</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line"><a name="a34"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div></li>
+<li><div class="src-line"><a name="a35"></a>&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-sym">}</span></div></li>
+<li><div class="src-line"><a name="a36"></a><span class="src-sym">}</span></div></li>
+<li><div class="src-line"><a name="a37"></a><span class="src-php">?&gt;</span></div></li>
+</ol></div>
+</div>
+	<p class="notes" id="credit">
+		Documentation generated on Tue, 10 Mar 2009 16:10:51 +0300 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.1</a>
+	</p>
+	</body>
+</html>

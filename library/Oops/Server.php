@@ -93,21 +93,40 @@ class Oops_Server extends Oops_Object {
 	function configure(&$config) {
 		$this->_config->mergeConfig($config);
 		$oopsConfig = $this->_config->get('oops');
+	}
 
-		if(is_object($oopsConfig) && $incPath = $oopsConfig->get('include_path')) {
-			set_include_path (
-				$incPath . PATH_SEPARATOR . get_include_path()
-			);
+	function _useConfig() {
+		$oopsConfig = $this->_config->get('oops');
+		if(is_object($oopsConfig)) {
+			if((bool) $oopsConfig->get('register_autoload')) {
+				require_once("Oops/_Autoload.php");
+			}
+
+			if($incPath = $oopsConfig->get('include_path')) {
+				$currentIncludePath = get_include_path();
+				if(!in_array($incPath,explode(PATH_SEPARATOR,$currentIncludePath))) {
+					set_include_path (
+						$incPath . PATH_SEPARATOR . get_include_path()
+					);
+				}
+			}
 		}
 	}
 
 	/**
 	* Run the application and output the response
 	*
+	* @todo return the Response object, use special function to return a Response for additional processing of error codes (404)
+	*
 	* @param string Application ID, reserved for future needs
 	* @return void
 	*/
 	function Run($request = null) {
+		if(!$this->_config->used) {
+			$this->_config->used = true;
+			$this->_useConfig();
+		}
+
 		if(!is_object($request)) {
 			require_once("Oops/Server/Request/Http.php");
 			$this->_request = new Oops_Server_Request_Http();
@@ -129,13 +148,6 @@ class Oops_Server extends Oops_Object {
 
 		$this->_initView();
 		if($this->_response->isReady()) return $this->_response->toString();
-/**
-		if(!is_object($this->_view)) {
-			require_once("Oops/Debug.php");
-			Oops_Debug::Dump($this->_request,"No output filter specified");
-			return;
-		}
-*/
 
 		$this->_routeRequest();
 		if($this->_response->isReady()) return $this->_response->toString();

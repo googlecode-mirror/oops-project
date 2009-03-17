@@ -58,4 +58,3 @@ class Oops_Sql {
 	}
 
 }
-?>

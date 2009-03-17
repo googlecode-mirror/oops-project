@@ -26,12 +26,13 @@ class Oops_Server_Request_Http extends Oops_Server_Request {
 
 		$this->_params = array_merge($this->_post,$this->_get);
 
-		list($this->path,$this->query) = explode('?',$_SERVER['REQUEST_URI'],2);
-		$this->host = $_SERVER['HTTP_HOST'];
-		$this->port = $_SERVER['SERVER_PORT'];
-		$this->user = @$_SERVER['PHP_AUTH_USER'];
-		$this->pass = @$_SERVER['PHP_AUTH_PW'];
+		$parsed = parse_url($_SERVER['REQUEST_URI']);
+		foreach($parsed as $name=>$value) $this->$name = $value;
+
+		if(!isset($this->host)) $this->host = $_SERVER['HTTP_HOST'];
+		if(!isset($this->port)) $this->port = $_SERVER['SERVER_PORT'];
+		if(!isset($this->user) && isset($_SERVER['PHP_AUTH_USER'])) $this->user = $_SERVER['PHP_AUTH_USER'];
+		if(!isset($this->pass) && isset($_SERVER['PHP_AUTH_PW'])) $this->pass = $_SERVER['PHP_AUTH_PW'];
 		
 	}
 }
-?>

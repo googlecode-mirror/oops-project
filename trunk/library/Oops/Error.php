@@ -75,4 +75,3 @@ class Oops_Error {
 	}
 	
 }
-?>

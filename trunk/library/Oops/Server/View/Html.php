@@ -10,4 +10,3 @@ require_once("Oops/Server/View/Php.php");
 */
 class Oops_Server_View_Html extends Oops_Server_View_Php {
 }
-?>

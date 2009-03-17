@@ -55,4 +55,3 @@ function debugPrint($value, $name=null, $fullTrace=false) {
 	require_once("Oops/Debug.php");
 	Oops_Debug::Dump($value, $name, $fullTrace);
 }
-?>

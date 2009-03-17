@@ -90,8 +90,10 @@ class Oops_Server_Router extends Oops_Object {
 				2.1. foundLevel == 0
 				2.2. foundLevel > 0
 			3. request path found exactly
+
+		Todo:
+			set Request params - controller class, [controller_ident, controller_params]
 		*/
 		
 	}
 }
-?>

@@ -50,4 +50,3 @@ class Oops_Server_View_Php extends Oops_Server_View {
 		return $template;
 	}
 }
-?>

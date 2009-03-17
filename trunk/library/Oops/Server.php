@@ -116,7 +116,7 @@ class Oops_Server extends Oops_Object {
 	/**
 	* Run the application and output the response
 	*
-	* @todo return the Response object, use special function to return a Response for additional processing of error codes (404)
+	* @todo return the Response object, use special function to return a Response for additional processing of error codes (404, 415, 501)
 	*
 	* @param string Application ID, reserved for future needs
 	* @return void
@@ -158,6 +158,9 @@ class Oops_Server extends Oops_Object {
 		if($this->_response->isReady()) return $this->_response->toString();
 
 
+		/**
+		* @todo Let the view handler use getRequest and getResponse as it need it
+		*/
 		$this->_view->In($data);
 		$this->_view->Set('controller',$this->_controller);
 		$this->_view->Set('uri',$this->_uri);
@@ -190,7 +193,7 @@ class Oops_Server extends Oops_Object {
 			if(($dotpos = strrpos($last,'.')) !== FALSE) {
 				$ext = substr($last,$dotpos+1);
 				require_once("Oops/Server/View.php");
-				if(Oops_Server_View::isValidView($ext)) {
+				if(Oops_Server_View::isValidView($ext) || $oopsConfig->get('strict_views')) {
 					$this->_action = substr($last,0,$dotpos);
 					$this->_extension = $ext;
 					array_pop($coolparts);
@@ -237,6 +240,8 @@ class Oops_Server extends Oops_Object {
 	* Routes the contoroller for a given URI, and places contoller class name into $this->_controller var
 	* Found path is set into $this->_controller_ident, and all remaining parts into $this->_controller_params
 	*
+	* @todo Move controller_ident and controller_params to the Request object
+	*
 	* @uses Oops_Server_Router
 	*/
 	function _routeRequest() {
@@ -248,6 +253,8 @@ class Oops_Server extends Oops_Object {
 	}
 
 	/**
+	* @todo Set error response code if there's controller class not found
+	*
 	* Controller instantiation. Uses $this->_controller as a class name (detected in DetectController), or starts default controller Oops_Controller
 	*/
 	function _initController() {
@@ -268,6 +275,9 @@ class Oops_Server extends Oops_Object {
 	}
 
 	/**
+	* @deprecated
+	* @todo Move this to Request object
+	*
 	* Method is used to get private application params
 	*/
 	function get($what) {
@@ -294,6 +304,10 @@ class Oops_Server extends Oops_Object {
 	function _initView() {
 		require_once("Oops/Server/View.php");
 		$this->_view =& Oops_Server_View::getInstance($this->_extension);
+
+		if(!is_object($this->_view)) {
+			//suggested view is not available
+			$this->_response->setCode(415);
+		}
 	}
 }
-?>

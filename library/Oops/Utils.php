@@ -74,12 +74,10 @@ class Oops_Utils {
 		}
 	}
 	/**
-	 * Приводит произвольное дерево вида:
+	 * Compile a given Tree to one-dimensional List having a depth level set for each element
 	 * 
-	 * к линейном массиву, где автоматически проставляется уровень в иерархии (от 0)	 
-	 *
-	 * @param unknown_type $Tree
-	 * @param unknown_type $ChildsID
+	 * @param array Tree
+	 * @param array childrenId
 	 * 
 	 * @author cloud
 	 * @access public
@@ -88,31 +86,31 @@ class Oops_Utils {
 	 * Используется:
 	 * comments_assembler::ToLine();
 	 */
-	function Tree2Line(&$Tree, $ChildsID, $LevelID='Level'){
+	function Tree2Line(&$Tree, $childrenId="Children", $levelId='Level'){
 		$ret=array();
-		Oops_Utils::_Tree2Line($ret, $Tree, $ChildsID, $LevelID, 0);
+		Oops_Utils::_Tree2Line($ret, $Tree, $childrenId, $levelId, 0);
 		return $ret;
 	}
 	
 	/**
-	 * Линейный вид треда
+	 * @ignore
 	 *
-	 * @param array $ret
-	 * @param array $Tree участок дерева
-	 * @param string $ChildsID ключ потомков
-	 * @param string $LevelID ключ уровня
+	 * @param array $ret Return value
+	 * @param array $Tree Tree segment
+	 * @param string $childrenId Children key in Element array
+	 * @param string $levelId A key to set with element's depth level value
 	 * 
 	 * @author cloud
 	 * @access public
 	 */
-	function _Tree2Line(&$ret, &$Tree, $ChildsID, $LevelID, $Level=0){
+	function _Tree2Line(&$ret, &$Tree, $childrenId, $levelId, $Level=0){
 		if ($count=count($Tree)){
 			for ($i=0; $i<$count; $i++){					
 				$ret[]=$Tree[$i];
-				unset($ret[count($ret)-1][$ChildsID]);
-				$ret[count($ret)-1][$ChildsID][$LevelID]=$Level;
-				if (isset($Tree[$i][$ChildsID])){					
-					Utils::_Tree2Line($ret, $Tree[$i][$ChildsID], $ChildsID, $LevelID, $Level+1);
+				unset($ret[count($ret)-1][$childrenId]);
+				$ret[count($ret)-1][$childrenId][$levelId]=$Level;
+				if (isset($Tree[$i][$childrenId])){					
+					Utils::_Tree2Line($ret, $Tree[$i][$childrenId], $childrenId, $levelId, $Level+1);
 				}
 			}
 		}
@@ -125,7 +123,7 @@ class Oops_Utils {
 	* @param string childrenid key name
 	* @return array
 	*/
-	function Line2Tree($Line,$ParentID='parent',$ChildrenID='children',$skipIfNoKey=false) {
+	function Line2Tree($Line,$ParentID='parent',$childrenId='children',$skipIfNoKey=false) {
 		$ret = array();
 		foreach($Line as $k=>$v) {
 			if(!isset($v[$ParentID])) { //NULL is like !isset - No Parent
@@ -139,8 +137,8 @@ class Oops_Utils {
 				$ret[$k] =& $Line[$k];
 				continue;
 			}
-			if(!isset($Line[$Parent][$ChildrenID]) || !is_array($Line[$Parent][$ChildrenID])) $Line[$Parent][$ChildrenID]=array();
-			$Line[$Parent][$ChildrenID][$k]=&$Line[$k];
+			if(!isset($Line[$Parent][$childrenId]) || !is_array($Line[$Parent][$childrenId])) $Line[$Parent][$childrenId]=array();
+			$Line[$Parent][$childrenId][$k]=&$Line[$k];
 		}
 		if(true && $skipIfNoKey!==false) {
 			$dontskip=array();
@@ -155,7 +153,7 @@ class Oops_Utils {
 			foreach($Line as $k=>$v) {
 				if(!in_array($k,$dontskip)) {
 					unset($Line[$k]);
-					if($v[$ParentID]) unset($Line[$v[$ParentID]][$ChildrenID][$k]);
+					if($v[$ParentID]) unset($Line[$v[$ParentID]][$childrenId][$k]);
 					else unset($ret[$k]);
 				}
 			}
@@ -163,4 +161,3 @@ class Oops_Utils {
 		return $ret;
 	}
 }
-?>

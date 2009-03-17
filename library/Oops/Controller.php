@@ -123,7 +123,10 @@ class Oops_Controller extends Oops_Object {
 		return array();
 	}
 
+	/**
+	* @return boolean True on successful request handling
+	*/
 	function Run() {
-		return "";
+		return true;
 	}
 }

@@ -131,4 +131,3 @@ class Oops_Sql_Logger {
 		return $l->log;
 	}
 }
-?>

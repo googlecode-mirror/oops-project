@@ -24,4 +24,3 @@ class Oops_Server_Request_Custom extends Oops_Server_Request {
 		$this->_params = $this->_get;
 	}
 }
-?>

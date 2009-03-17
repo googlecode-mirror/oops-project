@@ -79,4 +79,3 @@ class Oops_Server_Request extends Oops_Object {
 	}
 
 }
-?>

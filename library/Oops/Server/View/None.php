@@ -13,4 +13,3 @@ class Oops_Server_View_None extends Oops_Server_View {
 		return "text/plain";
 	}
 }
-?>

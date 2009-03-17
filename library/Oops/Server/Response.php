@@ -171,6 +171,10 @@ class Oops_Server_Response {
 		if(!$this->isReady()) $this->setCode(200);
 	}
 
+	function __toString() {
+		return $this->toString();
+	}
+
 	function toString() {
 		return $this->body;
 	}

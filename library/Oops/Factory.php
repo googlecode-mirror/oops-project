@@ -32,4 +32,3 @@ class Oops_Factory {
 		Oops_Session::getInstance();
 	}
 }
-?>

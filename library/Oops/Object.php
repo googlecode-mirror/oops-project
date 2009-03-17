@@ -36,4 +36,3 @@ class Oops_Object {
 
 	function __construct() {}
 }
-?>

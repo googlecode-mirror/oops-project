@@ -19,4 +19,3 @@ class Oops_Server_View_Debug extends Oops_Server_View {
 		return ob_get_clean();
 	}
 }
-?>

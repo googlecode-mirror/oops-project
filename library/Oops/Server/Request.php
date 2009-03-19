@@ -17,6 +17,7 @@ require_once("Oops/Object.php");
 
 /**
 * OOPS Request object handing
+* @abstract
 */
 class Oops_Server_Request extends Oops_Object {
 	var $_params = array();
@@ -42,7 +43,7 @@ class Oops_Server_Request extends Oops_Object {
 	}
 
 	function getBody() {
-		return isset($this->_body)?$this->b_ody:null;
+		return isset($this->_body)?$this->_body:null;
 	}
 
 	function getHeader($key) {
@@ -50,6 +51,11 @@ class Oops_Server_Request extends Oops_Object {
 	}
 
 	function getHost() {
+		return isset($this->host)?$this->host:null;
+	}
+
+	function getPath() {
+		return isset($this->path)?$this->path:'';
 	}
 
 	function getQuery() {

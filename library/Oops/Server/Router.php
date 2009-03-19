@@ -20,20 +20,6 @@ class Oops_Server_Router extends Oops_Object {
 	var $_set=array();
 
 	/**
-	* Found route level (number of matched URI parts)
-	*
-	* @access private
-	*/
-	var $_foundLevel;
-
-	/**
-	* Default controller class
-	*
-	* @access private
-	*/
-	var $_default = false;
-
-	/**
 	* Method is used to define settings
 	*
 	* @param string Routed path (/news/ or news or news/). If empty sets the default controller.
@@ -41,59 +27,46 @@ class Oops_Server_Router extends Oops_Object {
 	*/
 	function Set($path,$ctrl) {
 		$path = '/'.trim($path,'/');
-		if(!strlen($path)) $this->_default = $ctrl;
-		else $this->_set[$path] = $ctrl;
+			$this->_set[$path] = $ctrl;
 	}
 
 	/**
 	* Routing method
 	*
-	* @param array URI parts splitted
-	* @return string Controller class
-	* @todo process 404 on default controller when path != '/'
+	* @param array Oops_Server_Request Request object
+	* @return bool true if routed, false on 'not found'
+	* @todo set controller and other params in a non-conflicting way
 	*/
-	function getController($uri_parts) {
-		if(!is_array($uri_parts)) $uri_parts = explode('/',trim($uri_parts,'/'));
-
-		/*
-			if(!count($uri_parts)) return default;
-		*/
-		$ret = $this->_default;
-		$this->_foundLevel=0;
-		$cur='/';
-		for($i=0,$cnt = sizeof($uri_parts);$i<$cnt;$i++) {
-			$cur .= $uri_parts[$i];
-			if(isset($this->_set[$cur])) {
-				$ret = $this->_set[$cur];
-				$this->_foundLevel = $i+1;
-			}
-			$cur .= '/';
-		}
-		return $ret;
-	}
-
-	/**
-	* Use it after getController to obtain routed level
-	*
-	* @return int
-	*/
-	function getFoundLevel() {
-		return $this->_foundLevel;
-	}
-
-
 	function route(&$request) {
-		/**
-		Cases:
-			1. invalid request
-			2. request path not found
-				2.1. foundLevel == 0
-				2.2. foundLevel > 0
-			3. request path found exactly
+		//Obtaining path as string and split into parts
+		$parts = explode('/', trim($request->getPath(), '/'));
+		$path = '/' . join('/', $parts);
 
-		Todo:
-			set Request params - controller class, [controller_ident, controller_params]
-		*/
-		
+		$isSuccessful = false;
+
+		if(isset($this->_set[$path])) {
+			//Exact match, document_root requests first of all (if set the root route)
+			$controller = $this->_set[$path];
+			$foundPath = $path;
+			$isSuccessful = true;
+		} else {
+			$cur = '';
+			for($i = 0, $cnt = count($parts); $i < $cnt; $i++) {
+				$cur .= '/' . $parts[$i];
+				if(isset($this->_set[$cur])) {
+					$controller = $this->_set[$cur];
+					$foundPath = $cur;
+					$isSuccessful = true;
+				}
+			}
+		}
+		//Can't route the request
+		if(!$isSuccessful) return false;
+
+		//Routed OK, set request params
+		$this->controller = $controller;
+		$this->foundPath = $foundPath;
+		$this->notFoundPath = substr($path,strlen($notFoundPath));
+		return true;
 	}
 }

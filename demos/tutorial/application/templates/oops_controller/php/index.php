@@ -16,5 +16,5 @@
 		<?php print_r($this->Data);?>
 	</code>
 
-	<?php echo file_get_contents("oops://local/.subrequest2/index.html?param1=value1&param2=value+2")?>
+	Illegal subrequest is: <?php echo file_get_contents("oops://local/.subrequest2/index.html?param1=value1&param2=value+2")?>
 </div>

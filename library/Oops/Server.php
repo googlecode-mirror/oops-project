@@ -141,28 +141,33 @@ class Oops_Server extends Oops_Object {
 		}
 
 		/**
-		* @todo Use exceptions in PHP5 to check if response is ready
+		* @todo Use exceptions in PHP5 to check if response is ready (or trigger_error) or just chck the return and call some method for error or redirect response
 		*/
 		$this->_parseRequest();
-		if($this->_response->isReady()) return $this->_response->toString();
+		if($this->_response->isReady()) return $this->_response;
 
 		$this->_initView();
-		if($this->_response->isReady()) return $this->_response->toString();
+		if($this->_response->isReady()) return $this->_response;
 
 		$this->_routeRequest();
-		if($this->_response->isReady()) return $this->_response->toString();
+		if($this->_response->isReady()) return $this->_response;
 
+		/**
+		* @todo try to find controller action, then do everything else
+		*/
 		$this->_initController();
+		if($this->_response->isReady()) return $this->_response;
 
+		/** @todo Controller should return boolean, and data should be in response object?*/
 		$data = $this->_controller_instance->Run();
-		if($this->_response->isReady()) return $this->_response->toString();
+		if($this->_response->isReady()) return $this->_response;
 
 
 		/**
 		* @todo Let the view handler use getRequest and getResponse as it need it
 		*/
 		$this->_view->In($data);
-		$this->_view->Set('controller',$this->_controller);
+		$this->_view->Set('controller',$this->_router->controller);
 		$this->_view->Set('uri',$this->_uri);
 		$this->_view->Set('ext',$this->_extension);
 		$this->_view->Set('action',$this->_action);
@@ -171,7 +176,7 @@ class Oops_Server extends Oops_Object {
 		$this->_response->setHeader("Content-type",$this->_view->getContentType());
 		$this->_response->setBody($this->_view->Out());
 
-		return $this->_response->toString();
+		return $this->_response;
 	}
 
 
@@ -246,10 +251,13 @@ class Oops_Server extends Oops_Object {
 	*/
 	function _routeRequest() {
 		$this->_initRouter();
-		$this->_controller = $this->_router->getController($this->_uri_parts);
-		$level = $this->_router->getFoundLevel();
-		$this->_controller_ident = join('/',array_slice($this->_uri_parts,0,$level));
-		$this->_controller_params = array_slice($this->_uri_parts,$level);
+		if($this->_router->route($this->_request)) {
+			//Routed OK
+		}
+		else {
+			//We got 404 here, let's work it out
+			$this->_response->setCode(404);
+		}
 	}
 
 	/**
@@ -258,20 +266,13 @@ class Oops_Server extends Oops_Object {
 	* Controller instantiation. Uses $this->_controller as a class name (detected in DetectController), or starts default controller Oops_Controller
 	*/
 	function _initController() {
-		if(strlen($this->_controller)) {
-			if(!Oops_Loader::find($this->_controller)) {
-				require_once("Oops/Error.php");
-				Oops_Error::Raise("Error/Application/MissingConroller",$this->_controller);
-				$this->_controller=false;
-			}
+		$ctrl = $this->_router->controller;
+		if(!Oops_Loader::find($ctrl)) {
+			$this->_response->setCode(500);
+			$this->_response->setHeader("Oops-Error", "Controller $ctrl not found");
+			return;
 		}
-		if(!strlen($this->_controller)) {
-			require_once("Oops/Controller.php");
-			$this->_controller = "Oops_Controller";
-			$this->_controller_instance = new Oops_Controller();
-		}
-		$ctrlClass = $this->_controller;
-		$this->_controller_instance = new $ctrlClass();
+		$this->_controller_instance = new $ctrl();
 	}
 
 	/**

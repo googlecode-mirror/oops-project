@@ -17,6 +17,8 @@ class Oops_Server_Stream_Wrapper {
 	var $_position = 0;
 	var $_content = '';
 
+	var $_redirectLimit = 2;
+
 	var $_request;
 	var $_isHandled = false;
    
@@ -89,7 +91,17 @@ class Oops_Server_Stream_Wrapper {
 		if($this->_isHandled) return;
 		require_once("Oops/Server.php");
 		$server = new Oops_Server();
-		$this->_content = $server->Run($this->_request);
+		$response = $server->Run($this->_request);
+
+		while($response->isRedirect() && $this->_redirectLimit--) {
+			/**
+			* @todo do something, use Location header
+			*/
+			$this->_request = new Oops_Server_Request_Custom($response->getHeader("Location"));
+			$response = $server->Run($this->_request);
+		}
+
+		$this->_content = $response->body;
 
 		require_once("Oops/Server/Stack.php");
 		Oops_Server_Stack::pop();

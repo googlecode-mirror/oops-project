@@ -162,6 +162,20 @@ class Oops_Server_Response {
 		return $str;
 	}
 
+	/**
+	* Check whether the response is a redirection
+	*
+	* @return boolean
+	*/
+	function isRedirect() {
+		$restype = floor($this->code / 100);
+		if ($restype == 3) {
+			return true;
+		}
+
+		return false;
+	}
+
 	function redirect($location,$permanent = false) {
 		$this->setCode($permanent?301:302);
 		$this->setHeader('Location',$location);

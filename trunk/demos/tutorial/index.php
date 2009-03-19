@@ -8,4 +8,5 @@ require_once("Oops/Config/Ini.php");
 
 $server = new Oops_Server();
 $server->configure(new Oops_Config_Ini('application/config/oops.ini'));
-echo $server->Run();
+$response = $server->Run();
+echo $response->toString();

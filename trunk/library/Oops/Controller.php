@@ -17,7 +17,7 @@ class Oops_Controller extends Oops_Object {
 	var $_server;
 
 	/**
-	*
+	* @todo Consider using request and response as controller constructor params?
 	*/
 	function __construct() {
 		$this->_server =& Oops_Server::getInstance();
@@ -116,7 +116,7 @@ class Oops_Controller extends Oops_Object {
 	}
 
 	/**
-	*
+	* @todo Move controller params and controller_ident to the request object (fill 'em woth router)
 	*/
 	function getControllerParams() {
 		if(is_object($this->_server)) return $this->_server->get('controller_params');

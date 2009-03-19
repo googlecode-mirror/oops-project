@@ -18,9 +18,9 @@
 	<code>
 		&lt;?=$this->Data;?&gt;
 	</code>
-	<?=$this->Data?>
+	data<?=$this->Data?>data
 
-	<?php echo file_get_contents("oops://local/.subrequest/index.html?key=value+from+template");?>
+	<?php echo file_get_contents("oops://local/.subrequest//index.html?key=value+from+template");?>
 
 </div>
 <?php

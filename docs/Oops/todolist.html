@@ -10,20 +10,44 @@
 		<body>
 						<div align="center"><h1>Todo List</h1></div>
 <h2>Oops</h2>
-<h3><a href="Oops/Server/Oops_Server_Router.html#methodgetController">Oops_Server_Router::getController()</a></h3>
+<h3><a href="Oops/Server/Oops_Server.html#methodget">Oops_Server::get()</a></h3>
 <ul>
-    <li>process 404 on default controller when path != '/'</li>
+    <li><p>Move this to Request object</p><p>Method is used to get private application params</p></li>
+</ul>
+<h3><a href="Oops/Oops_Controller.html#methodgetControllerParams">Oops_Controller::getControllerParams()</a></h3>
+<ul>
+    <li>Move controller params and controller_ident to the request object (fill 'em woth router)</li>
+</ul>
+<h3><a href="Oops/Server/Oops_Server_Router.html#methodroute">Oops_Server_Router::route()</a></h3>
+<ul>
+    <li>set controller and other params in a non-conflicting way</li>
+</ul>
+<h3><a href="Oops/Server/Oops_Server.html#methodRun">Oops_Server::Run()</a></h3>
+<ul>
+    <li>return the Response object, use special function to return a Response for additional processing of error codes (404, 415, 501)</li>
 </ul>
 <h3><a href="Oops/Server/Oops_Server_Stream_Wrapper.html#method_handle">Oops_Server_Stream_Wrapper::_handle()</a></h3>
 <ul>
     <li>proceed 301, 302, 404 and other statuses. Current response object should be used for this, or Oops_Server::Run should return a response object instead of text</li>
 </ul>
+<h3><a href="Oops/Server/Oops_Server.html#method_initController">Oops_Server::_initController()</a></h3>
+<ul>
+    <li><p>Set error response code if there's controller class not found</p><p>Controller instantiation. Uses $this-&gt;_controller as a class name (detected in DetectController), or starts default controller Oops_Controller</p></li>
+</ul>
 <h3><a href="Oops/Oops_Controller.html#method_proceedRequestFiles">Oops_Controller::_proceedRequestFiles()</a></h3>
 <ul>
     <li>move this to Oops_Server_Request_Http::__construct</li>
 </ul>
+<h3><a href="Oops/Server/Oops_Server.html#method_routeRequest">Oops_Server::_routeRequest()</a></h3>
+<ul>
+    <li>Move controller_ident and controller_params to the Request object</li>
+</ul>
+<h3><a href="Oops/Oops_Controller.html#method__construct">Oops_Controller::__construct()</a></h3>
+<ul>
+    <li>Consider using request and response as controller constructor params?</li>
+</ul>
 	<p class="notes" id="credit">
-		Documentation generated on Tue, 10 Mar 2009 16:10:58 +0300 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.1</a>
+		Documentation generated on Tue, 14 Apr 2009 15:21:50 +0400 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.1</a>
 	</p>
 	</body>
 </html>

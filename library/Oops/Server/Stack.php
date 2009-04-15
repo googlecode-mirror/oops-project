@@ -29,7 +29,7 @@ class Oops_Server_Stack {
 	*/
 	function &last() {
 		$stack =& Oops_Server_Stack::getInstance();
-		return end($stack->_stack);
+		return $stack->_stack[count($stack->_stack)-1];
 	}
 
 	/**
@@ -42,7 +42,8 @@ class Oops_Server_Stack {
 	*/
 	function push(&$server) {
 		$stack =& Oops_Server_Stack::getInstance();
-		return array_push($stack->_stack,$server);
+		$stack->_stack[] =& $server;
+		return count($stack->_stack);
 	}
 
 	/**
@@ -55,6 +56,8 @@ class Oops_Server_Stack {
 	*/
 	function &pop() {
 		$stack =& Oops_Server_Stack::getInstance();
+		$last =& $stack->_stack[count($stack->_stack)-1];
+		$last = null;
 		return array_pop($stack->_stack);
 	}
 

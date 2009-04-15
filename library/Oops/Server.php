@@ -311,4 +311,18 @@ class Oops_Server extends Oops_Object {
 			$this->_response->setCode(415);
 		}
 	}
+
+	/**
+	* Initial server run using http request and processing http response (use it to prevent errors in index.php at php4
+	*
+	* @static
+	*/
+	function RunHttpDefault() {
+		require_once("Oops/Config/Ini.php");
+		$server =& new Oops_Server();
+		$server->configure(new Oops_Config_Ini('application/config/oops.ini'));
+		$response = $server->Run();
+		echo $response->toString();
+	}
+	
 }

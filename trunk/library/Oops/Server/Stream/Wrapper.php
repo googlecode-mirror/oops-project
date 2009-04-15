@@ -90,7 +90,7 @@ class Oops_Server_Stream_Wrapper {
 	function _handle() {
 		if($this->_isHandled) return;
 		require_once("Oops/Server.php");
-		$server = new Oops_Server();
+		$server =& new Oops_Server();
 		$response = $server->Run($this->_request);
 
 		while($response->isRedirect() && $this->_redirectLimit--) {

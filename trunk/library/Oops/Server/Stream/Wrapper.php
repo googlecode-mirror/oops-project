@@ -53,7 +53,7 @@ class Oops_Server_Stream_Wrapper {
 	function stream_stat() {
 		$this->_handle();
 		return array(
-			'size' => strlen($this->content),
+			'size' => strlen($this->_content),
 			'atime' => null,
 			'mtime' => null,
 			'ctime' => null,
@@ -90,7 +90,7 @@ class Oops_Server_Stream_Wrapper {
 	function _handle() {
 		if($this->_isHandled) return;
 		require_once("Oops/Server.php");
-		$server =& new Oops_Server();
+		$server =& Oops_Server::newInstance();
 		$response = $server->Run($this->_request);
 
 		while($response->isRedirect() && $this->_redirectLimit--) {

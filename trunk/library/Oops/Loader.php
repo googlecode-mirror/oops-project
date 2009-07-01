@@ -16,10 +16,13 @@ class Oops_Loader {
 	* @access public
 	* @param string Oops library Class name or php file name
 	*/
-	function find($class) {
-		if(class_exists($class)) return true;
+	public static function find($class) {
+		if(class_exists($class) || interface_exists($class)) return true;
+
 		$c = strtolower($class);
 		$parts = explode('_',$c);
+		$fname = '';
+
 		for($i=0,$cnt=sizeof($parts);$i<$cnt-1;$i++) $fname .= (ucfirst($parts[$i]) . DIRECTORY_SEPARATOR);
 		$fname .= (ucfirst($parts[$i]).'.php');
 

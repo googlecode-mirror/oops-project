@@ -24,7 +24,7 @@ class Oops_Debug {
 	* @param bool Output full backtrace or only the last element
 	* @return void
 	*/
-	function Dump($value, $name = null, $fullTrace = false) {
+	public static function Dump($value, $name = null, $fullTrace = false) {
 		if (!Oops_Debug::allow()) return;
 		?><div style="border:1px solid #FF0000"><?
 
@@ -45,7 +45,7 @@ class Oops_Debug {
 		?></div><?
 	}
 
-	function allow() {
+	public static function allow() {
 		static $ret;
 		if(!isset($ret)) {
 			$ret = false;
@@ -57,7 +57,7 @@ class Oops_Debug {
 	/**
 	* @ignore
 	*/
-	function print_r_dhtml ($value, $first=true) {
+	public static function print_r_dhtml ($value, $first=true) {
 		static $style;
 		static $i=0;$i++; 
 		static $j=0;

@@ -22,8 +22,7 @@ class Oops_Server_Response_Http extends Oops_Server_Response {
 	function toString() {
 		$this->getReady();
 		if(headers_sent()) {
-			require_once("Oops/Error.php");
-			Oops_Error::Raise("Warning/Server_Response_Http/HeadersAlreadySent");
+			trigger_error("Server_Response_Http/HeadersAlreadySent", E_USER_WARNING);
 		} else {
 			$this->_sendHeaders();
 		}

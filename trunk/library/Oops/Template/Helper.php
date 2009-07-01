@@ -17,7 +17,7 @@ class Oops_Template_Helper extends Oops_Object {
 	* @param string template name
 	* @return string local php file name
 	*/
-	function getTemplateFilename($name) {
+	public static function getTemplateFilename($name) {
 		static $templatesPath;
 		if(!isset($templatesPath)) {
 			/*
@@ -41,8 +41,7 @@ class Oops_Template_Helper extends Oops_Object {
 
 		$name = trim($name,'/');
 		if(!strlen($name)) {
-			require_once("Oops/Error.php");
-			return Oops_Error::Raise("Error/Template/EmptyTemplateName");
+			trigger_error("Template_Helper/EmptyTemplateName", E_USER_WARNING);
 		}
 
 		$dirname = dirname($name);
@@ -55,8 +54,7 @@ class Oops_Template_Helper extends Oops_Object {
 			if(file_exists($try)) return $try;
 			array_pop($dirparts);
 		}
-		require_once("Oops/Error.php");
-		Oops_Error::Raise("Error/Template/NoDefaultTemplate",$name);
+		trigger_error("Error/Template/NoDefaultTemplate/$name", E_USER_NOTICE);
 		return false;
 	}
 }

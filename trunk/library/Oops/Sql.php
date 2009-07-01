@@ -11,6 +11,15 @@ if(!defined('OOPS_Loaded')) die("OOPS not found");
 */
 class Oops_Sql {
 
+	private static $_config;
+	private static $_initComplete = false;
+
+	private static function Init() {
+		if(!self::$initComplete) self::$initComplete = true;
+		
+		
+	}
+
 	function Error($message) {
 		require_once("Oops/Debug.php");
 		Oops_Debug::Dump("Mysql error (".mysql_errno().") ".mysql_error(),$message,true);
@@ -35,9 +44,11 @@ class Oops_Sql {
 		}
 	}
 
-	function Query($query,$skiperrors=false) {
+	function Query($query,$dieOnError = false) {
 		Oops_Sql::Connect();
-		if(false && !$skiperrors) {
+
+		//
+		if(false) {
 			require_once('Oops/Sql/Logger.php');
 			$l =& Oops_Sql_Logger::getInstance();
 			return $l->Analyze($query);

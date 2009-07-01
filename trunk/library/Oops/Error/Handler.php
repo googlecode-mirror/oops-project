@@ -48,7 +48,7 @@ require_once("Oops/Object.php");
 *   unset($eh);
 * ?></code>
 */
-class Oops_Error_Handler extends Oops_Object {
+class Oops_Error_Handler {
 
 	/**
 	* Catched errors stack
@@ -65,6 +65,8 @@ class Oops_Error_Handler extends Oops_Object {
 	*/
 	var $_notices = array();
 
+	var $_phps = array();
+
 	/**
 	* Total state, TRUE if no errors were handled
 	*/
@@ -78,20 +80,10 @@ class Oops_Error_Handler extends Oops_Object {
 	}
 
 	/**
-	* Destructor for PHP4 (call it manually)
-	*/
-	function destruct() {
-		restore_error_handler();
-	}
-
-	function __destruct() {
-		$this->destruct();
-	}
-
-	/**
 	* Error handling function
 	*/
-	function handle($errno, $errstr) {
+	function handle($errno, $errstr, $errfile = null, $errline = null, $errcontext = null) {
+//echo $errstr;
 		switch($errno) {
 
 			case E_USER_ERROR:
@@ -107,6 +99,7 @@ class Oops_Error_Handler extends Oops_Object {
 				break;
 
 			default:
+				$this->_phps[] = $errstr . "at line $errline of file $errfile";
 				return false;
 		}
 		$this->_clear = false;
@@ -135,6 +128,10 @@ class Oops_Error_Handler extends Oops_Object {
 
 	function getNotices() {
 		return $this->_notices;
+	}
+
+	function getPhps() {
+		return $this->_phps;
 	}
 
 	function isClear() {

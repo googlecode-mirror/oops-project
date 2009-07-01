@@ -26,8 +26,7 @@ class Oops_Config_Ini extends Oops_Config {
 		restore_error_handler();
 
 		if($this->_parseError) {
-			require_once("Oops/Error.php");
-			Oops_Error::Raise("Error/Config/InvalidIniFile",$filename);
+			trigger_error("Config/InvalidIniFile/$filename", E_USER_WARNING);
 			return;
 		}
 		parent::__construct($data);

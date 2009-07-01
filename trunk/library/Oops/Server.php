@@ -6,56 +6,59 @@
 
 if(!defined('OOPS_Loaded')) die("OOPS not found");
 
-require_once("Oops/Object.php");
-
 /**
 * Application server object is used to proceed incoming request, init coresponding controller 
 * and format the resulting output according to internal settings, data and defined rules
 */
-class Oops_Server extends Oops_Object {
+class Oops_Server {
 	/**
 	* @var string Server instance number, reserved for future needs
 	* @protected
 	*/
-	var $_app;
+	protected $_app;
 
 	/**
 	* @var string Controller associated with a given request
 	* @protected
 	*/
-	var $_controller;
+	protected $_controller;
 
 	/**
 	* @var string Definition of any filter to proceed the value returned by controller
 	* @protected
 	*/
-	var $_view;
+	protected $_view;
 
 	/**
 	* @var string Requested action, default is 'index'
 	* @protected
 	*/
-	var $_action;
+	protected $_action;
 
 	/**
 	* @var string extension of requested script, 'php' by default
 	* @protected
 	*/
-	var $_extension;
+	protected $_extension;
 
 	/**
 	* @var Oops_Controller Associated controller instance
 	* @access protected
 	*/
-	var $_controller_instance;
-/** ===cut to=== **/
+	protected $_controller_instance;
+
 	/**
 	*
 	*/
-	var $_config;
+	protected $_config;
+
+	protected $_errorHandler;
 
 
-	function __construct() {
+	private function __construct() {
+		require_once("Oops/Error/Handler.php");
+		$this->_errorHandler = new Oops_Error_Handler();
+
 		require_once("Oops/Server/Stack.php");
 		if(Oops_Server_Stack::size()) {
 			$last =& Oops_Server_Stack::last();
@@ -68,34 +71,38 @@ class Oops_Server extends Oops_Object {
 	}
 	
 
-	function &getInstance() {
+	public static function &getInstance() {
 		require_once("Oops/Server/Stack.php");
 		$instance =& Oops_Server_Stack::last();
 		if(!is_object($instance)) $instance = new Oops_Server();
 		return $instance;
 	}
 
-	function &getConfig() {
+	public static function &newInstance() {
+		return new Oops_Server();
+	}
+
+	public static function &getConfig() {
 		$server =& Oops_Server::getInstance();
 		return $server->_config;
 	}
 
-	function &getRequest() {
+	public static function &getRequest() {
 		$server =& Oops_Server::getInstance();
 		return $server->_request;
 	}
 
-	function &getResponse() {
+	public static function &getResponse() {
 		$server =& Oops_Server::getInstance();
 		return $server->_response;
 	}
 
-	function configure(&$config) {
+	public function configure(&$config) {
 		$this->_config->mergeConfig($config);
 		$oopsConfig = $this->_config->get('oops');
 	}
 
-	function _useConfig() {
+	protected function _useConfig() {
 		$oopsConfig = $this->_config->get('oops');
 		if(is_object($oopsConfig)) {
 			if((bool) $oopsConfig->get('register_autoload')) {
@@ -121,7 +128,7 @@ class Oops_Server extends Oops_Object {
 	* @param string Application ID, reserved for future needs
 	* @return void
 	*/
-	function Run($request = null) {
+	public function Run($request = null) {
 		if(!$this->_config->used) {
 			$this->_config->used = true;
 			$this->_useConfig();
@@ -168,13 +175,15 @@ class Oops_Server extends Oops_Object {
 		*/
 		$this->_view->In($data);
 		$this->_view->Set('controller',$this->_router->controller);
-		$this->_view->Set('uri',$this->_uri);
+		$this->_view->Set('uri',$this->_request->getUri());
 		$this->_view->Set('ext',$this->_extension);
 		$this->_view->Set('action',$this->_action);
 		$this->_view->Set('uri_parts',$this->_uri_parts);
 
 		$this->_response->setHeader("Content-type",$this->_view->getContentType());
 		$this->_response->setBody($this->_view->Out());
+		$this->_response->reportErrors($this->_errorHandler);
+		restore_error_handler();
 
 		return $this->_response;
 	}
@@ -184,7 +193,7 @@ class Oops_Server extends Oops_Object {
 	* Parses URI into parts, action and extension, also checks spelling using 301 to the right location
 	*
 	*/
-	function _parseRequest() {
+	protected function _parseRequest() {
 
 		$oopsConfig = $this->_config->get("oops");
 		$parts = explode("/",$this->_request->path);
@@ -217,6 +226,7 @@ class Oops_Server extends Oops_Object {
 		$expectedPath = sizeof($coolparts)?'/'.join('/',$coolparts).'/':'/';
 		if($this->_action != $oopsConfig->get('default_action') || $this->_extension != $oopsConfig->get('default_extension')) $expectedPath .= "{$this->_action}.{$this->_extension}";
 
+		//If given path mismatch the one-and-only expected one, make a redirect to the expected
 		if($this->_request->path != $expectedPath) {
 			$correctRequest = clone($this->_request);
 			$correctRequest->path = $expectedPath;
@@ -228,7 +238,7 @@ class Oops_Server extends Oops_Object {
 		$this->_uri_parts = $coolparts;
 	}
 
-	function _initRouter() {
+	protected function _initRouter() {
 		$routerConfig = $this->_config->get('router');
 		if(is_object($routerConfig)) {
 			$routerClass = $routerConfig->get('class');
@@ -281,7 +291,7 @@ class Oops_Server extends Oops_Object {
 	*
 	* Method is used to get private application params
 	*/
-	function get($what) {
+	public function get($what) {
 		switch($what) {
 			case 'uri':
 				return $this->_uri;	
@@ -302,7 +312,7 @@ class Oops_Server extends Oops_Object {
 	* Output processing class instantiation (view or presentation factory)
 	* Uses $this->_extension (from ParseURI) to choose a view class.
 	*/
-	function _initView() {
+	protected function _initView() {
 		require_once("Oops/Server/View.php");
 		$this->_view =& Oops_Server_View::getInstance($this->_extension);
 
@@ -317,7 +327,7 @@ class Oops_Server extends Oops_Object {
 	*
 	* @static
 	*/
-	function RunHttpDefault() {
+	public static function RunHttpDefault() {
 		require_once("Oops/Config/Ini.php");
 		$server =& new Oops_Server();
 		$server->configure(new Oops_Config_Ini('application/config/oops.ini'));

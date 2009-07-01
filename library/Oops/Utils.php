@@ -16,7 +16,7 @@ class Oops_Utils {
 	*
 	* @static
 	*/
-	function ToArray(&$a) {
+	public static function ToArray(&$a) {
 		if(is_array($a)) return;
 		if(!is_null($a) && $a!==false) {
 			$a=array($a);
@@ -30,7 +30,7 @@ class Oops_Utils {
 	*
 	* @static
 	*/
-	function ToIntArray(&$a,$keepzero=false) {
+	public static function ToIntArray(&$a,$keepzero=false) {
 		Oops_Utils::ToArray($a);
 		if(count($a)) {
 			foreach($a as $k=>$v) {
@@ -44,7 +44,7 @@ class Oops_Utils {
 	*
 	* @static
 	*/
-	function ToNonEmptyArray(&$a) {
+	public static function ToNonEmptyArray(&$a) {
 		Oops_Utils::ToArray($a);
 		if(count($a)) {
 			foreach($a as $k=>$v) {
@@ -58,7 +58,7 @@ class Oops_Utils {
 	*
 	* @static
 	*/
-	function ToEscapedArray(&$a,$keepillegal=false) {
+	public static function ToEscapedArray(&$a,$keepillegal=false) {
 		Oops_Utils::ToArray($a);
 		if(count($a)) {
 			foreach($a as $k=>$v) {
@@ -86,7 +86,7 @@ class Oops_Utils {
 	 * Используется:
 	 * comments_assembler::ToLine();
 	 */
-	function Tree2Line(&$Tree, $childrenId="Children", $levelId='Level'){
+	public static function Tree2Line(&$Tree, $childrenId="Children", $levelId='Level'){
 		$ret=array();
 		Oops_Utils::_Tree2Line($ret, $Tree, $childrenId, $levelId, 0);
 		return $ret;
@@ -103,7 +103,7 @@ class Oops_Utils {
 	 * @author cloud
 	 * @access public
 	 */
-	function _Tree2Line(&$ret, &$Tree, $childrenId, $levelId, $Level=0){
+	protected static function _Tree2Line(&$ret, &$Tree, $childrenId, $levelId, $Level=0){
 		if ($count=count($Tree)){
 			for ($i=0; $i<$count; $i++){					
 				$ret[]=$Tree[$i];
@@ -123,7 +123,7 @@ class Oops_Utils {
 	* @param string childrenid key name
 	* @return array
 	*/
-	function Line2Tree($Line,$ParentID='parent',$childrenId='children',$skipIfNoKey=false) {
+	public static function Line2Tree($Line,$ParentID='parent',$childrenId='children',$skipIfNoKey=false) {
 		$ret = array();
 		foreach($Line as $k=>$v) {
 			if(!isset($v[$ParentID])) { //NULL is like !isset - No Parent

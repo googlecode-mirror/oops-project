@@ -17,7 +17,17 @@ class Oops_Server_Router extends Oops_Object {
 	*
 	* @access private
 	*/
-	var $_set=array();
+	private $_set=array();
+
+	/*
+	 * @var string Not routed part of a given path
+	 */
+	public $notFoundPath;
+
+	/*
+	 * @var string Routed part of a given path
+	 */
+	public $foundPath;
 
 	/**
 	* Method is used to define settings
@@ -66,7 +76,7 @@ class Oops_Server_Router extends Oops_Object {
 		//Routed OK, set request params
 		$this->controller = $controller;
 		$this->foundPath = $foundPath;
-		$this->notFoundPath = substr($path,strlen($notFoundPath));
+		$this->notFoundPath = substr($path,strlen($foundPath));
 		return true;
 	}
 }

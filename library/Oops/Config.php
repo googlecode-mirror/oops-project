@@ -15,12 +15,12 @@ require_once("Oops/Object.php");
 *
 */
 class Oops_Config extends Oops_Object {
-	var $_data = array();
+	protected $_data = array();
+	public $used = false;
 
 	function __construct($data = array()) {
 		if(!is_array($data)) {
-			require_once("Oops/Error.php");
-			Oops_Error::Raise("Error/Config/InvalidConfigData",$data);
+			trigger_error("Config/InvalidConfigData", E_USER_WARNING);
 			return;
 		}
 		foreach($data as $key=>$value) {
@@ -32,17 +32,20 @@ class Oops_Config extends Oops_Object {
 
 	function get($key) {
 		if(!strlen((string)$key)) {
-			require_once("Oops/Error.php");
-			Oops_Error::Raise("Error/Config/InvalidConfigKey",$key);
+debugPrint($key,"invalid",true);
+			trigger_error("Config/InvalidConfigKey/$key", E_USER_WARNING);
 			return null;
 		}
 		$key = strtolower($key);
 		if(!isset($this->_data[$key])) {
-			require_once("Oops/Error.php");
-			Oops_Error::Raise("Notice/Config/ConfigKeyNotFound",$key);
+			trigger_error("Config/ConfigKeyNotFound/$key", E_USER_NOTICE);
 			return null;
 		}
 		return $this->_data[$key];
+	}
+
+	function __get($var) {
+		return $this->get($key);
 	}
 
 	function mergeConfig(&$config) {

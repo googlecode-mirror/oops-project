@@ -56,7 +56,7 @@ class Oops_Server_View {
 	* @param string View type (basically request extension)
 	* @return Oops_Server_View
 	*/
-	function &getInstance($type) {
+	public static function &getInstance($type) {
 		if(($class = Oops_Server_View::_getViewClass($type))!==false) {
 			$ret = new $class;
 		}
@@ -66,7 +66,7 @@ class Oops_Server_View {
 		return $ret;
 	}
 
-	function _getViewClass($type) {
+	public static function _getViewClass($type) {
 		static $checked = array();
 		if(!isset($checked[$type])) {
 			$class = "Oops_Server_View_".ucfirst($type);
@@ -77,7 +77,7 @@ class Oops_Server_View {
 		return $checked[$type];
 	}
 
-	function isValidView($type) {
+	public static function isValidView($type) {
 		return (Oops_Server_View::_getViewClass($type)!==false)?true:false;
 	}
 

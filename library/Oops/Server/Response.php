@@ -196,4 +196,12 @@ class Oops_Server_Response {
 	function setBody($body) {
 		$this->body = $body;
 	}
+
+	function reportErrors($errorHandler) {
+		if(!is_object($errorHandler)) return;
+		foreach($errorHandler->getErrors() as $err) $this->setHeader("Oops-Error", $err, false);
+		foreach($errorHandler->getWarnings() as $err) $this->setHeader("Oops-Warning", $err, false);
+		foreach($errorHandler->getNotices() as $err) $this->setHeader("Oops-Notice", $err, false);
+		foreach($errorHandler->getPhps() as $err) $this->setHeader("PHP-Errors", $err, false);
+	}
 }

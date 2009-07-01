@@ -56,9 +56,10 @@ class Oops_Template extends Oops_Object {
 	/**
 	* Singleton pattern implementaion
 	*
+	* @static
 	* @param string template name
 	*/
-	function &getInstance($tplname) {
+	public static function &getInstance($tplname) {
 		$tplname = strtolower($tplname);
 		static $a=array();
 		if(!isset($a[$tplname])) $a[$tplname] = new Oops_Template($tplname);

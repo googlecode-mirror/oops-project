@@ -17,7 +17,7 @@ class Oops_Server_Stack {
 	*
 	* @access private
 	*/
-	var $_stack = array();
+	private $_stack = array();
 
 	/**
 	* Get current Server object
@@ -27,7 +27,7 @@ class Oops_Server_Stack {
 	* @static
 	* @return Oops_Server Current server instance
 	*/
-	function &last() {
+	public static function &last() {
 		$stack =& Oops_Server_Stack::getInstance();
 		return $stack->_stack[count($stack->_stack)-1];
 	}
@@ -40,7 +40,7 @@ class Oops_Server_Stack {
 	* @static
 	* @param Oops_Server Current server instance
 	*/
-	function push(&$server) {
+	public static function push(&$server) {
 		$stack =& Oops_Server_Stack::getInstance();
 		$stack->_stack[] =& $server;
 		return count($stack->_stack);
@@ -54,11 +54,12 @@ class Oops_Server_Stack {
 	* @static
 	* @return Oops_Server Current server instance
 	*/
-	function &pop() {
+	public static function &pop() {
 		$stack =& Oops_Server_Stack::getInstance();
 		$last =& $stack->_stack[count($stack->_stack)-1];
 		$last = null;
-		return array_pop($stack->_stack);
+		array_pop($stack->_stack);
+		return $stack->_stack[count($stack->_stack)-1];
 	}
 
 	/**
@@ -66,7 +67,7 @@ class Oops_Server_Stack {
 	*
 	* @return int Number of servers in stack
 	*/
-	function size() {
+	public static function size() {
 		$stack =& Oops_Server_Stack::getInstance();
 		return count($stack->_stack);
 	}
@@ -77,9 +78,11 @@ class Oops_Server_Stack {
 	*
 	* @access private
 	*/
-	function &getInstance() {
+	public static function &getInstance() {
 		static $instance;
 		if(!isset($instance)) $instance = new Oops_Server_Stack();
 		return $instance;
 	}
+
+	private function __construct() {}
 }

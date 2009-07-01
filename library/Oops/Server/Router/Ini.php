@@ -9,14 +9,15 @@ if(!defined("OOPS_Loaded")) die("OOPS not loaded");
 require_once("Oops/Server/Router.php");
 
 class Oops_Server_Router_Ini extends Oops_Server_Router {
+	private $_parseError = false;
+
 	function __construct($filename) {
 		set_error_handler(array($this,"_parseIniErrorHandler"));
 		$data = parse_ini_file($filename,true);
 		restore_error_handler();
 
 		if($this->_parseError) {
-			require_once("Oops/Error.php");
-			Oops_Error::Raise("Error/ServerRouter/InvalidIniFile",$filename);
+			trigger_error("Server_Router/InvalidIniFile/$filename", E_USER_WARNING);
 			return;
 		}
 		foreach($data as $controller => $sections) {

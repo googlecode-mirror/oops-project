@@ -65,6 +65,7 @@ class Oops_Controller extends Oops_Object {
 				Oops_Utils::ToIntArray($value);
 				return $value;
 			case 'sql':
+				require_once("Oops/Sql.php");
 				return Oops_Sql::Escape($value);
 			case 'words':
 				return preg_replace('/[^\s\w]/','',$value);

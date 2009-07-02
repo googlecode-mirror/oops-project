@@ -15,7 +15,7 @@ require_once("Oops/Config.php");
 *
 */
 class Oops_Config_Ini extends Oops_Config {
-	var $_parseError = false;
+	protected $_parseError = false;
 
 	/**
 	* @param string Ini file name
@@ -24,7 +24,6 @@ class Oops_Config_Ini extends Oops_Config {
 		set_error_handler(array($this,"_parseIniErrorHandler"));
 		$data = parse_ini_file($filename,true);
 		restore_error_handler();
-
 		if($this->_parseError) {
 			trigger_error("Config/InvalidIniFile/$filename", E_USER_WARNING);
 			return;

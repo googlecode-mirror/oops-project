@@ -18,21 +18,39 @@ class Oops_Config extends Oops_Object {
 	protected $_data = array();
 	public $used = false;
 
-	function __construct($data = array()) {
+	function __construct($data = array(), $keyDelimiter = '.') {
 		if(!is_array($data)) {
 			trigger_error("Config/InvalidConfigData", E_USER_WARNING);
 			return;
 		}
-		foreach($data as $key=>$value) {
+		foreach($data as $key => $value) {
 			$key = strtolower($key);
-			if(is_array($value)) $this->_data[$key] = new Oops_Config($value);
-			else $this->_data[$key] = $value;
+			if(strpos($key,$keyDelimiter) !== false) {
+				list($key,$subKey) = explode($keyDelimiter, $key, 2);
+				$value = array($subKey => $value);
+			}
+			if(is_array($value)) {
+				if(isset($this->_data[$key])) {
+					if(is_object($this->_data[$key])) {
+						$this->_data[$key]->mergeConfig(new Oops_Config($value));
+					} else {
+						trigger_error("Config/ConflictingInitValues/$key", E_USER_WARNING);
+					}
+				} else {
+					$this->_data[$key] = new Oops_Config($value);
+				}
+			}
+			elseif(!isset($this->_data[$key])) $this->_data[$key] = $value;
+			else trigger_error("Config/ConflictingInitValues/$key", E_USER_WARNING);
 		}
+	}
+
+	function getKeys() {
+		return array_keys($this->_data);
 	}
 
 	function get($key) {
 		if(!strlen((string)$key)) {
-debugPrint($key,"invalid",true);
 			trigger_error("Config/InvalidConfigKey/$key", E_USER_WARNING);
 			return null;
 		}
@@ -45,7 +63,11 @@ debugPrint($key,"invalid",true);
 	}
 
 	function __get($var) {
-		return $this->get($key);
+		return $this->get($var);
+	}
+
+	function __set($var, $value) {
+		return false;
 	}
 
 	function mergeConfig(&$config) {

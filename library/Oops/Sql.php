@@ -14,52 +14,66 @@ class Oops_Sql {
 	private static $_config;
 	private static $_initComplete = false;
 
-	private static function Init() {
-		if(!self::$initComplete) self::$initComplete = true;
-		
-		
+	private static function _Init() {
+		if(self::$_initComplete) return;
+		self::$_initComplete = true;
+		$cfg =& Oops_Server::getConfig();
+		self::$_config = $cfg->MySQL;
 	}
 
 	function Error($message) {
-		require_once("Oops/Debug.php");
-		Oops_Debug::Dump("Mysql error (".mysql_errno().") ".mysql_error(),$message,true);
+		trigger_error("Mysql/$message/(".mysql_errno().") ".mysql_error(), E_USER_ERROR);
 		die();
 	}
 
 	function Connect() {
+		self::_Init();
+
 		static $dbh;
 
 		if (!$dbh) {
-			$dbh = mysql_connect(DATABASE_HOST, DATABASE_USER, DATABASE_PASSWD);
+			$dbh = mysql_connect(self::$_config->host, self::$_config->user, self::$_config->password);
 
-			if (!$dbh)
+			if(!$dbh)
 				Oops_Sql::Error("mysql_connect");
 
-			if(defined("DATABASE_NAME")) {
-				$result = mysql_select_db(DATABASE_NAME);
+			$database = @self::$_config->database;
+			if(strlen($database)) {
+				$result = mysql_select_db($database);
 				if (!$result)
-					Oops_Sql::Error("mysql_select_db: ".DATABASE_NAME);
+					Oops_Sql::Error("mysql_select_db/".$database);
 			}
-			if(defined("DATABASE_NAMES")) mysql_query("SET NAMES ".DATABASE_NAMES);
+
+			$names = @self::$_config->names;
+			if(strlen($names)) mysql_query("SET NAMES ".$names);
 		}
 	}
 
+	/**
+	* @todo Use event dispatcher for logger run , add listener for @onBeforeSqlQuery inside the init function
+	*/
 	function Query($query,$dieOnError = false) {
 		Oops_Sql::Connect();
 
-		//
-		if(false) {
+		if(self::$_config->logger->enabled) {
 			require_once('Oops/Sql/Logger.php');
-			$l =& Oops_Sql_Logger::getInstance();
-			return $l->Analyze($query);
+			static $l;
+			if(!isset($l)) $l =& Oops_Sql_Logger::getInstance(self::$_config->logger->table);
+
+			if(self::$_config->logger->probability > mt_rand(0,1)) {
+				return $l->Analyze($query);
+			}
 		}
 
 		$result = mysql_query($query);
 
-		if(!$skiperrors && mysql_errno()) {
-			Oops_Sql::Error($query);
+		if(mysql_errno()) {
+			$errCode = mysql_errno();
+			$errStr = mysql_error();
+			trigger_error("MySQL/QueryError/$errCode - $errStr",E_USER_ERROR);
+			if($dieOnError) die();
 			return false;
-		}
+		} 
 		return $result;
 	}
 

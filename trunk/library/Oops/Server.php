@@ -1,76 +1,67 @@
 <?
 /**
-* @package Oops
-* @subpackage Server
-*/
+ * @package Oops
+ * @subpackage Server
+ */
 
 if(!defined('OOPS_Loaded')) die("OOPS not found");
 
 /**
-* Application server object is used to proceed incoming request, init coresponding controller 
-* and format the resulting output according to internal settings, data and defined rules
-*/
+ * Application server object is used to proceed incoming request, init coresponding controller
+ * and format the resulting output according to internal settings, data and defined rules
+ */
 class Oops_Server {
 	/**
-	* @var string Server instance number, reserved for future needs
-	* @protected
-	*/
+	 * @var string Server instance number, reserved for future needs
+	 * @protected
+	 */
 	protected $_app;
 
 	/**
-	* @var string Controller associated with a given request
-	* @protected
-	*/
+	 * @var string Controller associated with a given request
+	 * @protected
+	 */
 	protected $_controller;
 
 	/**
-	* @var string Definition of any filter to proceed the value returned by controller
-	* @protected
-	*/
+	 * @var string Definition of any filter to proceed the value returned by controller
+	 * @protected
+	 */
 	protected $_view;
 
 	/**
-	* @var string Requested action, default is 'index'
-	* @protected
-	*/
+	 * @var string Requested action, default is 'index'
+	 * @protected
+	 */
 	protected $_action;
 
 	/**
-	* @var string extension of requested script, 'php' by default
-	* @protected
-	*/
+	 * @var string extension of requested script, 'php' by default
+	 * @protected
+	 */
 	protected $_extension;
 
 	/**
-	* @var Oops_Controller Associated controller instance
-	* @access protected
-	*/
+	 * @var Oops_Controller Associated controller instance
+	 * @access protected
+	 */
 	protected $_controller_instance;
 
 	/**
-	*
-	*/
+	 *
+	 */
 	protected $_config;
 
 	protected $_errorHandler;
 
 
 	private function __construct() {
-		require_once("Oops/Error/Handler.php");
-		$this->_errorHandler = new Oops_Error_Handler();
-
-		require_once("Oops/Server/Stack.php");
-		if(Oops_Server_Stack::size()) {
-			$last =& Oops_Server_Stack::last();
-			$this->_config = $last->_config;
-		} else {
-			require_once("Oops/Config/Default.php");
-			$this->_config = new Oops_Config_Default();
-		}
-		Oops_Server_Stack::push($this);
 	}
-	
 
+	/**
+	 * Singleton pattern implementation
+	 * @return Oops_Server The current server object which is the last server in stack
+	 */
 	public static function &getInstance() {
 		require_once("Oops/Server/Stack.php");
 		$instance =& Oops_Server_Stack::last();
@@ -78,8 +69,28 @@ class Oops_Server {
 		return $instance;
 	}
 
-	public static function &newInstance() {
-		return new Oops_Server();
+	/**
+	 * Use this static method to invoke a new server instance. Note that constructor is private.
+	 * @param Oops_Config Config for the new server instance
+	 * @return Oops_Server
+	 */
+	public static function &newInstance($config = null) {
+		$new = new Oops_Server();
+		require_once("Oops/Server/Stack.php");
+
+		if(Oops_Server_Stack::size()) {
+			$last =& Oops_Server_Stack::last();
+			$new->_config = $last->_config;
+		} else {
+			require_once("Oops/Config/Default.php");
+			$new->_config = new Oops_Config_Default();
+		}
+
+		if(is_object($config)) $new->configure($config);
+
+		Oops_Server_Stack::push($new);
+
+		return $new;
 	}
 
 	public static function &getConfig() {
@@ -97,23 +108,38 @@ class Oops_Server {
 		return $server->_response;
 	}
 
-	public function configure(&$config) {
-		$this->_config->mergeConfig($config);
-		$oopsConfig = $this->_config->get('oops');
+	/**
+	 *
+	 * @param Oops_Config new configuration
+	 * @param boolean replace current config or merge with new one (default)
+	 * @return void
+	 */
+	public function configure(&$config, $replace = false) {
+		if(is_object($this->_config)) $this->_config->mergeConfig($config);
+		else $this->_config = $config;
+		$this->_useConfig();
 	}
 
+	/**
+	 * @todo Prevent multiple init
+	 * @return unknown_type
+	 */
 	protected function _useConfig() {
-		$oopsConfig = $this->_config->get('oops');
+		if($this->_config->used) return;
+		$this->_config->used = true;
+		
+		$oopsConfig = $this->_config->oops;
 		if(is_object($oopsConfig)) {
-			if((bool) $oopsConfig->get('register_autoload')) {
-				require_once("Oops/_Autoload.php");
+			if((bool) @$oopsConfig->register_autoload) {
+				require_once("Oops/Loader.php");
+				spl_autoload_register(array("Oops_Loader", "load"));
 			}
 
-			if($incPath = $oopsConfig->get('include_path')) {
+			if($incPath = @$oopsConfig->include_path) {
 				$currentIncludePath = get_include_path();
 				if(!in_array($incPath,explode(PATH_SEPARATOR,$currentIncludePath))) {
 					set_include_path (
-						$incPath . PATH_SEPARATOR . get_include_path()
+					$incPath . PATH_SEPARATOR . get_include_path()
 					);
 				}
 			}
@@ -121,18 +147,16 @@ class Oops_Server {
 	}
 
 	/**
-	* Run the application and output the response
-	*
-	* @todo return the Response object, use special function to return a Response for additional processing of error codes (404, 415, 501)
-	*
-	* @param string Application ID, reserved for future needs
-	* @return void
-	*/
+	 * Run the application and output the response
+	 *
+	 * @todo return the Response object, use special function to return a Response for additional processing of error codes (404, 415, 501)
+	 *
+	 * @param string Application ID, reserved for future needs
+	 * @return void
+	 */
 	public function Run($request = null) {
-		if(!$this->_config->used) {
-			$this->_config->used = true;
-			$this->_useConfig();
-		}
+		require_once("Oops/Error/Handler.php");
+		$this->_errorHandler = new Oops_Error_Handler();
 
 		if(!is_object($request)) {
 			require_once("Oops/Server/Request/Http.php");
@@ -148,8 +172,8 @@ class Oops_Server {
 		}
 
 		/**
-		* @todo Use exceptions in PHP5 to check if response is ready (or trigger_error) or just chck the return and call some method for error or redirect response
-		*/
+		 * @todo Use exceptions in PHP5 to check if response is ready (or trigger_error) or just chck the return and call some method for error or redirect response
+		 */
 		$this->_parseRequest();
 		if($this->_response->isReady()) return $this->_response;
 
@@ -159,20 +183,18 @@ class Oops_Server {
 		$this->_routeRequest();
 		if($this->_response->isReady()) return $this->_response;
 
-		/**
-		* @todo try to find controller action, then do everything else
-		*/
+		/** @todo try to find controller action, then do everything else */
 		$this->_initController();
 		if($this->_response->isReady()) return $this->_response;
 
-		/** @todo Controller should return boolean, and data should be in response object?*/
+		/** @todo Controller should return boolean, and data should be in response object? */
 		$data = $this->_controller_instance->Run();
 		if($this->_response->isReady()) return $this->_response;
 
 
 		/**
-		* @todo Let the view handler use getRequest and getResponse as it need it
-		*/
+		 * @todo Let the view handler use getRequest and getResponse as it need it
+		 */
 		$this->_view->In($data);
 		$this->_view->Set('controller',$this->_router->controller);
 		$this->_view->Set('uri',$this->_request->getUri());
@@ -190,9 +212,9 @@ class Oops_Server {
 
 
 	/**
-	* Parses URI into parts, action and extension, also checks spelling using 301 to the right location
-	*
-	*/
+	 * Parses URI into parts, action and extension, also checks spelling using 301 to the right location
+	 *
+	 */
 	protected function _parseRequest() {
 
 		$oopsConfig = $this->_config->get("oops");
@@ -241,9 +263,9 @@ class Oops_Server {
 	protected function _initRouter() {
 		$routerConfig = $this->_config->get('router');
 		if(is_object($routerConfig)) {
-			$routerClass = $routerConfig->get('class');
+			$routerClass = $routerConfig->class;
 			require_once("Oops/Loader.php");
-			if(Oops_Loader::find($routerClass)) $this->_router = new $routerClass($routerConfig->get('source'));
+			if(Oops_Loader::find($routerClass)) $this->_router = new $routerClass($routerConfig->source);
 		}
 		if(!is_object($this->_router)) {
 			require_once("Oops_Server_Router");
@@ -252,17 +274,19 @@ class Oops_Server {
 	}
 
 	/**
-	* Routes the contoroller for a given URI, and places contoller class name into $this->_controller var
-	* Found path is set into $this->_controller_ident, and all remaining parts into $this->_controller_params
-	*
-	* @todo Move controller_ident and controller_params to the Request object
-	*
-	* @uses Oops_Server_Router
-	*/
+	 * Routes the contoroller for a given URI, and places contoller class name into $this->_controller var
+	 * Found path is set into $this->_controller_ident, and all remaining parts into $this->_controller_params
+	 *
+	 * @todo Move controller_ident and controller_params to the Request object
+	 *
+	 * @uses Oops_Server_Router
+	 */
 	function _routeRequest() {
 		$this->_initRouter();
 		if($this->_router->route($this->_request)) {
 			//Routed OK
+			$this->_controller_ident = trim($this->_router->foundPath, '/');
+			$this->_controller_params = trim($this->_router->notFoundPath , '/');
 		}
 		else {
 			//We got 404 here, let's work it out
@@ -271,10 +295,10 @@ class Oops_Server {
 	}
 
 	/**
-	* @todo Set error response code if there's controller class not found
-	*
-	* Controller instantiation. Uses $this->_controller as a class name (detected in DetectController), or starts default controller Oops_Controller
-	*/
+	 * @todo Set error response code if there's controller class not found
+	 *
+	 * Controller instantiation. Uses $this->_controller as a class name (detected in DetectController), or starts default controller Oops_Controller
+	 */
 	function _initController() {
 		$ctrl = $this->_router->controller;
 		if(!Oops_Loader::find($ctrl)) {
@@ -286,17 +310,17 @@ class Oops_Server {
 	}
 
 	/**
-	* @deprecated
-	* @todo Move this to Request object
-	*
-	* Method is used to get private application params
-	*/
+	 * @deprecated
+	 * @todo Move this to Request object
+	 *
+	 * Method is used to get private application params
+	 */
 	public function get($what) {
 		switch($what) {
 			case 'uri':
-				return $this->_uri;	
+				return $this->_uri;
 			case 'uri_parts':
-				return $this->_uri_parts;	
+				return $this->_uri_parts;
 			case 'ext':
 				return $this->_extension;
 			case 'action':
@@ -309,9 +333,9 @@ class Oops_Server {
 	}
 
 	/**
-	* Output processing class instantiation (view or presentation factory)
-	* Uses $this->_extension (from ParseURI) to choose a view class.
-	*/
+	 * Output processing class instantiation (view or presentation factory)
+	 * Uses $this->_extension (from ParseURI) to choose a view class.
+	 */
 	protected function _initView() {
 		require_once("Oops/Server/View.php");
 		$this->_view =& Oops_Server_View::getInstance($this->_extension);
@@ -323,16 +347,15 @@ class Oops_Server {
 	}
 
 	/**
-	* Initial server run using http request and processing http response (use it to prevent errors in index.php at php4
-	*
-	* @static
-	*/
+	 * Initial server run using http request and processing http response (use it to prevent errors in index.php at php4
+	 *
+	 * @static
+	 */
 	public static function RunHttpDefault() {
 		require_once("Oops/Config/Ini.php");
-		$server =& new Oops_Server();
-		$server->configure(new Oops_Config_Ini('application/config/oops.ini'));
+		$server =& Oops_Server::newInstance(new Oops_Config_Ini('application/config/oops.ini'));
 		$response = $server->Run();
 		echo $response->toString();
 	}
-	
+
 }

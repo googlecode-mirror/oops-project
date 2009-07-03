@@ -31,7 +31,7 @@ class Oops_Template extends Oops_Object {
 	* @access private
 	*/
 	function __construct($tplname) {
-		static $num;
+		static $num = 0;
 		$this->_num = ++$num;
 		$this->_tplname = $tplname;
 		require_once("Oops/Template/Helper.php");

@@ -121,7 +121,7 @@ class Oops_Server {
 	}
 
 	/**
-	 * @todo Prevent multiple init
+	 * @todo Move to _Import.php
 	 * @return unknown_type
 	 */
 	protected function _useConfig() {

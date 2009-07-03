@@ -11,22 +11,22 @@ if(!defined('OOPS_Loaded')) die("OOPS not found");
 */
 class Oops_Sql {
 
-	private static $_config;
-	private static $_initComplete = false;
+	protected static $_config;
+	protected static $_initComplete = false;
 
-	private static function _Init() {
+	protected static function _Init() {
 		if(self::$_initComplete) return;
 		self::$_initComplete = true;
 		$cfg =& Oops_Server::getConfig();
 		self::$_config = $cfg->MySQL;
 	}
 
-	function Error($message) {
+	protected static function Error($message) {
 		trigger_error("Mysql/$message/(".mysql_errno().") ".mysql_error(), E_USER_ERROR);
 		die();
 	}
 
-	function Connect() {
+	protected static function Connect() {
 		self::_Init();
 
 		static $dbh;
@@ -52,7 +52,7 @@ class Oops_Sql {
 	/**
 	* @todo Use event dispatcher for logger run , add listener for @onBeforeSqlQuery inside the init function
 	*/
-	function Query($query,$dieOnError = false) {
+	public static function Query($query,$dieOnError = false) {
 		Oops_Sql::Connect();
 
 		if(@self::$_config->logger->enabled) {
@@ -70,14 +70,15 @@ class Oops_Sql {
 		if(mysql_errno()) {
 			$errCode = mysql_errno();
 			$errStr = mysql_error();
-			trigger_error("MySQL/QueryError/$errCode - $errStr",E_USER_ERROR);
+			/** @todo Refactor, now we can't see mysql errors in response, maybe we should use exceptions */
+			trigger_error("MySQL/QueryError/$errCode - $errStr", E_USER_ERROR);
 			if($dieOnError) die();
 			return false;
 		} 
 		return $result;
 	}
 
-	function Escape($s) {
+	public static function Escape($s) {
 		Oops_Sql::Connect();
 		return mysql_real_escape_string($s);
 	}

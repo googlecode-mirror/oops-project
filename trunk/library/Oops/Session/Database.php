@@ -3,6 +3,9 @@
 * @package Oops
 */
 
+require_once("Oops/Session/Abstract.php");
+require_once("Oops/Session/Interface.php");
+
 class Oops_Session_Database extends Oops_Session_Abstract implements Oops_Session_Interface {
 
 	/**

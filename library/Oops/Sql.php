@@ -55,7 +55,13 @@ class Oops_Sql {
 	public static function Query($query,$dieOnError = false) {
 		Oops_Sql::Connect();
 
-		if(@self::$_config->logger->enabled) {
+		static $loggerEnabled;
+		if(!isset($loggerEnabled)) {
+			if(is_object(self::$_config->logger)) $loggerEnabled = self::$_config->logger->enabled;
+			else $loggerEnabled = false;
+		}
+
+		if($loggerEnabled) {
 			require_once('Oops/Sql/Logger.php');
 			static $l;
 			if(!isset($l)) $l =& Oops_Sql_Logger::getInstance(self::$_config->logger->table);

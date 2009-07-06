@@ -13,7 +13,7 @@ class Oops_Factory {
 	/**
 	*
 	*/
-	function &getUser($us_id=false) {
+	public static function &getUser($us_id=false) {
 		require_once("Oops/User.php");
 		require_once("Oops/User/Helper.php");
 		if($us_id===false) $us_id = Oops_User_Helper::GetID();
@@ -27,8 +27,8 @@ class Oops_Factory {
 	/**
 	* 
 	*/
-	function initSession() {
+	public static function initSession() {
 		require_once("Oops/Session.php");
-		Oops_Session::getInstance();
+		Oops_Session::init();
 	}
 }

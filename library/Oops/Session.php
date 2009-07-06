@@ -29,6 +29,7 @@ class Oops_Session {
 	}
 	
 	private static function _initHandler() {
+		require_once("Oops/Server.php");
 		$cfg =& Oops_Server::getConfig();
 		$sessCfg = @$cfg->session;
 		if(is_object($sessCfg)) {
@@ -37,9 +38,11 @@ class Oops_Session {
 				self::$session = new $handlerClass($sessCfg);
 				return;
 			}
+			require_once("Oops/Session/Native.php");
 			self::$session = new Oops_Session_Native($sessCfg);
 			return;
 		}
+		require_once("Oops/Session/Native.php");
 		self::$session = new Oops_Session_Native($sessCfg); 
 	}
 }

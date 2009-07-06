@@ -17,6 +17,7 @@ require_once("Oops/Object.php");
 class Oops_Config extends Oops_Object {
 	protected $_data = array();
 	public $used = false;
+	protected $_cache = array();
 
 	function __construct($data = array(), $keyDelimiter = '.') {
 		if(!is_array($data)) {
@@ -56,7 +57,7 @@ class Oops_Config extends Oops_Object {
 		}
 		$key = strtolower($key);
 		if(!isset($this->_data[$key])) {
-			trigger_error("Config/ConfigKeyNotFound/$key", E_USER_NOTICE);
+//			trigger_error("Config/ConfigKeyNotFound/$key", E_USER_NOTICE);
 			return null;
 		}
 		return $this->_data[$key];

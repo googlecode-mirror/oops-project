@@ -7,12 +7,12 @@ require_once("Oops/Object.php");
 *
 * @todo Use factory template
 */
-class Oops_Kcaptcha_Storage extends Oops_Object {
+class Oops_Kcaptcha_Storage {
 
 	/**
 	* @param object Config object
 	*/
-	function __construct($config =  null) {
+	public function __construct($config =  null) {
 		if(!is_object($config)) {
 			require_once("Oops/Kcaptcha/Config.php");
 			$config = new Oops_Kcaptcha_Config();
@@ -20,7 +20,7 @@ class Oops_Kcaptcha_Storage extends Oops_Object {
 		$this->config = $config;
 	}
 
-	function Store($string) {
+	public function Store($string) {
 		$k = $this->config->storage_key;
 
 		@session_start();
@@ -29,7 +29,7 @@ class Oops_Kcaptcha_Storage extends Oops_Object {
 		if(!in_array($string, $_SESSION[$k])) $_SESSION[$k][]=$string;
 	}
 
-	function Check($passed, $keep = false) {
+	public function Check($passed, $keep = false) {
 		@session_start();
 		$k = $this->config->storage_key;
 

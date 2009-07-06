@@ -23,9 +23,7 @@ abstract class Oops_Session_Abstract {
 	 * @return bool True on success
 	 */
 	protected function setHandler() {
-		//First let's test if this class implements Oops_Session_Interface
-		$reflection = new ReflectionClass(get_class($this));
-		if(!$reflection->implementsInterface('Oops_Session_Interface')) {
+		if(!$this instanceof Oops_Session_Interface) {
 			/** @todo throw exception or error here */
 			return false;
 		}

@@ -29,10 +29,9 @@ class Oops_Session_Database extends Oops_Session_Abstract implements Oops_Sessio
 		$ses_id = preg_replace("/\W+$/","",$ses_id);
 		if (!strlen($ses_id)) return;
 
-		/* 
-		 * @todo Use CurrentUser for this
-		 */
-		$user_id = intval(@$_SESSION["sessUsers"]["user_id"]);
+		if(Oops_Loader::load("Oops_User_Helper")) {
+			$user_id = Oops_User_Helper::GetID();
+		} else $user_id = 0;
 
 		$ses_time = date("Ymd");
 		//Oops_Sql::Query("SET SQL_LOG_BIN=0");

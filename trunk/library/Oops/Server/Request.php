@@ -20,7 +20,7 @@ require_once("Oops/Object.php");
 * @abstract
 */
 class Oops_Server_Request extends Oops_Object {
-	var $_params = array();
+	private $_params = array();
 	var $_body = '';
 	var $_headers = array();
 

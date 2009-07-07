@@ -329,6 +329,8 @@ class Oops_Server {
 				return $this->_controller_params;
 			case 'controller_ident':
 				return $this->_controller_ident;
+			case 'controller':
+				return $this->_controller;
 		}
 	}
 

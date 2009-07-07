@@ -15,9 +15,9 @@ require_once("Oops/Server/Request.php");
  * HTTP request object representation
  */
 class Oops_Server_Request_Http extends Oops_Server_Request {
-	private $_get = array();
-	private $_post = array();
-	private $_cookie = array();
+	protected $_get = array();
+	protected $_post = array();
+	protected $_cookie = array();
 	protected $_files = array();
 
 	public function __construct() {
@@ -40,6 +40,9 @@ class Oops_Server_Request_Http extends Oops_Server_Request {
 
 	/**
 	 * Transform incomming files array
+	 * 
+	 * @todo Use objects to represent files
+	 * @todo Handle asyncronous file uploads
 	 *
 	 * @param $files array Received files array, as formatted by PHP
 	 * @param $keys array Current request keys stack
@@ -47,7 +50,6 @@ class Oops_Server_Request_Http extends Oops_Server_Request {
 	 */
 	protected function _proceedRequestFiles($from, &$to) {
 		foreach($from as $k => $v) {
-			//$pointer = $to[$k];
 			if(!is_array($v['name'])) {
 				if(is_array($to[$k])) {
 					$to[$k] = array_merge($to[$k], $v);

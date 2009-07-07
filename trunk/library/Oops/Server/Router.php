@@ -49,7 +49,7 @@ class Oops_Server_Router extends Oops_Object {
 	*/
 	function route(&$request) {
 		//Obtaining path as string and split into parts
-		$parts = explode('/', trim($request->getPath(), '/'));
+		$parts = explode('/', trim($request->getResourcePath(), '/'));
 		$path = '/' . join('/', $parts);
 
 		$isSuccessful = false;
@@ -76,7 +76,7 @@ class Oops_Server_Router extends Oops_Object {
 		//Routed OK, set request params
 		$this->controller = $controller;
 		$this->foundPath = $foundPath;
-		$this->notFoundPath = substr($path,strlen($foundPath));
+		$this->notFoundPath = substr($path,strlen($foundPath)+1);
 		return true;
 	}
 }

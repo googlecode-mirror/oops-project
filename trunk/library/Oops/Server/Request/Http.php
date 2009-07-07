@@ -19,19 +19,14 @@ class Oops_Server_Request_Http extends Oops_Server_Request {
 	private $_post = array();
 	private $_cookie = array();
 	protected $_files = array();
-	protected $_params = array();
 
 	public function __construct() {
 		$this->_get = $_GET;
 		$this->_post = $_POST;
 		$this->_cookie = $_COOKIE;
 		$this->_proceedRequestFiles($_FILES, $this->_files);
-		debugPrint($_FILES);
-		debugPrint($this->_files);
 
-		$this->_params = array_merge_recursive($this->_files, $this->_post, $this->_get);
-		//$this->_proceedRequestFiles($this->_files);
-
+		$this->_params = array_merge($this->_files, $this->_post, $this->_get);
 
 		$parsed = parse_url($_SERVER['REQUEST_URI']);
 		foreach($parsed as $name=>$value) $this->$name = $value;

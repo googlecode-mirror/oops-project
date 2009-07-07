@@ -18,12 +18,6 @@ class Oops_Server {
 	protected $_app;
 
 	/**
-	 * @var string Controller associated with a given request
-	 * @protected
-	 */
-	protected $_controller;
-
-	/**
 	 * @var string Definition of any filter to proceed the value returned by controller
 	 * @protected
 	 */
@@ -287,7 +281,6 @@ class Oops_Server {
 			//Routed OK
 			$this->_controller_ident = trim($this->_router->foundPath, '/');
 			$this->_controller_params = trim($this->_router->notFoundPath , '/');
-			$this->_controller = $this->_router->controller;
 		}
 		else {
 			//We got 404 here, let's work it out
@@ -311,9 +304,9 @@ class Oops_Server {
 	}
 
 	/**
-	 * @deprecated
+	 * @deprecated Use magic method __get
 	 *
-	 * Method is used to get private application params
+	 * Method is used to get private application params, decoration pattern here i think
 	 */
 	public function get($what) {
 		switch($what) {

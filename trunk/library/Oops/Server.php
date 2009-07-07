@@ -287,6 +287,7 @@ class Oops_Server {
 			//Routed OK
 			$this->_controller_ident = trim($this->_router->foundPath, '/');
 			$this->_controller_params = trim($this->_router->notFoundPath , '/');
+			$this->_controller = $this->_router->controller;
 		}
 		else {
 			//We got 404 here, let's work it out
@@ -311,14 +312,13 @@ class Oops_Server {
 
 	/**
 	 * @deprecated
-	 * @todo Move this to Request object
 	 *
 	 * Method is used to get private application params
 	 */
 	public function get($what) {
 		switch($what) {
 			case 'uri':
-				return $this->_uri;
+				return $this->_request->getUri();
 			case 'uri_parts':
 				return $this->_uri_parts;
 			case 'ext':
@@ -330,8 +330,13 @@ class Oops_Server {
 			case 'controller_ident':
 				return $this->_controller_ident;
 			case 'controller':
-				return $this->_controller;
+				return $this->_router->controller;
 		}
+		return null;
+	}
+	
+	public function __get($var) {
+		return $this->get($var);
 	}
 
 	/**

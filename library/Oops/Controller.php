@@ -14,7 +14,21 @@ class Oops_Controller extends Oops_Object {
 	/**
 	* @deprecated
 	*/
-	var $_server;
+	protected $_server;
+
+	/**
+	 * Request object instance
+	 * 
+	 * @var Oops_Server_Request
+	 */
+	protected $_request;
+
+	/**
+	 * Response object instance
+	 * 
+	 * @var Oops_Server_Response
+	 */
+	protected $_response;
 
 	/**
 	* @todo Consider using request and response as controller constructor params?

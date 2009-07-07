@@ -212,10 +212,10 @@ class Oops_Server {
 	protected function _parseRequest() {
 
 		$oopsConfig = $this->_config->get("oops");
-		$parts = explode("/",$this->_request->path);
+		$parts = explode("/", $this->_request->path);
 		$coolparts = array();
 		//Let's remove any empty parts. path//to/something/ should be turned into path/to/something
-		for($i=0,$cnt = sizeof($parts);$i<$cnt;$i++) {
+		for($i=0, $cnt = sizeof($parts); $i < $cnt; $i++) {
 			if(strlen($parts[$i])) $coolparts[] = strtolower($parts[$i]);
 		}
 		if($cnt = sizeof($coolparts)) {
@@ -280,7 +280,7 @@ class Oops_Server {
 		if($this->_router->route($this->_request)) {
 			//Routed OK
 			$this->_controller_ident = trim($this->_router->foundPath, '/');
-			$this->_controller_params = trim($this->_router->notFoundPath , '/');
+			$this->_controller_params = explode('/', $this->_router->notFoundPath);
 		}
 		else {
 			//We got 404 here, let's work it out

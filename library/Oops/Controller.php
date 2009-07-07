@@ -34,8 +34,6 @@ class Oops_Controller extends Oops_Object {
 	* @tutorial Oops/Oops/Controller.cls#handling_request
 	*/
 	function Request($key,$type=null,$default=null) {
-		static $filesDone = false;
-		if(!$filesDone) $this->_proceedRequestFiles();
 		if(!strlen($key)) return false;
 		if(is_null($value = $this->_request->get($key))) return $default;
 		if(is_null($type)) return $value;

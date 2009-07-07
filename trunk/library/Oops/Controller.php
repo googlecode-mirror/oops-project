@@ -78,38 +78,6 @@ class Oops_Controller extends Oops_Object {
 	}
 
 	/**
-	* @todo move this to Oops_Server_Request_Http::__construct
-	*/
-	function _proceedRequestFiles($files = null,$keys=array()) {
-		if(is_null($files)) $files = $_FILES;
-		foreach($files as $k=>$v) {
-			$keys[]=$k;
-			if(!is_array($v['name'])) {
-				//add to Request
-				$reqRef =& $_REQUEST;
-				for($i=0;$i<sizeof($keys);$i++) {
-					$reqRef =& $reqRef[$keys[$i]];
-				}
-				if(is_array($reqRef)) $reqRef = array_merge($reqRef,$v);
-				else $reqRef = $v;
-			} else {
-				$subfiles = array();
-				foreach(array_keys($v['name']) as $rk) {
-					$subfiles[$rk] = array(
-						'name' => $files[$k]['name'][$rk],
-						'type' => $files[$k]['type'][$rk],
-						'tmp_name' => $files[$k]['tmp_name'][$rk],
-						'error' => $files[$k]['error'][$rk],
-						'size' => $files[$k]['size'][$rk],
-					);
-					$this->_proceedRequestFiles($subfiles,$keys);
-				}
-			}
-			array_pop($keys);
-		}
-	}
-
-	/**
 	* List all defined request keys
 	*/
 	function getRequestKeys() {

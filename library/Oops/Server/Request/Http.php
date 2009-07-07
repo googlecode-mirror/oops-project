@@ -51,7 +51,7 @@ class Oops_Server_Request_Http extends Oops_Server_Request {
 	protected function _proceedRequestFiles($from, &$to) {
 		foreach($from as $k => $v) {
 			if(!is_array($v['name'])) {
-				if(is_array($to[$k])) {
+				if(isset($to[$k]) && is_array($to[$k])) {
 					$to[$k] = array_merge($to[$k], $v);
 				} else $to[$k] = $v;
 

@@ -13,6 +13,11 @@ require_once("Oops/Server.php");
 */
 class Oops_Server_Stack {
 	/**
+	 * Server stack instance for Singleton pattern
+	 * @var Oops_Server_Stack
+	 */
+	static private $instance;
+	/**
 	* Servers stack array
 	*
 	* @access private
@@ -79,9 +84,8 @@ class Oops_Server_Stack {
 	* @access private
 	*/
 	public static function &getInstance() {
-		static $instance;
-		if(!isset($instance)) $instance = new Oops_Server_Stack();
-		return $instance;
+		if(!is_object(self::$instance)) self::$instance = new self();
+		return self::$instance;
 	}
 
 	private function __construct() {}

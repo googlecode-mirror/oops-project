@@ -18,7 +18,7 @@ class Oops_Template_Helper extends Oops_Object {
 	* @return string local php file name
 	*/
 	public static function getTemplateFilename($name) {
-		static $templatesPath;
+		static $templatesPath = null;
 		if(!isset($templatesPath)) {
 			/*
 			if(defined("TEMPLATES_PATH")) $templatesPath = TEMPLATES_PATH;

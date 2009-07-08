@@ -39,7 +39,7 @@ class Oops_Session_Database extends Oops_Session_Abstract implements Oops_Sessio
 			$data = Oops_Sql::Escape($data);
 			$query = "INSERT INTO {$this->_tableSessions} (ses_id, ses_time, ses_start, ses_value, user_id)
 				VALUES ('$ses_id', '$ses_time', '$ses_time', '$data', '$user_id')
-				ON DUPLICATE KEY UPDATE ses_time = '$sestime', ses_value='$data', user_id = '$user_id'";
+				ON DUPLICATE KEY UPDATE ses_time = '$ses_time', ses_value='$data', user_id = '$user_id'";
 			Oops_Sql::Query($query);
 			debugPrint(mysql_error(), 'mysql_error');
 		} else {

@@ -29,7 +29,7 @@ class Oops_Sql {
 	protected static function Connect() {
 		self::_Init();
 
-		static $dbh;
+		static $dbh = null;
 
 		if (!$dbh) {
 			$dbh = mysql_connect(self::$_config->host, self::$_config->user, self::$_config->password);
@@ -55,7 +55,7 @@ class Oops_Sql {
 	public static function Query($query,$dieOnError = false) {
 		Oops_Sql::Connect();
 
-		static $loggerEnabled;
+		static $loggerEnabled = null;
 		if(!isset($loggerEnabled)) {
 			if(is_object(self::$_config->logger)) $loggerEnabled = self::$_config->logger->enabled;
 			else $loggerEnabled = false;
@@ -63,8 +63,8 @@ class Oops_Sql {
 
 		if($loggerEnabled) {
 			require_once('Oops/Sql/Logger.php');
-			static $l;
-			if(!isset($l)) $l =& Oops_Sql_Logger::getInstance(self::$_config->logger->table);
+			static $l = null;
+			if(!is_object($l)) $l =& Oops_Sql_Logger::getInstance(self::$_config->logger->table);
 
 			if(self::$_config->logger->probability > mt_rand(0,1)) {
 				return $l->Analyze($query);

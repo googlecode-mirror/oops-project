@@ -46,7 +46,7 @@ class Oops_Debug {
 	}
 
 	public static function allow() {
-		static $ret;
+		static $ret = null;
 		if(!isset($ret)) {
 			$ret = false;
 			if($_SERVER['REMOTE_ADDR'] == '127.0.0.1') $ret=true;
@@ -58,7 +58,7 @@ class Oops_Debug {
 	* @ignore
 	*/
 	public static function print_r_dhtml ($value, $first=true) {
-		static $style;
+		static $style = '';
 		static $i=0;$i++; 
 		static $j=0;
 		if($first) {

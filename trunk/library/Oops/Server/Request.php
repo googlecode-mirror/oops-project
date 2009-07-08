@@ -81,7 +81,7 @@ class Oops_Server_Request {
 		if($this->port != 80) $host.=":{$this->port}";
 
 		if(strlen($this->user)) {
-			$auth = $user;
+			$auth = $this->user;
 			if(strlen($this->pass)) $auth.=":{$this->pass}";
 			$host = "$auth@$host";
 		}

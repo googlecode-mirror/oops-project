@@ -10,6 +10,8 @@ if(!defined('OOPS_Loaded')) die("OOPS not found");
 * Logging mysql querries for debug purposes
 */
 class Oops_Sql_Logger {
+	static private $_instance;
+
 	private $_table;
 
 	var $temporary=true;
@@ -113,7 +115,7 @@ class Oops_Sql_Logger {
 		}
 		$this->log[] = array(
 			'query' => $query,
-			'reason' => $querytime,
+			'reason' => $reason,
 			'worktime' => $this->_worktime,
 			'trace' => $this->_trace,
 		);
@@ -123,9 +125,8 @@ class Oops_Sql_Logger {
 	*
 	*/
 	function &getInstance($table) {
-		static $o;
-		if(!isset($o)) $o = new Oops_Sql_Logger($table);
-		return $o;
+		if(!is_object(self::$_instance)) self::$_instance = new self($table);
+		return self::$_instance;
 	}
 
 	function __construct($table) {

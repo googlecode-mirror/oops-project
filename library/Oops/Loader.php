@@ -11,6 +11,7 @@ if(!defined('OOPS_Loaded')) die("OOPS not loaded");
  * Loader class
  */
 class Oops_Loader {
+
 	/**
 	 * @static
 	 * @access public
@@ -18,18 +19,19 @@ class Oops_Loader {
 	 */
 	public static function find($class) {
 		if(class_exists($class) || interface_exists($class)) return true;
-
+		
 		$c = strtolower($class);
-		$parts = explode('_',$c);
+		$parts = explode('_', $c);
 		$fname = '';
-
-		for($i=0, $cnt = sizeof($parts); $i < $cnt - 1; $i++) $fname .= (ucfirst($parts[$i]) . DIRECTORY_SEPARATOR);
-		$fname .= (ucfirst($parts[$i]).'.php');
-
+		
+		for($i = 0, $cnt = sizeof($parts); $i < $cnt - 1; $i++)
+			$fname .= (ucfirst($parts[$i]) . DIRECTORY_SEPARATOR);
+		$fname .= (ucfirst($parts[$i]) . '.php');
+		
 		$incPaths = explode(PATH_SEPARATOR, get_include_path());
 		foreach($incPaths as $incPath) {
 			if(file_exists($incPath . DIRECTORY_SEPARATOR . $fname)) {
-				require_once($incPath . DIRECTORY_SEPARATOR . $fname);
+				require_once ($incPath . DIRECTORY_SEPARATOR . $fname);
 				return true;
 			}
 		}

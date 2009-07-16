@@ -45,7 +45,7 @@ abstract class Oops_Process_Abstract {
 
 	static final public function getInstance(string $pid) {
 		// @todo Collect process helper and environment
-		$process = self::__construct($pid);
+		$process = self::__construct($helper, $pid);
 //		$process->_data = $data;
 		$process->_trigger_restore();
 		

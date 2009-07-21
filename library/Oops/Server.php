@@ -16,38 +16,37 @@ class Oops_Server {
 	 * @protected
 	 */
 	protected $_app;
-
+	
 	/**
 	 * @var string Definition of any filter to proceed the value returned by controller
 	 * @protected
 	 */
 	protected $_view;
-
+	
 	/**
 	 * @var string Requested action, default is 'index'
 	 * @protected
 	 */
 	protected $_action;
-
+	
 	/**
 	 * @var string extension of requested script, 'php' by default
 	 * @protected
 	 */
 	protected $_extension;
-
+	
 	/**
 	 * @var Oops_Controller Associated controller instance
 	 * @access protected
 	 */
 	protected $_controller_instance;
-
+	
 	/**
 	 *
 	 */
 	protected $_config;
-
+	
 	protected $_errorHandler;
-
 
 	private function __construct() {
 	}
@@ -57,8 +56,8 @@ class Oops_Server {
 	 * @return Oops_Server The current server object which is the last server in stack
 	 */
 	public static function &getInstance() {
-		require_once("Oops/Server/Stack.php");
-		$instance =& Oops_Server_Stack::last();
+		require_once ("Oops/Server/Stack.php");
+		$instance = & Oops_Server_Stack::last();
 		if(!is_object($instance)) $instance = new Oops_Server();
 		return $instance;
 	}
@@ -70,35 +69,35 @@ class Oops_Server {
 	 */
 	public static function &newInstance($config = null) {
 		$new = new Oops_Server();
-		require_once("Oops/Server/Stack.php");
-
+		require_once ("Oops/Server/Stack.php");
+		
 		if(Oops_Server_Stack::size()) {
-			$last =& Oops_Server_Stack::last();
+			$last = & Oops_Server_Stack::last();
 			$new->_config = $last->_config;
 		} else {
-			require_once("Oops/Config/Default.php");
+			require_once ("Oops/Config/Default.php");
 			$new->_config = new Oops_Config_Default();
 		}
-
+		
 		if(is_object($config)) $new->configure($config);
-
+		
 		Oops_Server_Stack::push($new);
-
+		
 		return $new;
 	}
 
 	public static function &getConfig() {
-		$server =& Oops_Server::getInstance();
+		$server = & Oops_Server::getInstance();
 		return $server->_config;
 	}
 
 	public static function &getRequest() {
-		$server =& Oops_Server::getInstance();
+		$server = & Oops_Server::getInstance();
 		return $server->_request;
 	}
 
 	public static function &getResponse() {
-		$server =& Oops_Server::getInstance();
+		$server = & Oops_Server::getInstance();
 		return $server->_response;
 	}
 
@@ -109,8 +108,10 @@ class Oops_Server {
 	 * @return void
 	 */
 	public function configure(&$config, $replace = false) {
-		if(is_object($this->_config)) $this->_config->mergeConfig($config);
-		else $this->_config = $config;
+		if(is_object($this->_config))
+			$this->_config->mergeConfig($config);
+		else
+			$this->_config = $config;
 		$this->_useConfig();
 	}
 
@@ -125,16 +126,14 @@ class Oops_Server {
 		$oopsConfig = $this->_config->oops;
 		if(is_object($oopsConfig)) {
 			if((bool) @$oopsConfig->register_autoload) {
-				require_once("Oops/Loader.php");
-				spl_autoload_register(array("Oops_Loader", "load"));
+				require_once ("Oops/Loader.php");
+				spl_autoload_register(array("Oops_Loader", "load" ));
 			}
-
+			
 			if($incPath = @$oopsConfig->include_path) {
 				$currentIncludePath = get_include_path();
-				if(!in_array($incPath,explode(PATH_SEPARATOR,$currentIncludePath))) {
-					set_include_path (
-					$incPath . PATH_SEPARATOR . get_include_path()
-					);
+				if(!in_array($incPath, explode(PATH_SEPARATOR, $currentIncludePath))) {
+					set_include_path($incPath . PATH_SEPARATOR . get_include_path());
 				}
 			}
 		}
@@ -149,108 +148,105 @@ class Oops_Server {
 	 * @return void
 	 */
 	public function Run($request = null) {
-		require_once("Oops/Error/Handler.php");
+		require_once ("Oops/Error/Handler.php");
 		$this->_errorHandler = new Oops_Error_Handler();
-
+		
 		if(!is_object($request)) {
-			require_once("Oops/Server/Request/Http.php");
+			require_once ("Oops/Server/Request/Http.php");
 			$this->_request = new Oops_Server_Request_Http();
-
-			require_once("Oops/Server/Response/Http.php");
+			
+			require_once ("Oops/Server/Response/Http.php");
 			$this->_response = new Oops_Server_Response_Http();
 		} else {
 			$this->_request = $request;
-
-			require_once("Oops/Server/Response.php");
+			
+			require_once ("Oops/Server/Response.php");
 			$this->_response = new Oops_Server_Response();
 		}
-
+		
 		/**
 		 * @todo Use exceptions in PHP5 to check if response is ready (or trigger_error) or just chck the return and call some method for error or redirect response
 		 */
 		$this->_parseRequest();
 		if($this->_response->isReady()) return $this->_response;
-
+		
 		$this->_initView();
 		if($this->_response->isReady()) return $this->_response;
-
+		
 		$this->_routeRequest();
 		if($this->_response->isReady()) return $this->_response;
-
+		
 		/** @todo try to find controller action, then do everything else */
 		$this->_initController();
 		if($this->_response->isReady()) return $this->_response;
-
+		
 		/** @todo Controller should return boolean, and data should be in response object? */
 		$data = $this->_controller_instance->Run();
 		if($this->_response->isReady()) return $this->_response;
-
-
+		
 		/**
 		 * @todo Let the view handler use getRequest and getResponse as it need it
 		 */
 		$this->_view->In($data);
-		$this->_view->Set('controller',$this->_router->controller);
-		$this->_view->Set('uri',$this->_request->getUri());
-		$this->_view->Set('ext',$this->_extension);
-		$this->_view->Set('action',$this->_action);
-		$this->_view->Set('uri_parts',$this->_uri_parts);
-
-		$this->_response->setHeader("Content-type",$this->_view->getContentType());
+		$this->_view->Set('controller', $this->_router->controller);
+		$this->_view->Set('uri', $this->_request->getUri());
+		$this->_view->Set('ext', $this->_extension);
+		$this->_view->Set('action', $this->_action);
+		$this->_view->Set('uri_parts', $this->_uri_parts);
+		
+		$this->_response->setHeader("Content-type", $this->_view->getContentType());
 		$this->_response->setBody($this->_view->Out());
 		$this->_response->reportErrors($this->_errorHandler);
 		restore_error_handler();
-
+		
 		return $this->_response;
 	}
-
 
 	/**
 	 * Parses URI into parts, action and extension, also checks spelling using 301 to the right location
 	 *
 	 */
 	protected function _parseRequest() {
-
+		
 		$oopsConfig = $this->_config->get("oops");
 		$parts = explode("/", $this->_request->path);
 		$coolparts = array();
 		//Let's remove any empty parts. path//to/something/ should be turned into path/to/something
-		for($i=0, $cnt = sizeof($parts); $i < $cnt; $i++) {
+		for($i = 0, $cnt = sizeof($parts); $i < $cnt; $i++) {
 			if(strlen($parts[$i])) $coolparts[] = strtolower($parts[$i]);
 		}
 		if($cnt = sizeof($coolparts)) {
-			$last = $coolparts[$cnt-1];
-			if(($dotpos = strrpos($last,'.')) !== FALSE) {
-				$ext = substr($last,$dotpos+1);
-				require_once("Oops/Server/View.php");
+			$last = $coolparts[$cnt - 1];
+			if(($dotpos = strrpos($last, '.')) !== FALSE) {
+				$ext = substr($last, $dotpos + 1);
+				require_once ("Oops/Server/View.php");
 				if(Oops_Server_View::isValidView($ext) || $oopsConfig->get('strict_views')) {
-					$this->_action = substr($last,0,$dotpos);
+					$this->_action = substr($last, 0, $dotpos);
 					$this->_extension = $ext;
 					array_pop($coolparts);
 				}
 			}
 		}
-
+		
 		if(!isset($this->_action)) {
 			//action should be index, content-type - php
 			$this->_action = $oopsConfig->get('default_action');
 			$this->_extension = $oopsConfig->get('default_extension');
 		}
-
-
+		
 		//Let's compile the one-and-only expected request_uri for this kind of request
-		$expectedPath = sizeof($coolparts)?'/'.join('/',$coolparts).'/':'/';
+		$expectedPath = sizeof($coolparts) ? '/' . join('/', $coolparts) . '/' : '/';
 		if($this->_action != $oopsConfig->get('default_action') || $this->_extension != $oopsConfig->get('default_extension')) $expectedPath .= "{$this->_action}.{$this->_extension}";
-
+		
 		//If given path mismatch the one-and-only expected one, make a redirect to the expected
 		if($this->_request->path != $expectedPath) {
-			$correctRequest = clone($this->_request);
+			$correctRequest = clone ($this->_request);
 			$correctRequest->path = $expectedPath;
-
-			$this->_response->redirect($correctRequest->getUrl(),true);
+			
+			$this->_response->redirect($correctRequest->getUrl(), true);
 			return;
 		}
-
+		
 		$this->_uri_parts = $coolparts;
 	}
 
@@ -258,11 +254,11 @@ class Oops_Server {
 		$routerConfig = $this->_config->get('router');
 		if(is_object($routerConfig)) {
 			$routerClass = $routerConfig->class;
-			require_once("Oops/Loader.php");
+			require_once ("Oops/Loader.php");
 			if(Oops_Loader::find($routerClass)) $this->_router = new $routerClass($routerConfig->source);
 		}
 		if(!is_object($this->_router)) {
-			require_once("Oops_Server_Router");
+			require_once ("Oops_Server_Router");
 			$this->_router = new Oops_Server_Router();
 		}
 	}
@@ -280,9 +276,8 @@ class Oops_Server {
 		if($this->_router->route($this->_request)) {
 			//Routed OK
 			$this->_controller_ident = trim($this->_router->foundPath, '/');
-			$this->_controller_params = explode('/', $this->_router->notFoundPath);
-		}
-		else {
+			$this->_controller_params = strlen($this->_router->notFoundPath) ? explode('/', $this->_router->notFoundPath) : array();
+		} else {
 			//We got 404 here, let's work it out
 			$this->_response->setCode(404);
 		}
@@ -327,7 +322,7 @@ class Oops_Server {
 		}
 		return null;
 	}
-	
+
 	public function __get($var) {
 		return $this->get($var);
 	}
@@ -337,9 +332,9 @@ class Oops_Server {
 	 * Uses $this->_extension (from ParseURI) to choose a view class.
 	 */
 	protected function _initView() {
-		require_once("Oops/Server/View.php");
-		$this->_view =& Oops_Server_View::getInstance($this->_extension);
-
+		require_once ("Oops/Server/View.php");
+		$this->_view = & Oops_Server_View::getInstance($this->_extension);
+		
 		if(!is_object($this->_view)) {
 			//suggested view is not available
 			$this->_response->setCode(415);
@@ -352,8 +347,8 @@ class Oops_Server {
 	 * @static
 	 */
 	public static function RunHttpDefault() {
-		require_once("Oops/Config/Ini.php");
-		$server =& Oops_Server::newInstance(new Oops_Config_Ini('application/config/oops.ini'));
+		require_once ("Oops/Config/Ini.php");
+		$server = & Oops_Server::newInstance(new Oops_Config_Ini('application/config/oops.ini'));
 		$response = $server->Run();
 		echo $response->toString();
 	}

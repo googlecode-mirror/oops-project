@@ -76,7 +76,7 @@ class Oops_Sql {
 		if(mysql_errno()) {
 			$errCode = mysql_errno();
 			$errStr = mysql_error();
-			/** @todo Refactor, now we can't see mysql errors in response, maybe we should use exceptions */
+			// @todo Refactor, now we can't see mysql errors in response, maybe we should use exceptions
 			trigger_error("MySQL/QueryError/$errCode - $errStr", E_USER_ERROR);
 			if($dieOnError) die();
 			return false;

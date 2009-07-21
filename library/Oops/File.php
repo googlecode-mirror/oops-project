@@ -5,7 +5,7 @@
  *
  * @author Dmitry Ivanov rockmagic@yandex.ru
  * @license GNUv3
- * 
+ *
  * @property string $filename File name
  * @property bool $exists True if file exists
  * @property string $type Mime type
@@ -13,7 +13,7 @@
  * @property string $dirname Path to file
  * @property string $basename File base name
  * @property string $extension File extension
- * 
+ *
  */
 class Oops_File {
 	protected $_filename;
@@ -55,9 +55,9 @@ class Oops_File {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param string $filename File name
-	 * @param bool $autoCreate Try to create file if it doens not exist
+	 * @param bool $autoCreate Try to create file if it does not exist
 	 */
 	public function __construct($filename, $autoCreate = false) {
 		$this->_filename = $filename;
@@ -111,13 +111,17 @@ class Oops_File {
 	 * @return Oops_File
 	 */
 	public function copy($dest) {
-		if(copy($this->_filename, $dest)) return new Oops_File($dest);
-		// @todo Check for errors
+		$destFile = new Oops_File($dest);
+		$destFile->makeWriteable();
+		if(copy($this->_filename, $dest)) return false;
+		$destFile = null;
+		$destFile = new Oops_File($dest);
+		$destFile->makeWriteable();
 	}
 
 	/**
 	 * Rename file
-	 * 
+	 *
 	 * @param string $dest
 	 * @return boolean True if moved successfully
 	 */
@@ -133,15 +137,30 @@ class Oops_File {
 		return false;
 	}
 
+	/**
+	 * 
+	 * @return string File contents
+	 */
 	function getContents() {
-		if($this->_exists) return file_get_contents($this->_filename);
+		if($this->_exists && $this->_isFile) return file_get_contents($this->_filename);
+		return "";
 	}
 
+	/**
+	 * Write content to the file
+	 * @param $content
+	 * @return unknown_type
+	 */
 	function putContents($content) {
-		if(!$this->makeWritable) return false;
+		if(!$this->makeWritable()) return false;
+		if($this->isDirectory()) return false;
 		return file_put_contents($this->_filename, $content);
 	}
 
+	/**
+	 * Make a file (or directory) writable
+	 * @return bool True on success
+	 */
 	function makeWriteable() {
 		if($this->isWritable()) return true;
 		if(!$this->exists) {
@@ -153,7 +172,15 @@ class Oops_File {
 				} catch(Exception $e) {
 					return false;
 				}
+				return true;
 			}
+		} else {
+			if($this->_filename)
+				return @chmod($this->_filename, 0666);
+			elseif(is_dir($this->_filename))
+				return @chmod($this->_filename, 0777);
+			else
+				return false;
 		}
 	}
 }

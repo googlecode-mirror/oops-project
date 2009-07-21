@@ -24,6 +24,16 @@ class Oops_Server_Request_Http extends Oops_Server_Request {
 		$this->_get = $_GET;
 		$this->_post = $_POST;
 		$this->_cookie = $_COOKIE;
+		
+		/**
+		 * strip slashes if magic_quotes is enabled
+		 */
+		if(get_magic_quotes_gpc()) {
+			$this->_stripSlashesRecursive($this->_get);
+			$this->_stripSlashesRecursive($this->_post);
+			$this->_stripSlashesRecursive($this->_cookie);
+		}
+		
 		$this->_proceedRequestFiles($_FILES, $this->_files);
 
 		$this->_params = array_merge($this->_files, $this->_post, $this->_get);
@@ -69,6 +79,14 @@ class Oops_Server_Request_Http extends Oops_Server_Request {
 				}
 				$this->_proceedRequestFiles($subfiles,$to[$k]);
 			}
+		}
+	}
+	
+	protected function _stripSlashesRecursive(array &$var) {
+		if(!is_array($var)) return;
+		foreach($var as $k=>$v) {
+			if(is_string($var[$k])) $var[$k] = stripslashes($v);
+			elseif(is_array($var[$k])) $this->_stripSlashesRecursive($var[$k]);
 		}
 	}
 

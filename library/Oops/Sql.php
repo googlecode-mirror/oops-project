@@ -88,5 +88,9 @@ class Oops_Sql {
 		Oops_Sql::Connect();
 		return mysql_real_escape_string($s);
 	}
+	
+	public static function EscapeIt(&$s) {
+		$s = self::Escape($s);
+	}
 
 }

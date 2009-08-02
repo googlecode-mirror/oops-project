@@ -24,7 +24,7 @@ abstract class Oops_Session_Abstract {
 	 */
 	protected function setHandler() {
 		if(!$this instanceof Oops_Session_Interface) {
-			/** @todo throw exception or error here */
+			// @todo throw exception or error here
 			return false;
 		}
 		

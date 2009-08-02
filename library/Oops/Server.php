@@ -176,17 +176,16 @@ class Oops_Server {
 		$this->_routeRequest();
 		if($this->_response->isReady()) return $this->_response;
 		
-		/** @todo try to find controller action, then do everything else */
+		// @todo try to find controller action, then do everything else
 		$this->_initController();
 		if($this->_response->isReady()) return $this->_response;
 		
-		/** @todo Controller should return boolean, and data should be in response object? */
+		// @todo Controller should return boolean, and data should be in response object?
 		$data = $this->_controller_instance->Run();
 		if($this->_response->isReady()) return $this->_response;
 		
-		/**
-		 * @todo Let the view handler use getRequest and getResponse as it need it
-		 */
+		//@todo Let the view handler use getRequest and getResponse as it need it
+		
 		$this->_view->In($data);
 		$this->_view->Set('controller', $this->_router->controller);
 		$this->_view->Set('uri', $this->_request->getUri());

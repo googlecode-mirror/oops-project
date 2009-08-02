@@ -22,10 +22,17 @@ abstract class Oops_Process_Abstract {
 	protected $_currentState;
 	
 	/**
-	 * States definition goes here
-	 * @var array
+	 * States definition
+	 * @var array array('StateA','StateB',...)
 	 */
 	protected $_states = array();
+	
+	/**
+	 * Process variables definition
+	 * @var array array('data1' => 'public', 'data2' => 'private');
+	 */
+	protected $_variables = array();
+	
 	
 	/**
 	 * Transitions priority matrix
@@ -58,6 +65,7 @@ abstract class Oops_Process_Abstract {
 	
 	/**
 	 * Transition actions go here
+	 * Should be defined as (void) protected function action_$StateA_$StateB
 	 */
 	
 	/**
@@ -169,7 +177,7 @@ abstract class Oops_Process_Abstract {
 				 * Developer must eliminate conflicting decision maker.
 				 */
 				require_once ("Oops/Process/Exception.php");
-				throw new Oops_Process_Exception('No way to go from state $state', OOPS_PROCESS_EXCEPTION_NOWAY);
+				throw new Oops_Process_Exception('No way to go from state $state', OOPS_PROCESS_EXCEPTION_NO_WAY);
 			}
 		
 		}
@@ -189,8 +197,9 @@ abstract class Oops_Process_Abstract {
 			throw new Oops_Process_Exception('Process was not started, use Init', OOPS_PROCESS_EXCEPTION_INIT_REQUIRED);
 		}
 		
-		/** @todo Check whenever transition is valid (defined in $_states property) */
+		// @todo Check whenever transition is valid (defined in $_states property)
 		
+
 		/**
 		 * Do the transition
 		 * @var callback
@@ -222,12 +231,12 @@ abstract class Oops_Process_Abstract {
 		 * Place incoming variables to object properties
 		 */
 		
-		foreach($inputValues as $key=>$value) {
+		foreach($inputValues as $key => $value) {
 			/**
 			 * @todo Make it's safe
 			 */
 			if($key == 'currentState' || key == 'pid') {
-				require_once("Oops/Process/Exception.php");
+				require_once ("Oops/Process/Exception.php");
 				throw new Oops_Process_Exception("Invalid input value", OOPS_PROCESS_EXCEPTION_INVALID_INPUT);
 			}
 			$this->{'_' . $key} = $value;
@@ -237,7 +246,6 @@ abstract class Oops_Process_Abstract {
 		 * Run custom init action (transition for nowhere to the start position) 
 		 */
 		$this->_actionStart();
-		
 		
 		/**
 		 * And only now, if everything ok (no exceptions), let's make a pid for this process
@@ -251,7 +259,7 @@ abstract class Oops_Process_Abstract {
 	 * @param string Start state id 
 	 * @return void
 	 */
-	abstract function _actionStart($startState);
+	abstract protected function _actionStart($startState);
 
 	/**
 	 * Process objects control functions
@@ -264,24 +272,67 @@ abstract class Oops_Process_Abstract {
 	 * 
 	 * @param string $pid
 	 */
-	private final function __construct(string $pid = null) {
+	public final function __construct(string $pid = null) {
 		if(is_null($pid)) {
 			/**
 			 * This is a newly created process, just wait for input values passed to init method
+			 * Or, object could be constructed for definition purposes
 			 */
+			unset($this->_currentState);
+			
 		} else {
-			require_once("Oops/Process/Factory.php");
-			$storage =& Oops_Process_Factory::getStorage();
+			/**
+			 * This process is being restored, get process data from Storage
+			 */
+			require_once ("Oops/Process/Factory.php");
+			$storage = & Oops_Process_Factory::getStorage();
 			$data = $storage->get($pid);
+			
+			if($data === false) {
+				/**
+				 * There's no data in storage
+				 */
+				require_once("Oops/Process/Exception.php");
+				throw new Oops_Process_Exception("Process data not found in storage", OOPS_PROCESS_EXCEPTION_NOT_FOUND);
+			}
+			
+			/**
+			 * Check for process class
+			 * @var unknown_type
+			 */
+			$class = $data['class'];
+			if(strtolower(get_class($this)) != strtolower($class)) {
+				/**
+				 * There's a wrong class being constructed 
+				 */
+				require_once("Oops/Process/Exception.php");
+				throw new Oops_Process_Exception("Constructing ".get_class($this)." for a $class process", OOPS_PROCESS_EXCEPTION_INVALID_CLASS);
+			}
+			
 			$currentState = $data['currentState'];
 			if(!$this->isValidState($currentState)) {
-				require_once("Oops/Process/Exception.php");
-				throw new Oops_Process_Exception("Tried to restore process in invalid state", OOPS_PROCESS_EXCEPTION_INVALID_STATE);
+				/**
+				 * stored state is invalid
+				 */
+				require_once ("Oops/Process/Exception.php");
+				throw new Oops_Process_Exception("Unable to restore $class process in invalid state $currentState", OOPS_PROCESS_EXCEPTION_INVALID_STATE);
 			}
+			$this->_currentState = $currentState;
+			
+			foreach($data['variables'] as $name => $value) {
+				// @todo Check if $name is defined as process variable
+				$this->{'_' . $name} = $value;
+			}
+			$this->_trigger_reconstructed();
 		}
-		$this->_trigger_constructed();
 	}
-	
+
+	/**
+	 * Override this function to make any actions after constructing object for existing process
+	 */
+	protected function _trigger_reconstructed() {
+	}
+
 	/**
 	 * @uses Oops_Process_Abstract::$_states
 	 * @param string $state
@@ -290,6 +341,27 @@ abstract class Oops_Process_Abstract {
 	protected final function isValidState($state) {
 		if(in_array($state, $this->_states)) return true;
 		return false;
+	}
+
+	/**
+	 * Stores this process
+	 * 
+	 * @return bool True on success
+	 */
+	protected final function _store() {
+		$data = array('class' => get_class($this), 'currentState' => $this->_currentState, 'variables' => array());
+		foreach($this->_variables as $name => $access) {
+			$data['variables'][$name] = $this->{'_' . $name};
+		}
+		
+		require_once ("Oops/Process/Factory.php");
+		
+		/**
+		 * 
+		 * @var Oops_Process_Storage $storage
+		 */
+		$storage = & Oops_Process_Factory::getStorage();
+		return $storage->set($this->_pid, $data);
 	}
 
 }

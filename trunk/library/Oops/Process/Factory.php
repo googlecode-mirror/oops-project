@@ -30,7 +30,7 @@ class Oops_Process_Factory {
 	 */
 	static public function &getStorage() {
 		if(!is_object(self::$_storage)) {
-			/** @todo Use config */
+			// @todo Use config
 			require_once("Oops/Process/Storage.php");
 			self::$_storage =& new Oops_Process_Storage();
 		}

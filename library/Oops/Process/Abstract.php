@@ -1,5 +1,8 @@
 <?php
 
+// @todo Invode _store method somewhere
+// @todo Request document for transition 
+
 /**
  * 
  * @author Dmitry Ivanov
@@ -114,7 +117,7 @@ abstract class Oops_Process_Abstract {
 			case 'pid':
 			case 'state':
 			case 'currentState':
-				require_once ("Oops_Process_Exception.php");
+				require_once("Oops/Process/Exception.php");
 				throw new Oops_Process_Exception("Restricted", OOPS_PROCESS_EXCEPTION_RESTRICTED_SETTER);
 		}
 	}

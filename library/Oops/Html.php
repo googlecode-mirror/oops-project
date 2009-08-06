@@ -310,7 +310,7 @@ class Oops_Html {
 	 * @param array $extra extra params
 	 * @return string
 	 */
-	protected static function _radio($name, $value, $label, $checked = false, $class = '', $extra = array()) {
+	public static function radio($name, $value, $label, $checked = false, $class = '', $extra = array()) {
 		$params = array();
 		$params[] = self::_putName($name);
 		$params[] = self::_putClass($class);

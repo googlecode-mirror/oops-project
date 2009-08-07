@@ -5,8 +5,6 @@
  * @license GNUv3
  */
 
-if(!defined('OOPS_Loaded')) die("OOPS not loaded");
-
 /**
  * Loader class
  */

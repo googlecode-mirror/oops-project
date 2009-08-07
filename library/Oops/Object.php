@@ -1,9 +1,8 @@
 <?
 /**
 * @package Oops
+* @deprecated
 */
-
-if(!defined('OOPS_Loaded')) die("OOPS not found");
 
 /**
 *

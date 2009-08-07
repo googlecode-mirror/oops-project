@@ -3,8 +3,6 @@
 * @package Oops
 */
 
-if(!defined('OOPS_Loaded')) die("OOPS not found");
-
 /**
 * Runtime debug tools
 */

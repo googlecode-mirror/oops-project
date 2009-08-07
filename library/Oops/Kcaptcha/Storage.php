@@ -1,7 +1,5 @@
 <?php
 
-require_once("Oops/Object.php");
-
 /**
 * Store generated key strings for client and check if suggested value is a previously generated key string
 *

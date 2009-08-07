@@ -4,8 +4,6 @@
  * @subpackage Server
  */
 
-if(!defined('OOPS_Loaded')) die("OOPS not found");
-
 /**
  * Application server object is used to proceed incoming request, init coresponding controller
  * and format the resulting output according to internal settings, data and defined rules
@@ -130,7 +128,7 @@ class Oops_Server {
 				spl_autoload_register(array("Oops_Loader", "load" ));
 			}
 			
-			if($incPath = @$oopsConfig->include_path) {
+			if(strlen($incPath = @$oopsConfig->include_path)) {
 				$currentIncludePath = get_include_path();
 				if(!in_array($incPath, explode(PATH_SEPARATOR, $currentIncludePath))) {
 					set_include_path($incPath . PATH_SEPARATOR . get_include_path());
@@ -179,13 +177,13 @@ class Oops_Server {
 		// @todo try to find controller action, then do everything else
 		$this->_initController();
 		if($this->_response->isReady()) return $this->_response;
-		
 		// @todo Controller should return boolean, and data should be in response object?
 		$data = $this->_controller_instance->Run();
 		if($this->_response->isReady()) return $this->_response;
 		
 		//@todo Let the view handler use getRequest and getResponse as it need it
 		
+
 		$this->_view->In($data);
 		$this->_view->Set('controller', $this->_router->controller);
 		$this->_view->Set('uri', $this->_request->getUri());
@@ -211,10 +209,10 @@ class Oops_Server {
 		$parts = explode("/", $this->_request->path);
 		$coolparts = array();
 		//Let's remove any empty parts. path//to/something/ should be turned into path/to/something
-		for($i = 0, $cnt = sizeof($parts); $i < $cnt; $i++) {
+		for($i = 0, $cnt = count($parts); $i < $cnt; $i++) {
 			if(strlen($parts[$i])) $coolparts[] = strtolower($parts[$i]);
 		}
-		if($cnt = sizeof($coolparts)) {
+		if(($cnt = count($coolparts)) != 0) {
 			$last = $coolparts[$cnt - 1];
 			if(($dotpos = strrpos($last, '.')) !== FALSE) {
 				$ext = substr($last, $dotpos + 1);

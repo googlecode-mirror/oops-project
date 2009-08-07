@@ -3,12 +3,11 @@
  * @package Oops
  * @subpackage Template
  */
-if(!defined('OOPS_Loaded')) die("OOPS not found");
 
 /**
  * Template helper
  */
-class Oops_Template_Helper extends Oops_Object {
+class Oops_Template_Helper {
 
 	/**
 	 * Points a filename for a given template name. If not found uses _default.php files;

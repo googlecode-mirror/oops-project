@@ -4,7 +4,6 @@
 * @subpackage Server
 * @author Dmitry Ivanov <rockmagic@yandex.ru>
 */
-if(!defined("OOPS_Loaded")) die("OOPS not found");
 
 /**
 * Load required classes

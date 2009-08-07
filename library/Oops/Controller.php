@@ -3,14 +3,12 @@
  * @package Oops
  */
 
-if(!defined('OOPS_Loaded')) die("OOPS not found");
-
 /**
  * Abstract controller class
  * 
  * @abstract
  */
-class Oops_Controller extends Oops_Object {
+class Oops_Controller {
 	/**
 	 * @deprecated
 	 */

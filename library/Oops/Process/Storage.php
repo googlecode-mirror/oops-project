@@ -44,7 +44,7 @@ class Oops_Process_Storage implements Oops_Storage_Interface {
 				$ret['variables'] = array();
 				
 				$r = Oops_Sql::Query("SELECT name, class, id, serialized FROM {$this->_tableProcessData} WHERE pid = '$pid'");
-				while(list($name, $class, $id, $serialized) = mysql_fetch_row($r)) {
+				while((list($name, $class, $id, $serialized) = mysql_fetch_row($r)) !== false) {
 					try {
 						$ret['variables'][$name] = $this->_decomposeData($class, $id, $serialized);
 					} catch(Exception $e) {

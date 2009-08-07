@@ -4,8 +4,6 @@
 * @subpackage Sql
 */
 
-if(!defined('OOPS_Loaded')) die("OOPS not found");
-
 /**
 * MySQL connection and query functionality
 */

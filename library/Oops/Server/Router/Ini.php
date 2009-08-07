@@ -4,8 +4,6 @@
 * @subpackage Server
 */
 
-if(!defined("OOPS_Loaded")) die("OOPS not loaded");
-
 require_once("Oops/Server/Router.php");
 
 class Oops_Server_Router_Ini extends Oops_Server_Router {

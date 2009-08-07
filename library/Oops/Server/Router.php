@@ -4,14 +4,10 @@
 * @subpackage Server
 */
 
-if(!defined("OOPS_Loaded")) die("OOPS not loaded");
-
-require_once("Oops/Object.php");
-
 /**
 * Server URI router
 */
-class Oops_Server_Router extends Oops_Object {
+class Oops_Server_Router {
 	/**
 	* Routing settings, array with URI parts as a key, controller class as a value 
 	*

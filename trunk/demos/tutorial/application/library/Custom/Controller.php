@@ -4,8 +4,6 @@
 * @subpackage Tutorial
 */
 
-if(!defined('OOPS_Loaded')) die("OOPS not found");
-
 require_once("Oops/Controller.php");
 
 /**

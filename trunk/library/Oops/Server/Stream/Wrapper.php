@@ -6,11 +6,6 @@
 */
 
 /**
-* Check if Oops is loaded
-*/
-if(!defined("OOPS_Loaded")) die("OOPS not found");
-
-/**
 * Stream wrapper to be registered for internal requests (subrequests) schema (i.e. oops://...)
 */
 class Oops_Server_Stream_Wrapper {

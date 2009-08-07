@@ -6,15 +6,11 @@
 * @license GNUv3
 */
 
-if(!defined('OOPS_Loaded')) die("OOPS not loaded");
-
-require_once("Oops/Object.php");
-
 /**
 * Config class
 *
 */
-class Oops_Config extends Oops_Object {
+class Oops_Config {
 	protected $_data = array();
 	public $used = false;
 	protected $_cache = array();
@@ -58,6 +54,7 @@ class Oops_Config extends Oops_Object {
 		$key = strtolower($key);
 		if(!isset($this->_data[$key])) {
 //			trigger_error("Config/ConfigKeyNotFound/$key", E_USER_NOTICE);
+			// @todo return new Oops_Config, make __toString function returning empty string
 			return null;
 		}
 		return $this->_data[$key];

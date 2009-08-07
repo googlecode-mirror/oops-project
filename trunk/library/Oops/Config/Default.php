@@ -6,9 +6,6 @@
 * @license GNUv3
 */
 
-if(!defined('OOPS_Loaded')) die("OOPS not loaded");
-
-
 require_once("Oops/Config.php");
 /**
 * Default Oops configuration

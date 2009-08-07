@@ -6,11 +6,6 @@
 */
 
 /**
-* Check if Oops is loaded
-*/
-if(!defined("OOPS_Loaded")) die("OOPS not found");
-
-/**
 * Oops server response representation
 */
 class Oops_Server_Response {

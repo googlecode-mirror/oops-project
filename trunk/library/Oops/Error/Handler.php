@@ -4,10 +4,6 @@
 * @subpackage Error
 */
 
-if(!defined('OOPS_Loaded')) die("OOPS not loaded");
-
-require_once("Oops/Object.php");
-
 /**
 * Class for handling user errors
 *

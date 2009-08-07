@@ -6,11 +6,6 @@
 */
 
 /**
-* Check if Oops is loaded
-*/
-if(!defined("OOPS_Loaded")) die("OOPS not found");
-
-/**
 * Load required classes
 */
 require_once("Oops/Server/Response.php");

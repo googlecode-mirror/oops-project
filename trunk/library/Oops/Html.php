@@ -16,7 +16,7 @@ class Oops_Html {
 	 * @return string
 	 */
 	protected static function _putName($name) {
-		if(!preg_match("/^[a-zA-Z_][a-zA-Z0-9_-\[\]]+$/", $name)) {
+		if(!preg_match("/^[a-zA-Z_][a-zA-Z0-9_\-\[\]]+$/", $name)) {
 			throw new Exception("Invalid input name: $name");
 		}
 		return "name=\"$name\"";
@@ -29,7 +29,7 @@ class Oops_Html {
 	 * @return string
 	 */
 	protected static function _putClass($class) {
-		if(!preg_match("/^[a-zA-Z_][a-zA-Z0-9_-\[\] ]+$/", $class)) {
+		if(!preg_match("/^[a-zA-Z_][a-zA-Z0-9_\-\[\] ]+$/", $class)) {
 			throw new Exception("Invalid input name: $class");
 		}
 		return "class=\"$class\"";

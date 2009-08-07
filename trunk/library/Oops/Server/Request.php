@@ -6,11 +6,6 @@
 */
 
 /**
-* Check if Oops is loaded
-*/
-if(!defined("OOPS_Loaded")) die("OOPS not found");
-
-/**
 * OOPS Request object handing
 * @abstract
 */
@@ -28,32 +23,36 @@ class Oops_Server_Request {
 	public $query;
 	public $fragment;
 
+
+	public function __get($key) {
+		return $this->get($key);
+	}
 	
-	function get($key) {
+	public function get($key) {
 		return isset($this->_params[$key])?$this->_params[$key]:null;
 	}
 
-	function getKeys() {
+	public function getKeys() {
 		return array_keys($this->_params);
 	}
 
-	function getBody() {
+	public function getBody() {
 		return isset($this->_body)?$this->_body:null;
 	}
 
-	function getHeader($key) {
+	public function getHeader($key) {
 		return isset($this->_headers[$key])?$this->_headers[$key]:null;
 	}
 
-	function getHost() {
+	public function getHost() {
 		return isset($this->host)?$this->host:null;
 	}
 
-	function getPath() {
+	public function getPath() {
 		return isset($this->path)?$this->path:'';
 	}
 	
-	function getResourcePath() {
+	public function getResourcePath() {
 		if(!isset($this->path)) {
 			return '';
 		} elseif(substr($this->path,-1,1) == '/') {
@@ -63,17 +62,17 @@ class Oops_Server_Request {
 		else return dirname($this->path).'/';
 	}
 
-	function getQuery() {
+	public function getQuery() {
 		return isset($this->query)?$this->query:'';
 	}
 
-	function getUri() {
+	public function getUri() {
 		$uri = $this->path;
 		if(strlen($this->query)) $uri .= "?{$this->query}";
 		return $uri;
 	}
 
-	function getUrl() {
+	public function getUrl() {
 		$uri = $this->getUri();
 		if(!strlen($this->host)) return $uri;
 

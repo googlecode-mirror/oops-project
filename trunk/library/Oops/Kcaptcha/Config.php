@@ -1,8 +1,6 @@
 <?php
 
-require_once("Oops/Object.php");
-
-class Oops_Kcaptcha_Config extends Oops_Object {
+class Oops_Kcaptcha_Config {
 
 	/**
 	* @var string Do not change without changing font files!

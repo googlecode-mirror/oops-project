@@ -4,8 +4,6 @@
 * @subpackage Server
 */
 
-if(!defined("OOPS_Loaded")) die("OOPS not loaded");
-
 require_once("Oops/Server.php");
 
 /**

@@ -21,10 +21,10 @@ class Oops_Utils {
 	public static function ToArray(&$a) {
 		if(is_array($a)) return;
 		if(!is_null($a) && $a !== false) {
-			$a = array ($a );
+			$a = array($a );
 			return;
 		}
-		$a = array ();
+		$a = array();
 	}
 
 	/**
@@ -86,11 +86,11 @@ class Oops_Utils {
 	 * @access public
 	 * @static Utils::Tree2Line()
 	 * 
-	 * Используется:
+	 * О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫:
 	 * comments_assembler::ToLine();
 	 */
 	public static function Tree2Line(&$Tree, $childrenId = "Children", $levelId = 'Level') {
-		$ret = array ();
+		$ret = array();
 		Oops_Utils::_Tree2Line($ret, $Tree, $childrenId, $levelId, 0);
 		return $ret;
 	}
@@ -107,14 +107,12 @@ class Oops_Utils {
 	 * @access public
 	 */
 	protected static function _Tree2Line(&$ret, &$Tree, $childrenId, $levelId, $Level = 0) {
-		if($count = count($Tree)) {
-			for($i = 0; $i < $count; $i++) {
-				$ret[] = $Tree[$i];
-				unset($ret[count($ret) - 1][$childrenId]);
-				$ret[count($ret) - 1][$childrenId][$levelId] = $Level;
-				if(isset($Tree[$i][$childrenId])) {
-					Utils::_Tree2Line($ret, $Tree[$i][$childrenId], $childrenId, $levelId, $Level + 1);
-				}
+		for($i = 0, $count = count($Tree); $i < $count; $i++) {
+			$ret[] = $Tree[$i];
+			unset($ret[count($ret) - 1][$childrenId]);
+			$ret[count($ret) - 1][$childrenId][$levelId] = $Level;
+			if(isset($Tree[$i][$childrenId])) {
+				Utils::_Tree2Line($ret, $Tree[$i][$childrenId], $childrenId, $levelId, $Level + 1);
 			}
 		}
 	}
@@ -126,7 +124,7 @@ class Oops_Utils {
 	 * @return array
 	 */
 	public static function Line2Tree($Line, $ParentID = 'parent', $childrenId = 'children', $skipIfNoKey = false) {
-		$ret = array ();
+		$ret = array();
 		foreach($Line as $k => $v) {
 			if(!isset($v[$ParentID])) { //NULL is like !isset - No Parent
 				$Line[$k][$ParentID] = false;
@@ -139,11 +137,11 @@ class Oops_Utils {
 				$ret[$k] = & $Line[$k];
 				continue;
 			}
-			if(!isset($Line[$Parent][$childrenId]) || !is_array($Line[$Parent][$childrenId])) $Line[$Parent][$childrenId] = array ();
+			if(!isset($Line[$Parent][$childrenId]) || !is_array($Line[$Parent][$childrenId])) $Line[$Parent][$childrenId] = array();
 			$Line[$Parent][$childrenId][$k] = &$Line[$k];
 		}
 		if(true && $skipIfNoKey !== false) {
-			$dontskip = array ();
+			$dontskip = array();
 			foreach($Line as $k => $v) {
 				if(array_key_exists($skipIfNoKey, $v)) {
 					while($k) {

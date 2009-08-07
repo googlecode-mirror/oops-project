@@ -1,5 +1,4 @@
 <?
-
 /**
  * @package Oops
  * @subpackage Template
@@ -10,7 +9,7 @@
 /**
  * Class for evaluating templates
  */
-class Oops_Template extends Oops_Object {
+class Oops_Template {
 	/**
 	 * State of the template
 	 *

@@ -143,7 +143,7 @@ class Oops_Sql_Common {
 		$where = join(' AND ', $wheres);
 		
 		$query = "DELETE FROM `$table` WHERE $where";
-		Oops_Sql::Query();
+		Oops_Sql::Query($query);
 		return mysql_affected_rows();
 	}
 

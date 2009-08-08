@@ -113,9 +113,10 @@ class Oops_Process_Storage implements Oops_Storage_Interface {
 		
 		if(is_object($data)) {
 			// @todo Check for class interfaces to decide how to recover object id
-			if(method_exists($data, 'getId')) {
+			$class = get_class($data);
+			$reflectionClass = new ReflectionClass($class);
+			if($reflectionClass->implementsInterface('Oops_Pattern_Identifiable_Interface')) {
 				$id = $data->getId();
-				$class = get_class($data);
 				return array($class, $id, '');
 			}
 		}
@@ -133,7 +134,9 @@ class Oops_Process_Storage implements Oops_Storage_Interface {
 	 */
 	protected function _decomposeData($class, $id, $serialized) {
 		if(strlen($serialized)) {
-			// @todo Use Oops_Error_Handler, throw exception on unserialize failure
+			/**
+			 * Object (or data) should be restored from serialized string 
+			 */
 			require_once("Oops/Error/Handler.php");
 			$eH = new Oops_Error_Handler();
 			
@@ -145,8 +148,24 @@ class Oops_Process_Storage implements Oops_Storage_Interface {
 			}
 			
 		} elseif(strlen($class) && Oops_Loader::find($class)) {
-			// @todo Check for $class interfaces, use $class::getInstance or Factory if any
-			$result = new $class($id);
+			// @todo Check for factory interface and use Factory constructor if any
+			$reflectionClass = new ReflectionClass($class);
+			if($reflectionClass->implementsInterface('Oops_Pattern_Identifiable_Singleton_Interface')) {
+				/**
+				 * This object can be restored using $class::getInstance($id)
+				 */
+				$result =& call_user_func(array($class, 'getInstance'), $id);
+			} elseif($reflectionClass->implementsInterface('Oops_Pattern_Singleton_Interface')) {
+				/**
+				 * This object is the single available instance of this class, so it can be restored using $class::getInstance()
+				 */
+				$result =& call_user_func(array($class, 'getInstance'));
+			} else {
+				/**
+				 * This type of object should be constructed with given $id
+				 */
+				$result = $reflectionClass->newInstance($id);
+			}
 		} else {
 			throw new Exception("Decomposition Error");
 		}

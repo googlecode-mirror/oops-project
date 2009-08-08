@@ -5,7 +5,7 @@ require_once ("Oops/Sql.php");
 
 // @todo refactor to Oops_Process_Storage_Database, or use it, or extend Oops_Storage_Database
 // @todo use stdClass or Oops_Process_Storage_Element instead of array in _composeData and _decomposeData methods
-// @todo use some database abstraction layer for select/insert/replace/delete operations 
+// @todo use some database abstraction layer for select operations 
 /**
  * 
  * @author Dmitry Ivanov
@@ -15,9 +15,10 @@ require_once ("Oops/Sql.php");
 class Oops_Process_Storage implements Oops_Storage_Interface {
 	private $_tableProcesses = 'processes';
 	private $_tableProcessData = 'processData';
+	private $_tableProcessTickets = 'processTickets';
+	private $_tableProcessRoles = 'processRoles';
 	
 	private $_cached = array();
-	
 
 	public function __construct() {
 		//@todo Init database settings
@@ -28,17 +29,17 @@ class Oops_Process_Storage implements Oops_Storage_Interface {
 	 * @return array Process Data
 	 */
 	public function get($pid) {
-		// @todo cache results using _cacheGet _cacheSet
 		if(isset($this->_cached[$pid])) return $this->_cached[$pid];
-		 
+		
 		if(preg_match('/[^a-zA-Z0-9_]/', $pid)) {
-			// @todo Throw exception here
-			return false;
+			require_once ("Oops/Process/Exception.php");
+			throw new Oops_Process_Exception("Invalid pid", OOPS_PROCESS_EXCEPTION_INVALID_PID);
 		}
-		$r = Oops_Sql::Query("SELECT class, currentState FROM {$this->_tableProcesses} WHERE pid = '$pid'");
+		$r = Oops_Sql::Query("SELECT `class`, `currentState` FROM {$this->_tableProcesses} WHERE pid = '$pid'");
 		switch(mysql_num_rows($r)) {
 			case 0:
-				return false;
+				require_once ("Oops/Process/Exception.php");
+				throw new Oops_Process_Exception("Process not found", OOPS_PROCESS_EXCEPTION_NOT_FOUND);
 			case 1:
 				$ret = mysql_fetch_assoc($r);
 				$ret['variables'] = array();
@@ -59,8 +60,8 @@ class Oops_Process_Storage implements Oops_Storage_Interface {
 				$this->_cached[$pid] = $ret;
 				return $ret;
 			default:
-				// @todo throw database error exception
-				return false;
+				require_once ("Oops/Process/Exception.php");
+				throw new Oops_Process_Exception("Process storage error", OOPS_PROCESS_EXCEPTION_NOT_FOUND);
 		}
 	}
 
@@ -72,11 +73,11 @@ class Oops_Process_Storage implements Oops_Storage_Interface {
 	 */
 	public function set($pid, $data) {
 		if(!strlen($pid)) {
-			require_once("Oops/Process/Exception.php");
+			require_once ("Oops/Process/Exception.php");
 			throw new Oops_Process_Exception("Can not store process without id", OOPS_PROCESS_EXCEPTION_NO_PID);
 		}
 		if(!isset($data['class'])) {
-			require_once("Oops/Process/Exception.php");
+			require_once ("Oops/Process/Exception.php");
 			throw new Oops_Process_Exception("Proceess class not defined", OOPS_PROCESS_EXCEPTION_NO_CLASS);
 		}
 		
@@ -85,22 +86,31 @@ class Oops_Process_Storage implements Oops_Storage_Interface {
 		/**
 		 * First store process class and state
 		 */
-		$class = Oops_Sql::Escape($data['class']);
-		$currentState = Oops_Sql::Escape($data['currentState']);
+		require_once ("Oops/Sql/Common.php");
+		Oops_Sql_Common::replace($this->_tableProcesses, array(
+			'pid' => $pid, 
+			'class' => $data['class'], 
+			'currentState' => $data['currentState'] ));
 		
-		Oops_Sql::Query("REPLACE INTO {$this->_tableProcesses} (pid, class, currentState) VALUES ('$pid', '$class', '$currentState')");
+		/**
+		 * Now let's store ticket
+		 */
+		Oops_Sql_Common::insert($this->_tableProcessTickets, array(
+			'pid' => $pid, 
+			'serialized' => $data['ticket'] ));
 		
+		/**
+		 * Finally store process variables
+		 */
 		foreach($data['variables'] as $name => $value) {
 			list($class, $id, $serialized) = $this->_composeData($value);
-			Oops_Sql::EscapeIt($class);
-			Oops_Sql::EscapeIt($id);
-			Oops_Sql::EscapeIt($serialized);
-			$valuesArray[] = "('$pid', '$name', '$class', '$id', '$serialized')";
+			$variable = array(
+				'pid' => $pid, 
+				'class' => $class, 
+				'id' => $id, 
+				'serialized' => $serialized );
+			Oops_Sql_Common::replace($this->_tableProcessData, $variable);
 		}
-		$values = join(', ', $valuesArray);
-		$keys = '(pid, name, class, id, serialized)';
-		Oops_Sql::Query("REPLACE INTO {$this->_tableProcessData} $keys values $values");
-		
 	}
 
 	/**
@@ -112,16 +122,15 @@ class Oops_Process_Storage implements Oops_Storage_Interface {
 	protected function _composeData($data) {
 		
 		if(is_object($data)) {
-			// @todo Check for class interfaces to decide how to recover object id
 			$class = get_class($data);
 			$reflectionClass = new ReflectionClass($class);
 			if($reflectionClass->implementsInterface('Oops_Pattern_Identifiable_Interface')) {
 				$id = $data->getId();
-				return array($class, $id, '');
+				return array($class, $id, '' );
 			}
 		}
 		
-		return array('','',serialize($data));
+		return array('', '', serialize($data) );
 	}
 
 	/**
@@ -137,7 +146,7 @@ class Oops_Process_Storage implements Oops_Storage_Interface {
 			/**
 			 * Object (or data) should be restored from serialized string 
 			 */
-			require_once("Oops/Error/Handler.php");
+			require_once ("Oops/Error/Handler.php");
 			$eH = new Oops_Error_Handler();
 			
 			$result = unserialize($serialized);
@@ -146,7 +155,7 @@ class Oops_Process_Storage implements Oops_Storage_Interface {
 			if(!$eH->isClear()) {
 				throw new Exception("Decomposition Error");
 			}
-			
+		
 		} elseif(strlen($class) && Oops_Loader::find($class)) {
 			// @todo Check for factory interface and use Factory constructor if any
 			$reflectionClass = new ReflectionClass($class);
@@ -154,12 +163,12 @@ class Oops_Process_Storage implements Oops_Storage_Interface {
 				/**
 				 * This object can be restored using $class::getInstance($id)
 				 */
-				$result =& call_user_func(array($class, 'getInstance'), $id);
+				$result = & call_user_func(array($class, 'getInstance' ), $id);
 			} elseif($reflectionClass->implementsInterface('Oops_Pattern_Singleton_Interface')) {
 				/**
 				 * This object is the single available instance of this class, so it can be restored using $class::getInstance()
 				 */
-				$result =& call_user_func(array($class, 'getInstance'));
+				$result = & call_user_func(array($class, 'getInstance' ));
 			} else {
 				/**
 				 * This type of object should be constructed with given $id
@@ -178,30 +187,31 @@ class Oops_Process_Storage implements Oops_Storage_Interface {
 	 * @return string Stored process class
 	 */
 	protected function getClass($pid) {
-		//@todo define getClass function
+		$stored = self::get($pid);
+		return $stored['class'];
 	}
-	
+
 	/**
 	 * (non-PHPdoc)
 	 * @see Oops/Storage/Oops_Storage_Interface#add($id, $value)
 	 */
 	public function add($pid, $data) {
-		throw new Exception(__CLASS__. "::" . __FUNCTION__ ." not implemented yet");
+		throw new Exception(__CLASS__ . "::" . __FUNCTION__ . " not implemented yet");
 	}
-	
+
 	/**
 	 * (non-PHPdoc)
 	 * @see Oops/Storage/Oops_Storage_Interface#replace($id, $value)
 	 */
 	public function replace($pid, $data) {
-		throw new Exception(__CLASS__. "::" . __FUNCTION__ ." not implemented yet");
+		throw new Exception(__CLASS__ . "::" . __FUNCTION__ . " not implemented yet");
 	}
-	
+
 	/**
 	 * (non-PHPdoc)
 	 * @see Oops/Storage/Oops_Storage_Interface#delete($id)
 	 */
 	public function delete($pid) {
-		throw new Exception(__CLASS__. "::" . __FUNCTION__ ." not implemented yet");
+		throw new Exception(__CLASS__ . "::" . __FUNCTION__ . " not implemented yet");
 	}
 }

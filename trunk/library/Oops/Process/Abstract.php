@@ -1,7 +1,8 @@
 <?php
 
-// @todo Invode _store method somewhere
-// @todo Request document for transition 
+// @todo Request document for transition (almost complete - tickets)
+// @todo Check for code duplication in init and setState methods.
+
 
 /**
  * 
@@ -36,13 +37,18 @@ abstract class Oops_Process_Abstract {
 	 */
 	protected $_variables = array();
 	
-	
 	/**
 	 * Transitions priority matrix
 	 * stateA => array(stateB, stateC) - in order of precedence
 	 * @var array
 	 */
 	protected $_transitions = array();
+	
+	/**
+	 * Any kind of additional operational process data to be places on input and not stored as process variables
+	 * @var unknown_type
+	 */
+	protected $_extra = array();
 
 	/**
 	 * Input variables go here 
@@ -68,7 +74,8 @@ abstract class Oops_Process_Abstract {
 	
 	/**
 	 * Transition actions go here
-	 * Should be defined as (void) protected function action_$StateA_$StateB
+	 * Should be defined as protected function action_$StateA_$StateB
+	 * Can return Oops_Process_Ticket_Interface object to be stored as corresponding document
 	 */
 	
 	/**
@@ -117,7 +124,7 @@ abstract class Oops_Process_Abstract {
 			case 'pid':
 			case 'state':
 			case 'currentState':
-				require_once("Oops/Process/Exception.php");
+				require_once ("Oops/Process/Exception.php");
 				throw new Oops_Process_Exception("Restricted", OOPS_PROCESS_EXCEPTION_RESTRICTED_SETTER);
 		}
 	}
@@ -146,7 +153,9 @@ abstract class Oops_Process_Abstract {
 		/**
 		 * Check if process can and should leave it's curent state 
 		 */
-		$stateDecisionMakerFunction = array($this, '_dM_' . $this->_currentState );
+		$stateDecisionMakerFunction = array(
+			$this, 
+			'_dM_' . $this->_currentState );
 		if(call_user_func($stateDecisionMakerFunction)) {
 			/**
 			 * Try to leave the state, check transitions DMs
@@ -162,7 +171,9 @@ abstract class Oops_Process_Abstract {
 					trigger_error("Process/TransitionsDefinitionContainsLoopback", E_USER_NOTICE);
 					continue;
 				}
-				$transitionDecisionMakerFunction = array($this, '_dM_' . $this->_currentState . '_' . $state );
+				$transitionDecisionMakerFunction = array(
+					$this, 
+					'_dM_' . $this->_currentState . '_' . $state );
 				if(call_user_func($transitionDecisionMakerFunction)) {
 					/**
 					 * Found the way, initiate transition
@@ -200,20 +211,34 @@ abstract class Oops_Process_Abstract {
 			throw new Oops_Process_Exception('Process was not started, use Init', OOPS_PROCESS_EXCEPTION_INIT_REQUIRED);
 		}
 		
-		// @todo Check whenever transition is valid (defined in $_states property)
+		if(!$this->isValidState($newState)) {
+			require_once ("Oops/Process/Exception.php");
+			throw new Oops_Process_Exception("Invalid state $newState", OOPS_PROCESS_EXCEPTION_INVALID_STATE);
+		}
 		
-
 		/**
 		 * Do the transition
 		 * @var callback
 		 */
-		$actionFunction = array($this, '_action_' . $this->_currentState . '_' . $newState );
-		call_user_func($actionFunction);
+		$actionFunction = array(
+			$this, 
+			'_action_' . $this->_currentState . '_' . $newState );
+		$ticket = call_user_func($actionFunction);
+		
+		if(!is_object($ticket)) {
+			$ticket = new Oops_Process_Ticket_Default();
+		} elseif(!($ticket instanceof Oops_Process_Ticket_Interface)) {
+			/**
+			 * @quiz Do we need exception here?
+			 */
+			throw new Oops_Process_Exception("Invalid ticket");
+		}
 		
 		/** 
 		 * Finally set the new state 
 		 */
 		$this->_currentState = $newState;
+		$this->_store($ticket);
 	}
 
 	/**
@@ -222,7 +247,7 @@ abstract class Oops_Process_Abstract {
 	 * @param array $inputValues - named input values
 	 * @throws Oops_Process_Exception
 	 */
-	public function init($inputValues) {
+	public final function init($inputValues) {
 		/**
 		 * This can't be run if process already initialized
 		 */
@@ -235,32 +260,35 @@ abstract class Oops_Process_Abstract {
 		 */
 		
 		foreach($inputValues as $key => $value) {
-			/**
-			 * @todo Make it's safe
-			 */
 			if($key == 'currentState' || key == 'pid') {
 				require_once ("Oops/Process/Exception.php");
 				throw new Oops_Process_Exception("Invalid input value", OOPS_PROCESS_EXCEPTION_INVALID_INPUT);
 			}
-			$this->{'_' . $key} = $value;
+			if(in_array($key, $this->_variables)) {
+				$this->{'_' . $key} = $value;
+			} else {
+				$this->_extra[$key] = $value;
+			}
 		}
 		
 		/**
-		 * Run custom init action (transition for nowhere to the start position) 
+		 * Run custom init action (transition from nowhere to the start position) 
 		 */
-		$this->_actionStart();
+		$ticket = $this->_actionStart($this->_getStartState());
+		if(!is_object($ticket)) $ticket = new Oops_Process_Ticket_Default();
 		
 		/**
 		 * And only now, if everything ok (no exceptions), let's make a pid for this process
 		 */
 		$this->_pid = Oops_Process_Factory::generatePid();
+		$this->_store();
 	}
 
 	/**
 	 * Init internal values on process creation
 	 * 
 	 * @param string Start state id 
-	 * @return void
+	 * @return Oops_Process_Ticket_Interface
 	 */
 	abstract protected function _actionStart($startState);
 
@@ -282,7 +310,7 @@ abstract class Oops_Process_Abstract {
 			 * Or, object could be constructed for definition purposes
 			 */
 			unset($this->_currentState);
-			
+		
 		} else {
 			/**
 			 * This process is being restored, get process data from Storage
@@ -295,7 +323,7 @@ abstract class Oops_Process_Abstract {
 				/**
 				 * There's no data in storage
 				 */
-				require_once("Oops/Process/Exception.php");
+				require_once ("Oops/Process/Exception.php");
 				throw new Oops_Process_Exception("Process data not found in storage", OOPS_PROCESS_EXCEPTION_NOT_FOUND);
 			}
 			
@@ -308,8 +336,8 @@ abstract class Oops_Process_Abstract {
 				/**
 				 * There's a wrong class being constructed 
 				 */
-				require_once("Oops/Process/Exception.php");
-				throw new Oops_Process_Exception("Constructing ".get_class($this)." for a $class process", OOPS_PROCESS_EXCEPTION_INVALID_CLASS);
+				require_once ("Oops/Process/Exception.php");
+				throw new Oops_Process_Exception("Constructing " . get_class($this) . " for a $class process", OOPS_PROCESS_EXCEPTION_INVALID_CLASS);
 			}
 			
 			$currentState = $data['currentState'];
@@ -323,8 +351,12 @@ abstract class Oops_Process_Abstract {
 			$this->_currentState = $currentState;
 			
 			foreach($data['variables'] as $name => $value) {
-				// @todo Check if $name is defined as process variable
-				$this->{'_' . $name} = $value;
+				if(array_key_exists($name, $this->_variables)) {
+					$this->{'_' . $name} = $value;
+				} else {
+					require_once ("Oops/Process/Exception.php");
+					throw new Oops_Process_Exception("Invalid variable name", OOPS_PROCESS_EXCEPTION_INVALID_INPUT);
+				}
 			}
 			$this->_trigger_reconstructed();
 		}
@@ -351,8 +383,12 @@ abstract class Oops_Process_Abstract {
 	 * 
 	 * @return bool True on success
 	 */
-	protected final function _store() {
-		$data = array('class' => get_class($this), 'currentState' => $this->_currentState, 'variables' => array());
+	protected final function _store($ticket) {
+		$data = array(
+			'class' => get_class($this), 
+			'currentState' => $this->_currentState, 
+			'ticket' => $ticket, 
+			'variables' => array() );
 		foreach($this->_variables as $name => $access) {
 			$data['variables'][$name] = $this->{'_' . $name};
 		}
@@ -365,6 +401,17 @@ abstract class Oops_Process_Abstract {
 		 */
 		$storage = & Oops_Process_Factory::getStorage();
 		return $storage->set($this->_pid, $data);
+	}
+
+	/**
+	 * Returns start position of this process class.
+	 * Method is being inside init, after calling assigning input variables and before calling _setState (that calls _actionStart)
+	 * @redefine-check
+	 * 
+	 * @return string Start position id
+	 */
+	protected function _getStartState() {
+		return $this->_states[0];
 	}
 
 }

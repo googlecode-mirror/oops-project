@@ -29,7 +29,7 @@ class Oops_Sql_Logger {
 		static $connected = false;
 		if(!$connected) {
 			$connected = true;
-			Oops_Sql::Connect();
+			$mysqlLink = Oops_Sql::Connect();
 		}
 		$this->_trace = false;
 		$this->_worktime = 0;
@@ -37,7 +37,7 @@ class Oops_Sql_Logger {
 		$start = (double) $t + $m;
 		
 		$r = Oops_Sql::Query($query);
-		if(mysql_errno()) {
+		if(mysql_errno($mysqlLink)) {
 			$this->_Log($query, 'mysqlerror');
 			return;
 		}
@@ -54,7 +54,7 @@ class Oops_Sql_Logger {
 		if($this->temporary || $this->filesort || $this->all || $this->maxrows || $this->registerKeys) {
 			$tableKeys = array();
 			$rex = Oops_Sql::Query("Explain $query");
-			if(mysql_errno()) return $r;
+			if(mysql_errno($mysqlLink)) return $r;
 			
 			$reasons = array();
 			while(($row = mysql_fetch_assoc($rex)) !== false) {
@@ -122,7 +122,10 @@ class Oops_Sql_Logger {
 	}
 
 	/**
-	 *
+	 * Singleton pattern implementation
+	 * 
+	 * @param string $table Log table
+	 * @return Oops_Sql_Logger
 	 */
 	function &getInstance($table) {
 		if(!is_object(self::$_instance)) self::$_instance = new self($table);

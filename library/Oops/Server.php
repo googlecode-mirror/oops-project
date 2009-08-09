@@ -162,9 +162,8 @@ class Oops_Server {
 			$this->_response = new Oops_Server_Response();
 		}
 		
-		/**
-		 * @todo Use exceptions in PHP5 to check if response is ready (or trigger_error) or just chck the return and call some method for error or redirect response
-		 */
+		//@todo Use exceptions to set response state on error
+		
 		$this->_parseRequest();
 		if($this->_response->isReady()) return $this->_response;
 		
@@ -177,12 +176,10 @@ class Oops_Server {
 		// @todo try to find controller action, then do everything else
 		$this->_initController();
 		if($this->_response->isReady()) return $this->_response;
-		// @todo Controller should return boolean, and data should be in response object?
 		$data = $this->_controller_instance->Run();
 		if($this->_response->isReady()) return $this->_response;
 		
 		//@todo Let the view handler use getRequest and getResponse as it need it
-		
 
 		$this->_view->In($data);
 		$this->_view->Set('controller', $this->_router->controller);

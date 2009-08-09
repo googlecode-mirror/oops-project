@@ -58,7 +58,7 @@ class Oops_Html {
 		$key = strtolower($key);
 		switch($key) {
 			case 'id':
-				// @todo Check for correct id
+				$value = preg_replace('/[^\-_0-9a-zA-Z/', '', $value);
 				return "id=\"$value\"";
 			case 'multiple':
 			case 'disabled':

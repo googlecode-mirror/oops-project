@@ -11,6 +11,7 @@
  * @property-read string  $pid Process Id
  * @property-read string $currentState Process current state
  * @property-read alias $state Alias for currentState
+ * 
  */
 abstract class Oops_Process_Abstract implements Oops_Pattern_Identifiable_Factored_Interface {
 	/**
@@ -110,6 +111,8 @@ abstract class Oops_Process_Abstract implements Oops_Pattern_Identifiable_Factor
 			case 'currentState':
 			case 'state':
 				return $this->_currentState;
+			default:
+				if(in_array($name, $this->_variables)) return $this->{'_'.$name};
 		}
 	}
 
@@ -414,7 +417,7 @@ abstract class Oops_Process_Abstract implements Oops_Pattern_Identifiable_Factor
 		return $this->_states[0];
 	}
 	
-	public static function getFactoryCallback() {
+	public static final function getFactoryCallback() {
 		return array('Oops_Process_Factory', 'getProcess');
 	}
 

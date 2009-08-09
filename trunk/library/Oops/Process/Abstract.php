@@ -420,5 +420,9 @@ abstract class Oops_Process_Abstract implements Oops_Pattern_Identifiable_Factor
 	public static final function getFactoryCallback() {
 		return array('Oops_Process_Factory', 'getProcess');
 	}
+	
+	public final function getId() {
+		return $this->_pid;
+	}
 
 }

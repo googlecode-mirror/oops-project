@@ -12,7 +12,7 @@
  * @property-read string $currentState Process current state
  * @property-read alias $state Alias for currentState
  */
-abstract class Oops_Process_Abstract {
+abstract class Oops_Process_Abstract implements Oops_Pattern_Identifiable_Factored_Interface {
 	/**
 	 * Process ID
 	 * @var string
@@ -399,7 +399,7 @@ abstract class Oops_Process_Abstract {
 		 * 
 		 * @var Oops_Process_Storage $storage
 		 */
-		$storage = & Oops_Process_Factory::getStorage();
+		$storage =& Oops_Process_Factory::getStorage();
 		return $storage->set($this->_pid, $data);
 	}
 
@@ -412,6 +412,10 @@ abstract class Oops_Process_Abstract {
 	 */
 	protected function _getStartState() {
 		return $this->_states[0];
+	}
+	
+	public static function getFactoryCallback() {
+		return array('Oops_Process_Factory', 'getProcess');
 	}
 
 }

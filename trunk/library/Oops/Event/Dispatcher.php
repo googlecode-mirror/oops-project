@@ -46,7 +46,7 @@ class Oops_Event_Dispatcher {
 	 */
 	function addObserver($callback, $event) {
 		if(!is_string($event)) {
-			// @todo throw exception here?
+			// @todo Consider throwing exception here
 			return false;
 		}
 		
@@ -89,7 +89,7 @@ class Oops_Event_Dispatcher {
 		} elseif(is_string($callback) && function_exists($callback)) {
 			$reg = $callback;
 		} else {
-			// @todo throw exception on illegal callback
+			// @todo Consider throwing exception on illegal callback here
 			return false;
 		}
 		return $reg;

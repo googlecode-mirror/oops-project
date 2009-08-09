@@ -53,7 +53,7 @@ class Oops_Process_Factory {
 	/**
 	 * Instantiate process storage object, singleton pattern implemented.
 	 * 
-	 * @return Oops_Project_Storage
+	 * @return Oops_Process_Storage
 	 */
 	static public function &getStorage() {
 		if(!is_object(self::$_storage)) {

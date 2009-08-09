@@ -60,6 +60,12 @@ class Oops_Sql {
 		return false;
 	}
 
+	/**
+	 * Connects to mysql server using server config and returns link identifier.
+	 * If connection already established returns link identifier
+	 * 
+	 * @return resource MySQL link
+	 */
 	public static function Connect() {
 		self::_Init();
 		
@@ -81,9 +87,10 @@ class Oops_Sql {
 	}
 
 	/**
-	 * @todo Use event dispatcher for logger run , add listener for @onBeforeSqlQuery inside the init function
+	 * 
 	 */
 	public static function Query($query, $dieOnError = false) {
+		// @todo Consider using event dispatcher to run logger, adding listener for onBeforeSqlQuery inside the _init function
 		Oops_Sql::Connect();
 		
 		static $loggerEnabled = null;

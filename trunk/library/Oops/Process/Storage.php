@@ -157,8 +157,15 @@ class Oops_Process_Storage implements Oops_Storage_Interface {
 			}
 		
 		} elseif(strlen($class) && Oops_Loader::find($class)) {
-			// @todo Check for factory interface and use Factory constructor if any
 			$reflectionClass = new ReflectionClass($class);
+
+			if($reflectionClass->implementsInterface('Oops_Pattern_Identifiable_Factored_Interface')) {
+				/**
+				 * Object can be restored using corresponding factory
+				 */
+				$factoryCallback = call_user_func($class, 'getFactoryCallback');
+				$result = call_user_func($factoryCallback, $id);
+			}
 			if($reflectionClass->implementsInterface('Oops_Pattern_Identifiable_Singleton_Interface')) {
 				/**
 				 * This object can be restored using $class::getInstance($id)

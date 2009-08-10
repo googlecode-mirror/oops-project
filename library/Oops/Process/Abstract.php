@@ -86,7 +86,7 @@ abstract class Oops_Process_Abstract implements Oops_Pattern_Identifiable_Factor
 	 * @param $method
 	 * @return unknown_type|bool
 	 */
-	protected final function __call($method) {
+	protected final function __call($method, $args) {
 		if(stristr($method, '_dM_') === 0) {
 			/**
 			 * Decision maker is called and it is not defined

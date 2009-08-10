@@ -14,7 +14,9 @@ class Oops_Config {
 	protected $_data = array();
 	public $used = false;
 	protected $_cache = array();
-
+	
+	private static $instances = array();
+	
 	function __construct($data = array(), $keyDelimiter = '.') {
 		if(!is_array($data)) {
 			trigger_error("Config/InvalidConfigData", E_USER_WARNING);

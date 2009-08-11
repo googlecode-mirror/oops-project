@@ -193,8 +193,8 @@ class Oops_Process_Storage implements Oops_Storage_Interface {
 	 * @param string $pid
 	 * @return string Stored process class
 	 */
-	protected function getClass($pid) {
-		$stored = self::get($pid);
+	public function getClass($pid) {
+		$stored = $this->get($pid);
 		return $stored['class'];
 	}
 

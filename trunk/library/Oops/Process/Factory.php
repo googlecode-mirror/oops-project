@@ -63,4 +63,15 @@ class Oops_Process_Factory {
 		}
 		return self::$_storage;
 	}
+	
+	/**
+	 * Generates new process id
+	 * 
+	 * @return string
+	 */
+	static public function generatePid() {
+		// @todo implement this function
+		trigger_error("Function is not implemented yet");
+		return md5(mt_rand(0,100000) . mt_rand(0,100000));
+	}
 }

@@ -53,7 +53,7 @@ class Oops_Form_Controller {
 	 * Events will be named after subject as onBefore$subjectFormShow, onBefore$subjectFormSave and onAfter$subjectFormSave
 	 * 
 	 * @param string $subject form subject
-	 * @return unknown_type
+	 * @return array Flags flagShowForm, flagErrors, flagUpdate, form data, errors and results of afterSave action 
 	 */
 	public function __construct($subject) {
 		$this->subject = $subject;

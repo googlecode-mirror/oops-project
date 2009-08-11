@@ -45,6 +45,12 @@ class Oops_Server {
 	protected $_config;
 	
 	protected $_errorHandler;
+	
+	/**
+	 * @todo Make this interface
+	 * @var Oops_Server_Router_Interface
+	 */
+	protected $_router;
 
 	private function __construct() {
 	}

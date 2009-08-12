@@ -120,7 +120,7 @@ class Oops_Form_Controller {
 		$beforeShowNotification = $this->_dispatcher->post($this->_onBeforeShowEvent);
 		$returnValue['flagShowForm'] = false;
 		$returnValue['flagUpdate'] = false;
-		$returnValue['formData'] = $beforeShowNotification->getAttachedData();
+		$returnValue['attached'] = $beforeShowNotification->getAttachedData();
 		
 		if($beforeShowNotification->isCancelled()) {
 			$returnValue['flagErrors'] = true;
@@ -143,6 +143,10 @@ class Oops_Form_Controller {
 			 * @var Oops_Form_Notification
 			 */
 			$beforeSaveNotification = $this->_dispatcher->post($this->_onBeforeSaveEvent, $request);
+			$attached = $beforeSaveNotification->getAttachedData();
+			foreach($attached as $k => $v) {
+				$returnValue['attached'][$k] = $v;
+			}
 			if($beforeSaveNotification->isCancelled()) {
 				/**
 				 * Notification was cancelled, collect errors
@@ -160,7 +164,11 @@ class Oops_Form_Controller {
 				$afterSaveNotification = $this->_dispatcher->postNotification($afterSaveNotification);
 				
 				$returnValue['status'] = true;
-				$returnValue['attached'] = $afterSaveNotification->getAttachedData();
+				$attached = $afterSaveNotification->getAttachedData();
+				foreach($attached as $k => $v) {
+					$returnValue['attached'][$k] = $v;
+				}
+				
 				$returnValue['flagShowForm'] = false;
 				$returnValue['flagErrors'] = false;
 			

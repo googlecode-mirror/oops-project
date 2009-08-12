@@ -120,6 +120,7 @@ class Oops_Form_Controller {
 		$beforeShowNotification = $this->_dispatcher->post($this->_onBeforeShowEvent);
 		$returnValue['flagShowForm'] = false;
 		$returnValue['flagUpdate'] = false;
+		$returnValue['formData'] = $beforeShowNotification->getAttachedData();
 		
 		if($beforeShowNotification->isCancelled()) {
 			$returnValue['flagErrors'] = true;
@@ -130,7 +131,6 @@ class Oops_Form_Controller {
 		
 		$returnValue['flagShowForm'] = true;
 		$returnValue['flagErrors'] = false;
-		$returnValue['formData'] = $beforeShowNotification->getAttachedData();
 		
 		/**
 		 * If there's update flag, try to save the sumbitted values

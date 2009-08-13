@@ -67,7 +67,7 @@ class Oops_Event_Notification {
 	}
 
 	function getAttachedData($mergeTo = null) {
-		if(!is_array($mergeTo)) {
+		if(is_array($mergeTo)) {
 			return array_merge($mergeTo, $this->_attached);
 		}
 		return $this->_attached;

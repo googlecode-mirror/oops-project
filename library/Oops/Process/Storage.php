@@ -146,14 +146,15 @@ class Oops_Process_Storage implements Oops_Storage_Interface {
 			/**
 			 * Object (or data) should be restored from serialized string 
 			 */
-			require_once ("Oops/Error/Handler.php");
+			require_once 'Oops/Error/Handler.php';
 			$eH = new Oops_Error_Handler();
 			
 			$result = unserialize($serialized);
 			
 			restore_error_handler();
 			if(!$eH->isClear()) {
-				throw new Exception("Decomposition Error");
+				require_once 'Oops/Process/Exception.php';
+				throw new Oops_Process_Exception("Process stored data decomposition error", OOPS_PROCESS_EXCEPTION_DECOMPOSITION_ERROR);
 			}
 		
 		} elseif(strlen($class) && Oops_Loader::find($class)) {
@@ -183,7 +184,8 @@ class Oops_Process_Storage implements Oops_Storage_Interface {
 				$result = $reflectionClass->newInstance($id);
 			}
 		} else {
-			throw new Exception("Decomposition Error");
+				require_once 'Oops/Process/Exception.php';
+				throw new Oops_Process_Exception("Process stored data decomposition error", OOPS_PROCESS_EXCEPTION_DECOMPOSITION_ERROR);
 		}
 		return $result;
 	}

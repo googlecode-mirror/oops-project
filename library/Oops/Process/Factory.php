@@ -37,7 +37,7 @@ class Oops_Process_Factory {
 	/**
 	 * 
 	 * @param string $pid
-	 * @return Oops_Process
+	 * @return Oops_Process_Abstract
 	 * @throws Oops_Process_Exception
 	 */
 	static public function &getProcess($pid) {

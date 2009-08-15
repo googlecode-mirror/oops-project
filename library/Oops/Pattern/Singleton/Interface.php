@@ -1,6 +1,5 @@
 <?php
 
 interface Oops_Pattern_Singleton_Interface {
-	public static function &getInstance();
-	private function __construct();
+	public static function getInstance();
 }

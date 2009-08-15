@@ -83,7 +83,7 @@ class Oops_Server {
 			$new->_config = new Oops_Config_Default();
 		}
 		
-		if(is_object($config)) $new->configure($config);
+		$new->configure($config);
 		
 		Oops_Server_Stack::push($new);
 		

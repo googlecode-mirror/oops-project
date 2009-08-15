@@ -4,7 +4,7 @@
 * @subpackage Tutorial
 */
 
-require_once("Oops/Controller.php");
+require_once 'Oops/Controller.php';
 
 /**
 * Custrom controller class example. The only work is to translate request params into output data

@@ -4,7 +4,7 @@
 // @todo Check for code duplication in init and setState methods.
 
 
-require_once("Oops/Pattern/Identifiable/Factored/Interface.php");
+require_once 'Oops/Pattern/Identifiable/Factored/Interface.php';
 
 /**
  * 

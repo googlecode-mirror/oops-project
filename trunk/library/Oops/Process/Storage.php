@@ -171,12 +171,12 @@ class Oops_Process_Storage implements Oops_Storage_Interface {
 				/**
 				 * This object can be restored using $class::getInstance($id)
 				 */
-				$result = & call_user_func(array($class, 'getInstance' ), $id);
+				$result = call_user_func(array($class, 'getInstance' ), $id);
 			} elseif($reflectionClass->implementsInterface('Oops_Pattern_Singleton_Interface')) {
 				/**
 				 * This object is the single available instance of this class, so it can be restored using $class::getInstance()
 				 */
-				$result = & call_user_func(array($class, 'getInstance' ));
+				$result = call_user_func(array($class, 'getInstance' ));
 			} else {
 				/**
 				 * This type of object should be constructed with given $id

@@ -10,10 +10,11 @@
  * OOPS Request object handing
  * @abstract
  */
-class Oops_Server_Request {
+class Oops_Server_Request implements ArrayAccess, Countable, Iterator {
 	protected $_params = array();
 	protected $_body = '';
 	protected $_headers = array();
+	protected $_arrayPosition = 0; 
 	
 	public $scheme = 'http';
 	public $host;
@@ -30,6 +31,10 @@ class Oops_Server_Request {
 
 	public function get($key) {
 		return isset($this->_params[$key]) ? $this->_params[$key] : null;
+	}
+	
+	public function getAsArray() {
+		return $this->_params;
 	}
 
 	public function getKeys() {
@@ -90,5 +95,59 @@ class Oops_Server_Request {
 		$url = "{$this->scheme}://$host" . $uri;
 		return $url;
 	}
-
+	
+	/**
+	 * ArrayAccess interface methods
+	 */
+	public function offsetExists($offset) {
+		return array_key_exists($offset, $this->_params);
+	}
+	
+	public function offsetGet($offset) {
+		return $this->get($offset);
+	}
+	
+	public function offsetSet($offset, $value) {
+		/**
+		 * Protected
+		 */
+		return false;
+	}
+	
+	public function offsetUnset($offset) {
+		return false;
+	}
+	
+	/**
+	 * Countable insterface method
+	 */
+	public function count() {
+		return count($this->_params);
+	}
+	
+	/**
+	 * Iterator interface method
+	 */
+	public function current() {
+		return current($this->_params);
+	}
+	
+	public function key() {
+		return key($this->_params);
+	}
+	
+	public function next() {
+		++$this->_arrayPosition;
+		next($this->_params);
+	}
+	
+	public function rewind() {
+		$this->_arrayPosition = 0;
+		rewind($this->_params);
+	}
+	
+	public function valid() {
+		if($this->_arrayPosition < count($this->_params) && $this->_arrayPosition >= 0) return true;
+		return false;
+	}
 }

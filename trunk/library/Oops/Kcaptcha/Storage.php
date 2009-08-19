@@ -21,14 +21,16 @@ class Oops_Kcaptcha_Storage {
 	public function Store($string) {
 		$k = $this->config->storage_key;
 
-		@session_start();
+		require_once 'Oops/Session.php';
+		Oops_Session::init();
 
 		if(!is_array($_SESSION[$k])) $_SESSION[$k] = array();
 		if(!in_array($string, $_SESSION[$k])) $_SESSION[$k][]=$string;
 	}
 
 	public function Check($passed, $keep = false) {
-		@session_start();
+		require_once 'Oops/Session.php';
+		Oops_Session::init();
 		$k = $this->config->storage_key;
 
 		if(is_array($_SESSION[$k]) && (($position = array_search($passed, $_SESSION[$k])) !== false)) {

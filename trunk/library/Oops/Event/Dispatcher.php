@@ -8,9 +8,9 @@
  * Event dispatcher class
  */
 class Oops_Event_Dispatcher {
-	var $_name;
-	var $_ro = array();
-	var $_nestedDispatchers = array();
+	protected $_name;
+	protected $_ro = array();
+	protected $_nestedDispatchers = array();
 
 	protected function __construct($name) {
 		$this->_name = $name;
@@ -22,7 +22,7 @@ class Oops_Event_Dispatcher {
 	 * @param string $name Name of the notification dispatcher. Default notification dispatcher is named __default.
 	 * @return object Oops_Event_Dispatcher
 	 */
-	function &getInstance($name = '__default') {
+	function getInstance($name = '__default') {
 		static $dispatchers = array();
 		$name = strtolower($name);
 		if(!isset($dispatchers[$name])) {
@@ -55,7 +55,7 @@ class Oops_Event_Dispatcher {
 		}
 		
 		if(!isset($this->_ro[$event])) {
-			$this->_ro[$event] = array($reg => $callback );
+			$this->_ro[$event] = array($reg => $callback);
 		} else {
 			if(isset($this->_ro[$event][$reg])) return false;
 			$this->_ro[$event][$reg] = $callback;
@@ -101,9 +101,9 @@ class Oops_Event_Dispatcher {
 	 * @param mixed    Event information of any kind
 	 * @return object  The notification object
 	 */
-	function &post($event, $info = array()) {
+	function post($event, $info = array()) {
 		require_once ("Oops/Event/Notification.php");
-		$notification = & new Oops_Event_Notification($event, $info);
+		$notification = new Oops_Event_Notification($event, $info);
 		return $this->postNotification($notification);
 	
 	}
@@ -113,7 +113,7 @@ class Oops_Event_Dispatcher {
 	 * @param object   The notification object
 	 * @return object  The notification object //!!!! not necessary
 	 */
-	function &postNotification(&$notification) {
+	function postNotification($notification) {
 		$event = $notification->getEvent();
 		if(!isset($this->_ro[$event])) return $notification;
 		foreach($this->_ro[$event] as $callback) {
@@ -122,10 +122,46 @@ class Oops_Event_Dispatcher {
 				require_once ("Oops/Loader.php");
 				Oops_Loader::load($callback[0]);
 			}
-			call_user_func_array($callback, array(&$notification ));
+			call_user_func_array($callback, array($notification));
 		}
 		/* Here to call nested dispatchers and pending observers */
+		foreach($this->_nestedDispatchers as $nestedDispatcher) {
+			$notification = $nestedDispatcher->postNotification($notification);
+		}
+		
 		return $notification;
+	}
+
+	function addNestedDispatcher($dispatcher) {
+		if(!is_object($dispatcher)) {
+			/**
+			 * consider throwing exception here
+			 */
+			return false;
+		}
+		$dispatcherName = $dispatcher->getName();
+		if(!isset($this->_nestedDispatchers[$dispatcherName])) {
+			$this->_nestedDispatchers[$dispatcherName] = $dispatcher;
+			return true;
+		}
+		return false;
+	}
+
+	function removeNestedDispatcher($dispatcher) {
+		$dispatcherName = (string) $dispatcher;
+		if(isset($this->_nestedDispatchers[$dispatcherName])) {
+			unset($this->_nestedDispatchers[$dispatcher]);
+			return true;
+		}
+		return false;
+	}
+
+	function getName() {
+		return $this->_name;
+	}
+
+	function __toString() {
+		return $this->_name;
 	}
 
 }

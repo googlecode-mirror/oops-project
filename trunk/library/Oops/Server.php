@@ -59,9 +59,9 @@ class Oops_Server {
 	 * Singleton pattern implementation
 	 * @return Oops_Server The current server object which is the last server in stack
 	 */
-	public static function &getInstance() {
-		require_once ("Oops/Server/Stack.php");
-		$instance = & Oops_Server_Stack::last();
+	public static function getInstance() {
+		require_once 'Oops/Server/Stack.php';
+		$instance = Oops_Server_Stack::last();
 		if(!is_object($instance)) $instance = new Oops_Server();
 		return $instance;
 	}
@@ -71,15 +71,15 @@ class Oops_Server {
 	 * @param Oops_Config Config for the new server instance
 	 * @return Oops_Server
 	 */
-	public static function &newInstance($config = null) {
+	public static function newInstance($config = null) {
 		$new = new Oops_Server();
-		require_once ("Oops/Server/Stack.php");
+		require_once 'Oops/Server/Stack.php';
 		
 		if(Oops_Server_Stack::size()) {
-			$last = & Oops_Server_Stack::last();
+			$last = Oops_Server_Stack::last();
 			$new->_config = $last->_config;
 		} else {
-			require_once ("Oops/Config/Default.php");
+			require_once 'Oops/Config/Default.php';
 			$new->_config = new Oops_Config_Default();
 		}
 		
@@ -90,18 +90,18 @@ class Oops_Server {
 		return $new;
 	}
 
-	public static function &getConfig() {
-		$server = & Oops_Server::getInstance();
+	public static function getConfig() {
+		$server = Oops_Server::getInstance();
 		return $server->_config;
 	}
 
-	public static function &getRequest() {
-		$server = & Oops_Server::getInstance();
+	public static function getRequest() {
+		$server = Oops_Server::getInstance();
 		return $server->_request;
 	}
 
-	public static function &getResponse() {
-		$server = & Oops_Server::getInstance();
+	public static function getResponse() {
+		$server = Oops_Server::getInstance();
 		return $server->_response;
 	}
 
@@ -111,7 +111,7 @@ class Oops_Server {
 	 * @param boolean replace current config or merge with new one (default)
 	 * @return void
 	 */
-	public function configure(&$config, $replace = false) {
+	public function configure($config, $replace = false) {
 		if(is_object($this->_config))
 			$this->_config->mergeConfig($config);
 		else
@@ -333,7 +333,7 @@ class Oops_Server {
 	 */
 	protected function _initView() {
 		require_once ("Oops/Server/View.php");
-		$this->_view = & Oops_Server_View::getInstance($this->_extension);
+		$this->_view = Oops_Server_View::getInstance($this->_extension);
 		
 		if(!is_object($this->_view)) {
 			//suggested view is not available
@@ -348,7 +348,7 @@ class Oops_Server {
 	 */
 	public static function RunHttpDefault() {
 		require_once ("Oops/Config/Ini.php");
-		$server = & Oops_Server::newInstance(new Oops_Config_Ini('application/config/oops.ini'));
+		$server = Oops_Server::newInstance(new Oops_Config_Ini('application/config/oops.ini'));
 		$response = $server->Run();
 		echo $response->toString();
 	}

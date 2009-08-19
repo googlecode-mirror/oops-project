@@ -56,7 +56,7 @@ class Oops_Server_View {
 	* @param string View type (basically request extension)
 	* @return Oops_Server_View
 	*/
-	public static function &getInstance($type) {
+	public static function getInstance($type) {
 		if(($class = Oops_Server_View::_getViewClass($type))!==false) {
 			$ret = new $class;
 		}

@@ -174,7 +174,7 @@ class Oops_Form_Controller {
 				
 				$returnValue['flagShowForm'] = false;
 				$returnValue['flagErrors'] = false;
-				$returnValue['flagComplete'] = false;
+				$returnValue['flagComplete'] = true;
 			
 			}
 		}

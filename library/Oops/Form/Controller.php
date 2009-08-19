@@ -23,6 +23,12 @@ class Oops_Form_Controller {
 	protected $_subject;
 	
 	/**
+	 * Associated dispatcher name
+	 * @var string
+	 */
+	protected $_dispatcherName;
+	
+	/**
 	 * Event to throw before showing the form string id
 	 * @var string
 	 */
@@ -49,14 +55,15 @@ class Oops_Form_Controller {
 	/**
 	 * Constructs new form controller.
 	 * 
-	 * Subject will be used to identify Form_Dispatcher instance
 	 * Events will be named after subject as onBefore$subjectFormShow, onBefore$subjectFormSave and onAfter$subjectFormSave
+	 * dispatcher name is used for instantiating associated (nested) dispatcher
 	 * 
 	 * @param string $subject form subject
 	 * @return array Flags flagShowForm, flagErrors, flagUpdate, form data, errors and results of afterSave action 
 	 */
-	public function __construct($subject) {
+	public function __construct($subject, $dispatcherName = '__default') {
 		$this->subject = $subject;
+		$this->_dispatcherName = $dispatcherName;
 	}
 
 	protected function __set($name, $value) {
@@ -88,7 +95,7 @@ class Oops_Form_Controller {
 
 	protected function _initDispatcher() {
 		if(!isset($this->_dispatcher)) {
-			$this->_dispatcher = new Oops_Form_Dispatcher($this->_subject);
+			$this->_dispatcher = new Oops_Form_Dispatcher($this->_dispatcherName);
 		}
 	}
 
@@ -120,11 +127,12 @@ class Oops_Form_Controller {
 		$beforeShowNotification = $this->_dispatcher->post($this->_onBeforeShowEvent);
 		$returnValue['flagShowForm'] = false;
 		$returnValue['flagUpdate'] = false;
+		$returnValue['flagComplete'] = false;
 		$returnValue['attached'] = $beforeShowNotification->getAttachedData();
 		
 		if($beforeShowNotification->isCancelled()) {
 			$returnValue['flagErrors'] = true;
-			$returnValue['status'] = false;
+			$returnValue['flagStatus'] = false;
 			$returnValue['errors'] = $beforeShowNotification->getFormErrors();
 			return $returnValue;
 		}
@@ -149,7 +157,7 @@ class Oops_Form_Controller {
 				/**
 				 * Notification was cancelled, collect errors
 				 */
-				$returnValue['status'] = false;
+				$returnValue['flagStatus'] = false;
 				$returnValue['flagErrors'] = true;
 				$returnValue['errors'] = $beforeSaveNotification->getFormErrors();
 			} else {
@@ -161,14 +169,14 @@ class Oops_Form_Controller {
 				$afterSaveNotification->attachData('beforeSaveNotification', $beforeSaveNotification);
 				$afterSaveNotification = $this->_dispatcher->postNotification($afterSaveNotification);
 				
-				$returnValue['status'] = true;
+				$returnValue['flagStatus'] = true;
 				$returnValue['attached'] = $afterSaveNotification->getAttachedData($returnValue['attached']);
 				
 				$returnValue['flagShowForm'] = false;
 				$returnValue['flagErrors'] = false;
+				$returnValue['flagComplete'] = false;
 			
 			}
-		} else {
 		}
 		
 		return $returnValue;

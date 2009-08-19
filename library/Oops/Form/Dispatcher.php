@@ -1,10 +1,12 @@
 <?php
 
+require_once 'Oops/Event/Dispatcher.php';
+
 class Oops_Form_Dispatcher extends Oops_Event_Dispatcher {
 	
 	public function __construct($name) {
-		// @todo Solve the problem with Event_Registrator. Now this will not invoke Event_Dispatcher::getInstance. So a nested dispatcher should be used.
-		parent::__construct($name);
+		$dispatcher = Oops_Event_Dispatcher::getInstance($name);
+		$this->addNestedDispatcher($dispatcher);		
 	}
 
 	/**
@@ -13,7 +15,7 @@ class Oops_Form_Dispatcher extends Oops_Event_Dispatcher {
 	 * 
 	 * @return Oops_Form_Notification
 	 */
-	function &post($event, $info = array()) {
+	function post($event, $info = array()) {
 		$notification = new Oops_Form_Notification($event, $info);
 		return $this->postNotification($notification);
 	}

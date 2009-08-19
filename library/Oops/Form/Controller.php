@@ -166,6 +166,7 @@ class Oops_Form_Controller {
 				 */
 				// @todo Let beforeSaveForm observer modify request?
 				$afterSaveNotification = new Oops_Form_Notification($this->_onAfterSaveEvent, $request);
+				// @todo Consider removing this line
 				$afterSaveNotification->attachData('beforeSaveNotification', $beforeSaveNotification);
 				$afterSaveNotification = $this->_dispatcher->postNotification($afterSaveNotification);
 				

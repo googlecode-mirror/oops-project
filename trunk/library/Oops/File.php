@@ -175,7 +175,7 @@ class Oops_File {
 				return true;
 			}
 		} else {
-			if($this->_filename)
+			if(is_file($this->_filename))
 				return @chmod($this->_filename, 0666);
 			elseif(is_dir($this->_filename))
 				return @chmod($this->_filename, 0777);

@@ -31,9 +31,9 @@ class Oops_File {
 			case 'exists':
 				return $this->_exists;
 			case 'type':
-				return $this->type();
+				return $this->_type;
 			case 'size':
-				return $this->size();
+				return $this->_size;
 			case 'dirname':
 				return $this->_dirname;
 			case 'basename':
@@ -46,7 +46,7 @@ class Oops_File {
 		return null;
 	}
 
-	function __set($var) {
+	function __set($var, $value) {
 		return;
 	}
 

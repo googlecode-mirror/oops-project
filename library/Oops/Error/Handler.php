@@ -1,4 +1,4 @@
-<?
+<?php
 /**
 * @package Oops
 * @subpackage Error
@@ -8,7 +8,7 @@
 * Class for handling user errors
 *
 * Usage:
-* <code><?
+* <code>
 *   require_once("Oops/Error/Handler");
 *   $eh = new Oops_Error_Hander();
 *
@@ -42,7 +42,7 @@
 *   //when using PHP4 call destructor manually
 *   $eh->destruct();
 *   unset($eh);
-* ?></code>
+* </code>
 */
 class Oops_Error_Handler {
 

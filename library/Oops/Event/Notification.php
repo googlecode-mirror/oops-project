@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * Default state of the notification
  */

@@ -75,9 +75,7 @@ class Oops_File {
 	}
 
 	protected function _stat() {
-		if(!$this->_exists) return;
-		
-		$pathInfo = pathinfo($this->filename);
+		$pathInfo = pathinfo($this->_filename);
 		$this->_dirname = $pathInfo['dirname'];
 		$this->_basename = $pathInfo['basename'];
 		$this->_extension = $pathInfo['extension'];
@@ -110,10 +108,11 @@ class Oops_File {
 	 * @param $dest string Destination file name
 	 * @return Oops_File
 	 */
-	public function copy($dest) {
+	public function copy($dest, $mode) {
 		$destFile = new Oops_File($dest);
 		$destFile->makeWriteable();
 		if(copy($this->_filename, $dest)) return false;
+		@chmod($dest, $mode);
 		$destFile = null;
 		$destFile = new Oops_File($dest);
 		$destFile->makeWriteable();
@@ -125,12 +124,13 @@ class Oops_File {
 	 * @param string $dest
 	 * @return boolean True if moved successfully
 	 */
-	public function rename($dest) {
+	public function rename($dest, $mode = 0666) {
 		$destFile = new Oops_File($dest);
 		$destFile->makeWriteable();
 		
 		if(rename($this->_filename, $destFile->filename)) {
 			$this->_filename = $destFile->filename;
+			@chmod($this->_filename, $mode);
 			$this->_stat();
 			return true;
 		}
@@ -162,8 +162,8 @@ class Oops_File {
 	 * @return bool True on success
 	 */
 	function makeWriteable() {
-		if($this->isWritable()) return true;
-		if(!$this->exists) {
+		//if($this->isWritable()) return true;
+		if(!$this->_exists) {
 			$dir = new Oops_File($this->_dirname);
 			if(!$dir->exists) {
 				require_once "Oops/File/Utils.php";

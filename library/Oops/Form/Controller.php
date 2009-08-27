@@ -100,8 +100,9 @@ class Oops_Form_Controller {
 	}
 
 	/**
-	 * Do the work
-	 * If there's 'Update' value in $request, try to store submitted values
+	 * Performs task
+	 * 
+	 * If $doUpdate is true then tries to store submitted values
 	 * Returns definitions of the form structure, errors or detailed success status
 	 * 
 	 * @param array $request
@@ -115,8 +116,8 @@ class Oops_Form_Controller {
 		 */
 		$returnValue = array();
 		/**
-		 * Dispather should be initialized to this point, but for now let's get sure
-		 * @todo throw exception if there still no dispatcher?
+		 * Dispatcher should be initialized to this point, but for now let's get sure
+		 * @todo consider throw exception if there still no dispatcher
 		 */
 		$this->_initDispatcher();
 		

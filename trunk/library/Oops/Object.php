@@ -1,4 +1,4 @@
-<?
+<?php
 /**
 * @package Oops
 * @deprecated
@@ -12,7 +12,7 @@
 *   __constructor method is used instead of common PHP4 constructor.
 *
 *   In order to pass variables by reference to the constructor, define PHP4-style constructor like the following:
-*   <code><?
+*   <code>
 *     class Oops_SomeClass extends Oops_Object {
 *        function Oops_SomeClass (&$var) {
 *           $this->__construct($var);
@@ -21,7 +21,7 @@
 *           //constructor code
 *        }
 *     }
-*   ?></code>
+*   </code>
 *
 * @author Dmitry Ivanov
 * @package Oops

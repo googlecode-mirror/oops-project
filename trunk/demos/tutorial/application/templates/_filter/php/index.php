@@ -3,9 +3,9 @@
 
 ?><div class="filter">
 	<h2>Filter template</h2>
-	<div class="indexnumber">Template call index number: <b><?=$this->_num?></b></div>
-	<div class="tplname">called template name: <u><?=$this->_tplname?></u></div>
-	<div class="tplfile">found template file: <u><?=$this->_tplfile?></u></div>
+	<div class="indexnumber">Template call index number: <b><?php echo $this->_num?></b></div>
+	<div class="tplname">called template name: <u><?php echo $this->_tplname?></u></div>
+	<div class="tplfile">found template file: <u><?php echo $this->_tplfile?></u></div>
 
 	<br>This is a filter template, use it to set page layout.<br>
 	Template is addressed using View type (requested file extension), request path and request action.<br>
@@ -18,7 +18,7 @@
 	<code>
 		&lt;?=$this-&gt;Data;?&gt;
 	</code>
-	data<?=$this->Data?>data
+	data<?php echo $this->Data?>data
 
 	<?php echo file_get_contents("oops://local/.subrequest//index.html?key=value+from+template");?>
 

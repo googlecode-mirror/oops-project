@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package Oops
  * @subpackage Template
@@ -34,10 +35,10 @@ class Oops_Template {
 		static $num = 0;
 		$this->_num = ++$num;
 		$this->_tplname = $tplname;
-		require_once ("Oops/Template/Helper.php");
+		require_once 'Oops/Template/Helper.php';
 		if(($this->_tplfile = Oops_Template_Helper::getTemplateFilename($tplname)) !== false) $this->_valid = true;
-		$this->_request = & Oops_Server::getRequest();
-		$this->_response = & Oops_Server::getResponse();
+		$this->_request = Oops_Server::getRequest();
+		$this->_response = Oops_Server::getResponse();
 	}
 
 	/**
@@ -60,7 +61,7 @@ class Oops_Template {
 	 */
 	public static function &getInstance($tplname) {
 		$tplname = strtolower($tplname);
-		static $a = array ();
+		static $a = array();
 		if(!isset($a[$tplname])) $a[$tplname] = new Oops_Template($tplname);
 		return $a[$tplname];
 	}
@@ -79,7 +80,7 @@ class Oops_Template {
 	}
 
 	function store($key, $value = null) {
-		static $store = array ();
+		static $store = array();
 		if(is_null($value))
 			return isset($store[$key]) ? $store[$key] : null;
 		else

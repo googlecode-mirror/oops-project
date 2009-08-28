@@ -22,7 +22,7 @@ class Oops_Template_Helper {
 		static $defaultBasename = '_default.php';
 		
 		if(!isset($templatesPath)) {
-			$config = & Oops_Server::getConfig();
+			$config = Oops_Server::getConfig();
 			$oopsConfig = $config->get('oops');
 			if(is_object($oopsConfig)) $templatesPath = $oopsConfig->get('templates_path');
 			

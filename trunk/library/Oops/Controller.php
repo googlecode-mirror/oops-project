@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package Oops
  */
@@ -10,7 +11,9 @@
  */
 class Oops_Controller {
 	/**
-	 * @deprecated
+	 * Current server instance
+	 * 
+	 * @var Oops_Server
 	 */
 	protected $_server;
 	
@@ -32,9 +35,9 @@ class Oops_Controller {
 	 * @todo Consider using request and response as controller constructor params?
 	 */
 	function __construct() {
-		$this->_server = & Oops_Server::getInstance();
-		$this->_request = & Oops_Server::getRequest();
-		$this->_response = & Oops_Server::getResponse();
+		$this->_server = Oops_Server::getInstance();
+		$this->_request = Oops_Server::getRequest();
+		$this->_response = Oops_Server::getResponse();
 	}
 
 	/**
@@ -99,7 +102,7 @@ class Oops_Controller {
 	 */
 	function getControllerParams() {
 		if(is_object($this->_server)) return $this->_server->get('controller_params');
-		return array ();
+		return array();
 	}
 
 	/**

@@ -57,7 +57,7 @@ class Oops_Config {
 		if(!isset($this->_data[$key])) {
 //			trigger_error("Config/ConfigKeyNotFound/$key", E_USER_NOTICE);
 			// @todo return new Oops_Config, make __toString function returning empty string
-			return null;
+			$this->_data[$key] = new Oops_Config_Fake();
 		}
 		return $this->_data[$key];
 	}
@@ -83,5 +83,9 @@ class Oops_Config {
 				$this->_data[$key] = $config->_data[$key];
 			}
 		}
+	}
+	
+	public function isValidConfig() {
+		return true;
 	}
 }

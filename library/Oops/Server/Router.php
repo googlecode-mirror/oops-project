@@ -43,13 +43,12 @@ class Oops_Server_Router {
 	* @return bool true if routed, false on 'not found'
 	* @todo set controller and other params in a non-conflicting way
 	*/
-	function route(&$request) {
+	function route($request) {
 		//Obtaining path as string and split into parts
 		$parts = explode('/', trim($request->getResourcePath(), '/'));
 		$path = '/' . join('/', $parts);
 
 		$isSuccessful = false;
-
 		if(isset($this->_set[$path])) {
 			//Exact match, document_root requests first of all (if set the root route)
 			$controller = $this->_set[$path];

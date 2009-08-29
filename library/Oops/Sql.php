@@ -127,4 +127,8 @@ class Oops_Sql {
 		$s = self::Escape($s);
 	}
 
+	public static function getConfig() {
+		self::_Init();
+		return self::$_config;
+	}
 }

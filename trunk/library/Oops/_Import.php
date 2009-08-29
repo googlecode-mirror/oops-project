@@ -31,7 +31,7 @@ stream_wrapper_register("oops", "Oops_Server_Stream_Wrapper");
  * @deprecated Use Oops_Sql::Query instead
  */
 function db_query($query, $skiperrors = false) {
-	require_once ('Oops/Sql.php');
+	require_once 'Oops/Sql.php';
 	return Oops_Sql::Query($query, $skiperrors);
 }
 

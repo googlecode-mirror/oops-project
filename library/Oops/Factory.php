@@ -9,21 +9,15 @@
 */
 class Oops_Factory {
 	/**
-	*
+	* @deprecated Use Oops_User_Helper::getUser($userId)
 	*/
-	public static function &getUser($us_id=false) {
-		require_once("Oops/User.php");
+	public static function getUser($us_id=false) {
 		require_once("Oops/User/Helper.php");
-		if($us_id===false) $us_id = Oops_User_Helper::GetID();
-		if(!$us_id) {
-			require_once("Oops/User/Guest.php");
-			return Oops_User_Guest::getInstance();
-		}
-		return Oops_User::getInstance($us_id);
+		return Oops_User_Helper::getUser($us_id);
 	}
 
 	/**
-	* 
+	* @deprecated Use Oops_Session::init()
 	*/
 	public static function initSession() {
 		require_once("Oops/Session.php");

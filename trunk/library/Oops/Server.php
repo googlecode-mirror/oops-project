@@ -40,10 +40,14 @@ class Oops_Server {
 	protected $_controller_instance;
 	
 	/**
-	 *
+	 * @var Oops_Config
 	 */
 	protected $_config;
 	
+	/**
+	 * 
+	 * @var Oops_Error_Handler
+	 */
 	protected $_errorHandler;
 	
 	/**
@@ -90,6 +94,10 @@ class Oops_Server {
 		return $new;
 	}
 
+	/**
+	 * 
+	 * @return Oops_Config Server configuration object
+	 */
 	public static function getConfig() {
 		$server = Oops_Server::getInstance();
 		return $server->_config;
@@ -153,7 +161,7 @@ class Oops_Server {
 	 */
 	public function Run($request = null) {
 		require_once ("Oops/Error/Handler.php");
-		$this->_errorHandler = new Oops_Error_Handler();
+		//$this->_errorHandler = new Oops_Error_Handler();
 		
 		if(!is_object($request)) {
 			require_once ("Oops/Server/Request/Http.php");
@@ -251,10 +259,10 @@ class Oops_Server {
 	}
 
 	protected function _initRouter() {
-		$routerConfig = $this->_config->get('router');
+		$routerConfig = $this->_config->router;
 		if(is_object($routerConfig)) {
 			$routerClass = $routerConfig->class;
-			require_once ("Oops/Loader.php");
+			require_once 'Oops/Loader.php';
 			if(Oops_Loader::find($routerClass)) $this->_router = new $routerClass($routerConfig->source);
 		}
 		if(!is_object($this->_router)) {
@@ -291,8 +299,8 @@ class Oops_Server {
 	function _initController() {
 		$ctrl = $this->_router->controller;
 		if(!Oops_Loader::find($ctrl)) {
-			$this->_response->setCode(500);
 			$this->_response->setHeader("Oops-Error", "Controller $ctrl not found");
+			$this->_response->setCode(500);
 			return;
 		}
 		$this->_controller_instance = new $ctrl();

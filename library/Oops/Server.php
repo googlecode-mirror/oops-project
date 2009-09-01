@@ -103,11 +103,19 @@ class Oops_Server {
 		return $server->_config;
 	}
 
+	/**
+	 * 
+	 * @return Oops_Server_Request Current request object
+	 */
 	public static function getRequest() {
 		$server = Oops_Server::getInstance();
 		return $server->_request;
 	}
 
+	/**
+	 * 
+	 * @return Oops_Server_Response Current response object
+	 */
 	public static function getResponse() {
 		$server = Oops_Server::getInstance();
 		return $server->_response;
@@ -350,7 +358,8 @@ class Oops_Server {
 	}
 
 	/**
-	 * Initial server run using http request and processing http response (use it to prevent errors in index.php at php4
+	 * Initial server run using http request and processing http response
+	 * Uses default config location of ./application/config/oops.ini
 	 *
 	 * @static
 	 */

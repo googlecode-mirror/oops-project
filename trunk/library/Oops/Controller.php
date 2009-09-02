@@ -32,12 +32,20 @@ class Oops_Controller {
 	protected $_response;
 
 	/**
+	 * Current config instance
+	 * 
+	 * @var Oops_Config
+	 */
+	protected $_config;
+	
+	/**
 	 * @todo Consider using request and response as controller constructor params?
 	 */
 	function __construct() {
 		$this->_server = Oops_Server::getInstance();
 		$this->_request = Oops_Server::getRequest();
 		$this->_response = Oops_Server::getResponse();
+		$this->_config = Oops_Server::getConfig();
 	}
 
 	/**

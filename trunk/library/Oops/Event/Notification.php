@@ -1,36 +1,68 @@
 <?php
-/**
- * Default state of the notification
- */
-@define('EVENT_NOTIFICATION_STATE_DEFAULT', 0);
 
 /**
- * Notification has been cancelled
+ * @package Oops
+ * @subpackage Event_Dispatcher
  */
-@define('EVENT_NOTIFICATION_STATE_CANCELLED', 1);
 
+/**
+ * 
+ * @author Dmitry Ivanov <rockmagic@yandex.ru>
+ * 
+ * @property-read string $event Event string ID
+ * @property-read mixed $info Event details
+ * @property-read array $errors Notification errors (if was cancelled with errors)
+ * @property-read array $attached Data attached by observers
+ * @property-read int $_state;
+ *
+ */
 class Oops_Event_Notification {
-	var $_event;
-	var $_info;
-	var $_errors = array();
-	var $_attached = array();
 	
-	var $_state = EVENT_NOTIFICATION_STATE_DEFAULT;
+	const STATE_DEFAULT = 0;
+	const STATE_CANCELLED = 1;
+	
+	protected $_event;
+	protected $_info;
+	protected $_errors = array();
+	protected $_attached = array();
+	protected $_state = self::STATE_DEFAULT;
 
-	function Oops_Event_Notification($event, &$info) {
-		Oops_Event_Notification::__construct($event, $info);
-	}
-
-	function __construct($event, &$info) {
+	/**
+	 * 
+	 * @param string $event Event string ID (ex. onAfterSomethingHappened)
+	 * @param mixed $info Event details
+	 */
+	function __construct($event, $info = null) {
 		$this->_event = $event;
-		$this->_info = & $info;
+		$this->_info = $info;
+	}
+	
+	/**
+	 * Getter
+	 * 
+	 * @ignore
+	 */
+	function __get($name) {
+		switch($name) {
+			case 'event':
+				return $this->_event;
+			case 'info':
+				return $this->_info;
+			case 'errors':
+				return $this->getErrors();
+			case 'attached':
+				return $this->_attached;
+			case 'state':
+				return $this->_state;
+			
+		}
 	}
 
 	function getState() {
 		return $this->_state;
 	}
 
-	function &getInfo() {
+	function getInfo() {
 		return $this->_info;
 	}
 
@@ -38,12 +70,21 @@ class Oops_Event_Notification {
 		return $this->_event;
 	}
 
+	/**
+	 * 
+	 * @return bool True if notification was cancelled
+	 */
 	function isCancelled() {
-		return ($this->_state === EVENT_NOTIFICATION_STATE_CANCELLED ? true : false);
+		return ($this->_state === self::STATE_CANCELLED ? true : false);
 	}
 
+	/**
+	 * Cancels the notification and stores passed error
+	 * 
+	 * @param string $Error
+	 */
 	function Cancel($Error = null) {
-		$this->_state = EVENT_NOTIFICATION_STATE_CANCELLED;
+		$this->_state = self::STATE_CANCELLED;
 		if(!is_null($Error)) {
 			if(is_array($Error))
 				$this->_errors = array_merge($this->_errors, $Error);
@@ -53,15 +94,31 @@ class Oops_Event_Notification {
 		}
 	}
 
-	function GetErrors() {
+	/**
+	 * Returns all errors stored after cancel calls
+	 * 
+	 * @return array Error strings
+	 */
+	function getErrors() {
 		if($this->isCancelled()) return $this->_errors;
 		return null;
 	}
 
+	/**
+	 * Attaches mixed data to notification
+	 * 
+	 * @param string $key Data key (name)
+	 * @param mixed $value Data to attach
+	 */
 	function attachData($key, $value) {
 		$this->_attached[$key] = $value;
 	}
 
+	/**
+	 * Detaches any attached data
+	 * 
+	 * @param string $key Data key
+	 */
 	function detachData($key) {
 		unset($this->_attached[$key]);
 	}

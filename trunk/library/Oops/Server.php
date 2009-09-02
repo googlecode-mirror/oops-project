@@ -7,6 +7,14 @@
 /**
  * Application server object is used to proceed incoming request, init coresponding controller
  * and format the resulting output according to internal settings, data and defined rules
+ * 
+ * @property-read string $uri Request URI
+ * @property-read array $uri_parts Request URI path parts (exploded path)
+ * @property-read string $ext Request extension (view)
+ * @property-read string $extension Request extension (view)
+ * @property-read string $action Requested action
+ * @property-read array $controller_params Controller params (not routed parts of the request path)
+ * @property-read string $controller_ident Controller identification (routed path substring)
  */
 class Oops_Server {
 	/**
@@ -326,6 +334,7 @@ class Oops_Server {
 			case 'uri_parts':
 				return $this->_uri_parts;
 			case 'ext':
+			case 'extension':
 				return $this->_extension;
 			case 'action':
 				return $this->_action;

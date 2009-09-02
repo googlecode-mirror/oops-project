@@ -2,6 +2,7 @@
 
 /**
  * @package Oops
+ * @subpackage Event_Dispatcher
  */
 
 /**

@@ -8,26 +8,26 @@
 * @abstract
 * Server output presentation class
 */
-class Oops_Server_View {
+abstract class Oops_Server_View {
 	/**
 	* @ignore
 	*/
-	var $_in;
+	protected $_in;
 	/**
 	* @ignore
 	*/
-	var $_out;
+	protected $_out;
 	/**
 	* @ignore
 	*/
-	var $_params=array();
+	protected $_params=array();
 
 	/**
 	* Set input value
 	*
 	* @param mixed Input value
 	*/
-	function In(&$var) {
+	public function In(&$var) {
 		$this->_in =& $var;
 	}
 
@@ -37,7 +37,7 @@ class Oops_Server_View {
 	* @param string Param key
 	* @param mixed Value
 	*/
-	function Set($k,$v) {
+	public function Set($k,$v) {
 		$this->_params[$k] = $v;
 	}
 
@@ -46,7 +46,7 @@ class Oops_Server_View {
 	*
 	* @return mixed Output
 	*/
-	function Out() {
+	public function Out() {
 		return $this->_out;
 	}
 
@@ -80,6 +80,7 @@ class Oops_Server_View {
 	public static function isValidView($type) {
 		return (Oops_Server_View::_getViewClass($type)!==false)?true:false;
 	}
-
+	
+	abstract public function getContentType();
 
 }

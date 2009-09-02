@@ -1,9 +1,5 @@
-AddType text/html tab crd pro btab
-
-<IfModule mod_rewrite.c>
-	RewriteEngine on
-	RewriteCond %{REQUEST_FILENAME} !-f
-	RewriteRule .* /index.php [QSA]
-</IfModule>
+RewriteEngine on
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule .* /index.php [QSA]
 
 php_value zlib.output_compression 1

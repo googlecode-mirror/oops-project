@@ -29,6 +29,7 @@ class Oops_Html {
 	 * @return string
 	 */
 	protected static function _putClass($class) {
+		if(!strlen($class)) return '';
 		if(!preg_match("/^[a-zA-Z_][a-zA-Z0-9_\-\[\] ]+$/", $class)) {
 			throw new Exception("Invalid input name: $class");
 		}

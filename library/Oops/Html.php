@@ -29,7 +29,6 @@ class Oops_Html {
 	 * @return string
 	 */
 	protected static function _putClass($class) {
-		if(!strlen($class)) return '';
 		if(!preg_match("/^[a-zA-Z_][a-zA-Z0-9_\-\[\] ]+$/", $class)) {
 			throw new Exception("Invalid input name: $class");
 		}
@@ -89,7 +88,7 @@ class Oops_Html {
 		$params[] = self::_putClass($class);
 		$params[] = self::_putValue($value);
 		if(is_array($extra)) foreach($extra as $key => $value) {
-			self::_putExtra($key, $value, 'text');
+			$params[] = self::_putExtra($key, $value, 'text');
 		}
 		
 		return '<input type="text" ' . join(' ', $params) . '/>';
@@ -108,7 +107,7 @@ class Oops_Html {
 		$params[] = self::_putClass($class);
 		$params[] = self::_putValue($value);
 		if(is_array($extra)) foreach($extra as $key => $value) {
-			self::_putExtra($key, $value, 'password');
+			$params[] = self::_putExtra($key, $value, 'password');
 		}
 		
 		return '<input type="password" ' . join(' ', $params) . '/>';
@@ -126,12 +125,30 @@ class Oops_Html {
 		$params[] = self::_putName($name);
 		$params[] = self::_putClass($class);
 		if(is_array($extra)) foreach($extra as $key => $value) {
-			self::_putExtra($key, $value, 'file');
+			$params[] = self::_putExtra($key, $value, 'file');
 		}
 		
 		return '<input type="file" ' . join(' ', $params) . '/>';
 	}
-
+	
+	/**
+	 * Kapthca field
+	 * 
+	 * @param $name name of HTML element
+	 * @param $params array of additional parameters such as className (CSS), ID, etc
+	 * @return string
+	 */
+   public static function kaptcha($name, $class = '', $extra = array()) {
+		$params = array();
+		$params[] = self::_putName($name);
+		$params[] = self::_putClass($class);
+		if(is_array($extra)) foreach($extra as $key => $value) {
+			$params[] = self::_putExtra($key, $value, 'file');
+		}
+		
+		return '<img src="/kaptcha?rnd' . rand(0,10000) . '" ' . join(' ', $params) . '/>';
+	}
+	
 	/**
 	 * Hidden input
 	 * 
@@ -177,7 +194,7 @@ class Oops_Html {
 		if(is_array($extra)) foreach($extra as $key => $value) {
 			$params[] = self::_putExtra($key, $value, 'submit');
 		}
-		return '<input type="reset" ' . join(' ', $params) . '/>';
+		return '<input type="submit" ' . join(' ', $params) . '/>';
 	}
 
 	/**
@@ -194,7 +211,7 @@ class Oops_Html {
 		if(is_array($extra)) foreach($extra as $key => $value) {
 			$params[] = self::_putExtra($key, $value, 'button');
 		}
-		return '<input type="reset" ' . join(' ', $params) . '/>';
+		return '<input type="button" ' . join(' ', $params) . '/>';
 	}
 
 	/**
@@ -209,7 +226,7 @@ class Oops_Html {
 	 * @return string select tag HTML code
 	 */
 	public static function select($name, array $options, $value = '', $class = '', $empty = false, $extra = array()) {
-		$params = array();
+	    $params = array();
 		$params[] = self::_putName($name);
 		$params[] = self::_putClass($class);
 		if(is_array($extra)) foreach($extra as $key => $value) {
@@ -283,12 +300,12 @@ class Oops_Html {
 	 * @param array $extra extra params
 	 * @return string
 	 */
-	public static function checkbox($name, $label = false, $checked = false, $class = '', array $extra = array()) {
+	public static function checkbox($name, $label = false, $checked = false, $class = '', $extra = array()) {
 		$params = array();
 		$params[] = self::_putName($name);
 		$params[] = self::_putClass($class);
 		if(is_array($extra)) foreach($extra as $key => $value) {
-			self::_putExtra($key, $value, 'password');
+			$params[] = self::_putExtra($key, $value, 'password');
 		}
 		if($checked) $params[] = 'checked';
 		
@@ -317,7 +334,7 @@ class Oops_Html {
 		$params[] = self::_putClass($class);
 		$params[] = self::_putValue($value);
 		if(is_array($extra)) foreach($extra as $key => $value) {
-			self::_putExtra($key, $value, 'password');
+			$params[] = self::_putExtra($key, $value, 'password');
 		}
 		if($checked) $params[] = 'checked';
 		
@@ -339,7 +356,7 @@ class Oops_Html {
 	 * @param array $extra Extra tag params. If 'id' param is given, every button will be marked with given id concatenated with optionValue
 	 * @return string
 	 */
-	public static function radioGroup($name = '', array $options, string $value = null, $class = '', $extra = array()) {
+	public static function radioGroup($name = '', array $options, $value = null, $class = '', $extra = array()) {
 		$out = '';
 		foreach($options as $optionValue => $optionLabel) {
 			$optionExtra = $extra;

@@ -126,7 +126,8 @@ class Oops_File {
 	 */
 	public function rename($dest, $mode = 0666) {
 		$destFile = new Oops_File($dest);
-		$destFile->makeWriteable();
+		// @todo Consider using exception here
+		if(!$destFile->makeWriteable()) return false;
 		
 		if(rename($this->_filename, $destFile->filename)) {
 			$this->_filename = $destFile->filename;

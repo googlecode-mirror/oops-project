@@ -177,7 +177,7 @@ class Oops_Server {
 	 */
 	public function Run($request = null) {
 		require_once ("Oops/Error/Handler.php");
-		//$this->_errorHandler = new Oops_Error_Handler();
+		$this->_errorHandler = new Oops_Error_Handler();
 		
 		if(!is_object($request)) {
 			require_once ("Oops/Server/Request/Http.php");

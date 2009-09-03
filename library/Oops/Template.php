@@ -15,15 +15,19 @@ class Oops_Template {
 	 * State of the template
 	 *
 	 * @access private
+	 * @var bool
 	 */
-	var $_valid = false;
+	private $_valid = true;
+	
+	private $_tplFile;
+	private $_tplName;
 
 	/**
 	 * Tells whenever object is a valid template (template file exists)
 	 *
 	 * @return bool TRUE if valid
 	 */
-	function isValid() {
+	public function isValid() {
 		return $this->_valid;
 	}
 
@@ -31,12 +35,27 @@ class Oops_Template {
 	 * @param string template name
 	 * @access private
 	 */
-	function __construct($tplname) {
+	private function __construct($tplName) {
+		/**
+		 * Numbering templates
+		 */
 		static $num = 0;
 		$this->_num = ++$num;
-		$this->_tplname = $tplname;
+		
+		$this->_tplName = $tplName;
+
+		// @todo move helper initialization to static method
+		
 		require_once 'Oops/Template/Helper.php';
-		if(($this->_tplfile = Oops_Template_Helper::getTemplateFilename($tplname)) !== false) $this->_valid = true;
+		try {
+			/**
+			 * Obtain template file name 
+			 */
+			$this->_tplFile = Oops_Template_Helper::getTemplateFilename($tplName);
+		} catch(Exception $e) {
+			trigger_error($e->getMessage(), E_USER_ERROR);
+		 	$this->_valid = false;
+		}
 		$this->_request = Oops_Server::getRequest();
 		$this->_response = Oops_Server::getResponse();
 	}
@@ -44,11 +63,12 @@ class Oops_Template {
 	/**
 	 * @param mixed Template data, will be accessable as $this->Data
 	 */
-	function out(&$var) {
+	public function out(&$var) {
+		// @todo Eliminate notice when scalar value is passed (can't by passed by reference)
 		if(!$this->_valid) return;
 		$this->Data = & $var;
 		ob_start();
-		include ($this->_tplfile);
+		include ($this->_tplFile);
 		return ob_get_clean();
 	
 	}
@@ -59,7 +79,7 @@ class Oops_Template {
 	 * @static
 	 * @param string template name
 	 */
-	public static function &getInstance($tplname) {
+	public static function getInstance($tplname) {
 		$tplname = strtolower($tplname);
 		static $a = array();
 		if(!isset($a[$tplname])) $a[$tplname] = new Oops_Template($tplname);
@@ -68,11 +88,9 @@ class Oops_Template {
 
 	/**
 	 * Call another template
-	 *
-	 * @access private
 	 */
-	function call($tplname, $data = null) {
-		$template = & Oops_Template::getInstance($tplname);
+	protected function call($tplname, $data = null) {
+		$template = Oops_Template::getInstance($tplname);
 		if($template->isValid()) {
 			if(is_null($data)) $data = & $this->Data;
 			return $template->out($data);

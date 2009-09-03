@@ -2,7 +2,7 @@
 
 class Oops_File_Utils {
 	
-	static $openBasedir;
+	private static $openBasedir;
 
 	/**
 	 * Reads ini setting open_basedir and stores open real paths in class static array 
@@ -36,7 +36,7 @@ class Oops_File_Utils {
 			$subPath .= $parts[$i] . DIRECTORY_SEPARATOR;
 			
 			foreach(self::$openBasedir as $opendir) {
-				if($opendir === $subPath || strpos($opendir . DIRECTORY_SEPARATOR, $subPath) === 0) continue;
+				if($opendir === $subPath || strpos($opendir . DIRECTORY_SEPARATOR, $subPath) === 0) continue 2;
 			}
 			
 			if(is_dir($subPath)) continue;

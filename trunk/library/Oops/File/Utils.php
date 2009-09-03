@@ -34,7 +34,9 @@ class Oops_File_Utils {
 		$subPath = '';
 		for($i = 0, $cnt = count($parts); $i < $cnt; $i++) {
 			$subPath .= $parts[$i] . DIRECTORY_SEPARATOR;
-			
+
+			if($subPath == '/') continue;
+
 			foreach(self::$openBasedir as $opendir) {
 				if($opendir === $subPath || strpos($opendir . DIRECTORY_SEPARATOR, $subPath) === 0) continue 2;
 			}

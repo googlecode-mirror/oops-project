@@ -74,4 +74,24 @@ class Oops_Server_Router {
 		$this->notFoundPath = substr($path,strlen($foundPath)+1);
 		return true;
 	}
+	
+	/**
+	 * Finds first path defined for a given controller class
+	 * 
+	 * @param $controllerClass Controller class
+	 * @return string path without leading and trailing '/'
+	 */
+	public function backRoute($controllerClass) {
+		return array_search($controllerClass, $this->_set);
+	}
+	
+	/**
+	 * Finds all paths defined for a given controller class
+	 * 
+	 * @param $controllerClass Controller class
+	 * @return string array of paths without leading and trailing '/'
+	 */
+	public function backRouteAll($controllerClass) {
+		return array_keys($this->_set, $controllerClass);
+	}
 }

@@ -14,6 +14,8 @@ class Oops_Server_Router {
 	* @access private
 	*/
 	private $_set=array();
+	
+	private $_setLowerCase;
 
 	/*
 	 * @var string Not routed part of a given path
@@ -33,7 +35,8 @@ class Oops_Server_Router {
 	*/
 	function Set($path,$ctrl) {
 		$path = '/'.trim($path,'/');
-			$this->_set[$path] = $ctrl;
+		$this->_set[$path] = $ctrl;
+		$this->_setLowerCase[strtolower($path)] = strtolower($ctrl);
 	}
 
 	/**
@@ -82,7 +85,7 @@ class Oops_Server_Router {
 	 * @return string path without leading and trailing '/'
 	 */
 	public function backRoute($controllerClass) {
-		return array_search($controllerClass, $this->_set);
+		return array_search(strtolower($controllerClass), $this->_setLowerCase);
 	}
 	
 	/**
@@ -92,6 +95,6 @@ class Oops_Server_Router {
 	 * @return string array of paths without leading and trailing '/'
 	 */
 	public function backRouteAll($controllerClass) {
-		return array_keys($this->_set, $controllerClass);
+		return array_keys($this->_setLowerCase, strtolower($controllerClass));
 	}
 }

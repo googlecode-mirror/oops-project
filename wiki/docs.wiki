@@ -1,0 +1,13 @@
+#summary Документация. Developer's guide.
+
+= Introduction =
+
+Здесь надо что-то написать в целом.
+В целом доки надо вести по модулям, описывать принципы работы и приводить примеры кода.
+
+
+= Details =
+
+Список модулей:
+  * Oops_Form_Controller
+  * Oops_Form_Constructor

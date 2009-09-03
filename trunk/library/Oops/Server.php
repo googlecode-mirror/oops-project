@@ -15,6 +15,9 @@
  * @property-read string $action Requested action
  * @property-read array $controller_params Controller params (not routed parts of the request path)
  * @property-read string $controller_ident Controller identification (routed path substring)
+ * @property-read string $controllerClass Router controller class name
+ * @property-read Oops_Server_Router $router Router instance
+ * @property-read Oops_Controller $controller_instance Controller instance
  */
 class Oops_Server {
 	/**
@@ -43,7 +46,6 @@ class Oops_Server {
 	
 	/**
 	 * @var Oops_Controller Associated controller instance
-	 * @access protected
 	 */
 	protected $_controller_instance;
 	
@@ -128,7 +130,12 @@ class Oops_Server {
 		$server = Oops_Server::getInstance();
 		return $server->_response;
 	}
-
+	
+	public static function getRouter() {
+		$server = Oops_Server::getRouter();
+		return $server->_router;
+	}
+	
 	/**
 	 *
 	 * @param Oops_Config new configuration
@@ -342,8 +349,13 @@ class Oops_Server {
 				return $this->_controller_params;
 			case 'controller_ident':
 				return $this->_controller_ident;
+			case 'controller_instance':
+				return $this->_controller_instance;
 			case 'controller':
+			case 'controllerClass':
 				return $this->_router->controller;
+			case 'router':
+				return $this->_router;
 		}
 		return null;
 	}

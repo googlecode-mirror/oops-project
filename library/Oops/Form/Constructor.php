@@ -133,12 +133,12 @@ class Oops_Form_Constructor
             $this->_groupDecorator = new Oops_Form_Constructor_Decorator_Group();  
     }
     
-    /*
+    
     public function __toString()
     {
         return $this->getHtml();
     }
-    */
+    
     
     /**
      * @return string

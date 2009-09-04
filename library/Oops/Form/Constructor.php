@@ -20,12 +20,12 @@ class Oops_Form_Constructor
     /*
      * Form field decorator Obj
      */
-    protected $_fieldDecorator = NULL;
+    protected $_fieldDecorator;
     
      /*
      * Form group decorator Obj
      */
-    protected $_groupDecorator = NULL;
+    protected $_groupDecorator;
     
     /*
      *  Form properties
@@ -41,7 +41,6 @@ class Oops_Form_Constructor
      * @param array $attr  - form tag properties
      * @return void
      */
-    
     public function __construct($attr = false)
     {
         if(empty($attr))
@@ -127,10 +126,10 @@ class Oops_Form_Constructor
 
     protected function _checkDecorators()
     {
-        if($this->_fieldDecorator == NULL)
+        if(!is_object($this->_fieldDecorator))
             $this->_fieldDecorator = new Oops_Form_Constructor_Decorator_Field();
             
-        if($this->_groupDecorator == NULL)
+        if(!is_object($this->_groupDecorator))
             $this->_groupDecorator = new Oops_Form_Constructor_Decorator_Group();  
     }
     
@@ -340,5 +339,3 @@ class Oops_Form_Constructor
         }
     }
 }
-
-?>

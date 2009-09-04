@@ -29,10 +29,10 @@ class Oops_Session {
 	}
 	
 	private static function _initHandler() {
+		// @todo merge given config to the default one to avoid missing fields
 		require_once("Oops/Server.php");
-		$cfg =& Oops_Server::getConfig();
-		$sessCfg = @$cfg->session;
-		if(is_object($sessCfg)) {
+		$sessCfg = Oops_Server::getConfig()->session;
+		if($sessCfg->handler) {
 			$handlerClass = 'Oops_Session_' . $sessCfg->handler;
 			if(Oops_Loader::find($handlerClass)) {
 				self::$session = new $handlerClass($sessCfg);

@@ -42,8 +42,7 @@ class Oops_Sql {
 	protected static function _Init() {
 		if(self::$_initComplete) return;
 		self::$_initComplete = true;
-		$cfg = & Oops_Server::getConfig();
-		self::$_config = $cfg->MySQL;
+		self::$_config = Oops_Server::getConfig()->MySQL;
 	}
 
 	protected static function _initError($message) {

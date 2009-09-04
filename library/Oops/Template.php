@@ -78,6 +78,7 @@ class Oops_Template {
 	 *
 	 * @static
 	 * @param string template name
+	 * @return Oops_Template
 	 */
 	public static function getInstance($tplname) {
 		$tplname = strtolower($tplname);

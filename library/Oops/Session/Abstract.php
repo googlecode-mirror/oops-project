@@ -1,4 +1,5 @@
 <?php
+
 abstract class Oops_Session_Abstract {
 
 	public function __construct($config) {
@@ -7,9 +8,9 @@ abstract class Oops_Session_Abstract {
 			$config = new Oops_Config();
 		}
 
-		if(@$config->name) session_name($config->name);
+		if(strlen($config->name)) session_name($config->name);
 
-		if(@$config->cache_limiter) {
+		if(strlen($config->cache_limiter)) {
 			session_cache_limiter($config->cache_limiter);
 		} else {
 			session_cache_limiter('nocache');

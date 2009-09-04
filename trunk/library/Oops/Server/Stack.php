@@ -32,7 +32,7 @@ class Oops_Server_Stack {
 	*/
 	public static function last() {
 		$stack = Oops_Server_Stack::getInstance();
-		return $stack->_stack[count($stack->_stack)-1];
+		return count($stack->_stack) ? $stack->_stack[count($stack->_stack)-1] : null;
 	}
 
 	/**
@@ -62,7 +62,7 @@ class Oops_Server_Stack {
 		$last = $stack->_stack[count($stack->_stack)-1];
 		$last = null;
 		array_pop($stack->_stack);
-		return $stack->_stack[count($stack->_stack)-1];
+		return count($stack->_stack) ? $stack->_stack[count($stack->_stack)-1] : null;
 	}
 
 	/**

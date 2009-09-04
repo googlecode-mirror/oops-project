@@ -18,6 +18,7 @@
  * @property-read string $controllerClass Router controller class name
  * @property-read Oops_Server_Router $router Router instance
  * @property-read Oops_Controller $controller_instance Controller instance
+ * @property-read Oops_Config $config Server's config instance
  */
 class Oops_Server {
 	/**
@@ -356,6 +357,9 @@ class Oops_Server {
 				return $this->_router->controller;
 			case 'router':
 				return $this->_router;
+			case 'config':
+				return $this->_config;
+					
 		}
 		return null;
 	}

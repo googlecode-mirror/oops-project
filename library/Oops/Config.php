@@ -57,8 +57,7 @@ class Oops_Config {
 		}
 		$key = strtolower($key);
 		if(!isset($this->_data[$key])) {
-			//			trigger_error("Config/ConfigKeyNotFound/$key", E_USER_NOTICE);
-			// @todo return new Oops_Config, make __toString function returning empty string
+			require_once 'Oops/Config/Fake.php';
 			$this->_data[$key] = new Oops_Config_Fake();
 		}
 		return $this->_data[$key];

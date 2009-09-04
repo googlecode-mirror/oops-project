@@ -35,8 +35,31 @@ class Oops_Utils {
 	public static function ToIntArray(&$a, $keepzero = false) {
 		Oops_Utils::ToArray($a);
 		if(count($a)) {
+			$renumberArray = false;
 			foreach($a as $k => $v) {
-				if(!(int) $v && (!$keepzero || $v !== (int) $v)) unset($a[$k]);
+				// If it's an integer value
+				if($v === (int) $v) continue;
+				
+				if(strval($v) == strval((int) $v)) {
+					//it's an integer string
+					$a[$k] = (int) $v;
+					continue;
+				}
+				// it's not an integer string, so it's not valid, assume zero
+				if($keepzero) {
+					//Replace value with 0
+					$a[$k] = 0;
+					continue;
+				}
+				
+				//value should be unset
+				unset($a[$k]);
+				//Trigger a flag to renumber array keys
+				$renumberArray = true;
+				continue;
+			}
+			if($renumberArray) {
+				$a = array_merge(array(), $a);
 			}
 		}
 	}
@@ -86,10 +109,8 @@ class Oops_Utils {
 	 * @access public
 	 * @static Utils::Tree2Line()
 	 * 
-	 * ������������:
-	 * comments_assembler::ToLine();
 	 */
-	public static function Tree2Line(&$Tree, $childrenId = "Children", $levelId = 'Level') {
+	public static function Tree2Line(&$Tree, $childrenId = "children", $levelId = 'level') {
 		$ret = array();
 		Oops_Utils::_Tree2Line($ret, $Tree, $childrenId, $levelId, 0);
 		return $ret;
@@ -107,12 +128,12 @@ class Oops_Utils {
 	 * @access public
 	 */
 	protected static function _Tree2Line(&$ret, &$Tree, $childrenId, $levelId, $Level = 0) {
-		for($i = 0, $count = count($Tree); $i < $count; $i++) {
-			$ret[] = $Tree[$i];
-			unset($ret[count($ret) - 1][$childrenId]);
-			$ret[count($ret) - 1][$childrenId][$levelId] = $Level;
+		foreach(array_keys($Tree) as $i) {
+			$ret[$i] = $Tree[$i];
+			unset($ret[$i][$childrenId]);
+			$ret[$i][$levelId] = $Level;
 			if(isset($Tree[$i][$childrenId])) {
-				Utils::_Tree2Line($ret, $Tree[$i][$childrenId], $childrenId, $levelId, $Level + 1);
+				Oops_Utils::_Tree2Line($ret, $Tree[$i][$childrenId], $childrenId, $levelId, $Level + 1);
 			}
 		}
 	}

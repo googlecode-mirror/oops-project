@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package Oops
  * @subpackage Server
@@ -7,7 +8,7 @@
 /**
  * Application server object is used to proceed incoming request, init coresponding controller
  * and format the resulting output according to internal settings, data and defined rules
- * 
+ *
  * @property-read string $uri Request URI
  * @property-read array $uri_parts Request URI path parts (exploded path)
  * @property-read string $ext Request extension (view)
@@ -56,7 +57,7 @@ class Oops_Server {
 	protected $_config;
 	
 	/**
-	 * 
+	 *
 	 * @var Oops_Error_Handler
 	 */
 	protected $_errorHandler;
@@ -106,7 +107,7 @@ class Oops_Server {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return Oops_Config Server configuration object
 	 */
 	public static function getConfig() {
@@ -115,7 +116,7 @@ class Oops_Server {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return Oops_Server_Request Current request object
 	 */
 	public static function getRequest() {
@@ -124,19 +125,19 @@ class Oops_Server {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return Oops_Server_Response Current response object
 	 */
 	public static function getResponse() {
 		$server = Oops_Server::getInstance();
 		return $server->_response;
 	}
-	
+
 	public static function getRouter() {
 		$server = Oops_Server::getRouter();
 		return $server->_router;
 	}
-	
+
 	/**
 	 *
 	 * @param Oops_Config new configuration
@@ -163,7 +164,7 @@ class Oops_Server {
 		if(is_object($oopsConfig)) {
 			if((bool) @$oopsConfig->register_autoload) {
 				require_once ("Oops/Loader.php");
-				spl_autoload_register(array("Oops_Loader", "load" ));
+				spl_autoload_register(array("Oops_Loader", "load"));
 			}
 			
 			if(strlen($incPath = @$oopsConfig->include_path)) {
@@ -180,54 +181,64 @@ class Oops_Server {
 	 *
 	 * @todo return the Response object, use special function to return a Response for additional processing of error codes (404, 415, 501)
 	 *
-	 * @param string Application ID, reserved for future needs
+	 * @param Oops_Server_Request Request to dispatch
 	 * @return void
 	 */
 	public function Run($request = null) {
 		require_once ("Oops/Error/Handler.php");
 		$this->_errorHandler = new Oops_Error_Handler();
 		
-		if(!is_object($request)) {
-			require_once ("Oops/Server/Request/Http.php");
-			$this->_request = new Oops_Server_Request_Http();
+		try {
 			
-			require_once ("Oops/Server/Response/Http.php");
-			$this->_response = new Oops_Server_Response_Http();
-		} else {
-			$this->_request = $request;
+			if(!is_object($request)) {
+				require_once ("Oops/Server/Request/Http.php");
+				$this->_request = new Oops_Server_Request_Http();
+				
+				require_once ("Oops/Server/Response/Http.php");
+				$this->_response = new Oops_Server_Response_Http();
+			} else {
+				$this->_request = $request;
+				
+				require_once ("Oops/Server/Response.php");
+				$this->_response = new Oops_Server_Response();
+			}
 			
-			require_once ("Oops/Server/Response.php");
-			$this->_response = new Oops_Server_Response();
-		}
-		
-		//@todo Use exceptions to set response state on error
-		
-		$this->_parseRequest();
-		if($this->_response->isReady()) return $this->_response;
-		
-		$this->_initView();
-		if($this->_response->isReady()) return $this->_response;
-		
-		$this->_routeRequest();
-		if($this->_response->isReady()) return $this->_response;
-		
-		// @todo try to find controller action, then do everything else
-		$this->_initController();
-		if($this->_response->isReady()) return $this->_response;
-		$data = $this->_controller_instance->Run();
-		if($this->_response->isReady()) return $this->_response;
-		
-		//@todo Let the view handler use getRequest and getResponse as it need it
+			$this->_parseRequest();
+			
+			$this->_initView();
+			
+			$this->_routeRequest();
+			
+			// @todo try to find controller action, then do everything else
+			$this->_initController();
+			
+			$data = $this->_controller_instance->Run();
+			
+			//@todo Let the view handler use getRequest and getResponse as it need it
+			
 
-		$this->_view->In($data);
-		$this->_view->Set('controller', $this->_router->controller);
-		$this->_view->Set('uri', $this->_request->getUri());
-		$this->_view->Set('ext', $this->_extension);
-		$this->_view->Set('action', $this->_action);
-		$this->_view->Set('uri_parts', $this->_uri_parts);
+			$this->_view->In($data);
+			$this->_view->Set('controller', $this->_router->controller);
+			$this->_view->Set('uri', $this->_request->getUri());
+			$this->_view->Set('ext', $this->_extension);
+			$this->_view->Set('action', $this->_action);
+			$this->_view->Set('uri_parts', $this->_uri_parts);
+			
+			$this->_response->setHeader("Content-type", $this->_view->getContentType());
+			$this->_response->setBody($this->_view->Out());
 		
-		$this->_response->setHeader("Content-type", $this->_view->getContentType());
-		$this->_response->setBody($this->_view->Out());
+		} catch(Oops_Server_Exception $e) {
+			switch($e->getCode()) {
+				case OOPS_SERVER_EXCEPTION_RESPONSE_READY:
+					//
+					$this->_response->setHeader('oops-exception', $e->getMessage());
+					break;
+				default:
+					throw $e;
+			}
+		} catch(Exception $e) {
+			trigger_error($e->getMessage(), E_USER_ERROR);
+		}
 		$this->_response->reportErrors($this->_errorHandler);
 		restore_error_handler();
 		
@@ -359,7 +370,7 @@ class Oops_Server {
 				return $this->_router;
 			case 'config':
 				return $this->_config;
-					
+		
 		}
 		return null;
 	}

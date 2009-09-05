@@ -8,6 +8,8 @@ require_once 'PHPUnit/TextUI/TestRunner.php';
 require_once 'UtilsTests.php';
 require_once 'ConfigTests.php';
 require_once 'ServerTests.php';
+require_once 'RequestTests.php';
+require_once 'ResponseTests.php';
 
 class tests_Oops_AllTests {
 
@@ -25,6 +27,8 @@ class tests_Oops_AllTests {
 		$suite->addTestSuite('tests_Utils');
 		$suite->addTestSuite('tests_Config');
 		$suite->addTestSuite('tests_Server');
+		$suite->addTestSuite('tests_Request');
+		$suite->addTestSuite('tests_Response');
 		
 		return $suite;
 	}

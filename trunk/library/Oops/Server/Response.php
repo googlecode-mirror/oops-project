@@ -8,15 +8,25 @@
 
 /**
  * Oops server response representation
+ * 
+ * @property integer $code Response code (HTTP)
+ * @property-read string $message Response message according to code
+ * @property-read string $version Protocol version
+ * @property array $headers Response headers array
  */
 class Oops_Server_Response {
-	var $code;
-	var $message;
-	var $version = '1.x';
-	var $headers = array();
-	var $body = '';
+	protected $_code;
+	protected $_message;
+	protected $_version = '1.x';
+	protected $_headers = array();
 	
-	var $_messages = array(
+	/**
+	 * Response body
+	 * @var string
+	 */
+	public $body = '';
+	
+	protected static $_messages = array(
 		// Informational 1xx
 		100 => 'Continue', 
 		101 => 'Switching Protocols', 
@@ -69,37 +79,61 @@ class Oops_Server_Response {
 		505 => 'HTTP Version Not Supported', 
 		509 => 'Bandwidth Limit Exceeded');
 
-	function isReady() {
-		if(isset($this->code)) return true;
-		return false;
+		
+	public function __get($name) {
+		switch($name) {
+			case 'code':
+				return $this->_code;
+			case 'message':
+				return $this->_message;
+			case 'headers':
+				return $this->_headers;
+			case 'version':
+				return $this->_version;
+			default:
+				return null;
+		}
 	}
 
-	function setCode($code, $dontThrowException = false) {
-		if(!isset($this->_messages[$code])) {
+	public function __set($name, $value) {
+		switch($name) {
+			case 'code':
+				return $this->setCode($value);
+			case 'headers':
+				return $this->_setHeaders($value);
+		}
+	}
+
+	public function isReady() {
+		return isset($this->_code) ? true : false;
+	}
+
+	public function setCode($code, $dontThrowException = false) {
+		if(!isset(self::$_messages[$code])) {
 			// @todo Consider throw exception here
 			return false;
 		}
-		$this->code = $code;
-		$this->message = $this->_messages[$code];
+		$this->_code = $code;
+		$this->_message = self::$_messages[$code];
 		if($dontThrowException) return true;
 		require_once 'Oops/Server/Exception.php';
 		throw new Oops_Server_Exception("Done", OOPS_SERVER_EXCEPTION_RESPONSE_READY);
 	}
 
-	function setHeaders($headers) {
-		$this->headers = $headers;
+	public function setHeaders($headers) {
+		$this->_headers = $headers;
 	}
 
-	function setHeader($name, $value, $replace = true) {
+	public function setHeader($name, $value, $replace = true) {
 		$name = strtolower($name);
-		if($replace || !isset($this->headers[$name])) {
-			$this->headers[$name] = $value;
+		if($replace || !isset($this->_headers[$name])) {
+			$this->_headers[$name] = $value;
 		} else {
-			if(!is_array($this->headers[$name])) {
+			if(!is_array($this->_headers[$name])) {
 				require_once ("Oops/Utils.php");
-				Oops_Utils::toArray($this->headers[$name]);
+				Oops_Utils::toArray($this->_headers[$name]);
 			}
-			$this->headers[$name][] = $value;
+			$this->_headers[$name][] = $value;
 		}
 	}
 
@@ -108,8 +142,8 @@ class Oops_Server_Response {
 	 *
 	 * @return array
 	 */
-	function getHeaders() {
-		return $this->headers;
+	public function getHeaders() {
+		return $this->_headers;
 	}
 
 	/**
@@ -118,9 +152,9 @@ class Oops_Server_Response {
 	 * @param string
 	 * @return string|array
 	 */
-	function getHeader($name) {
+	public function getHeader($name) {
 		$name = strtolower($name);
-		if(isset($this->headers[$name])) return $this->headers[$name];
+		if(isset($this->_headers[$name])) return $this->_headers[$name];
 		return '';
 	}
 
@@ -129,8 +163,8 @@ class Oops_Server_Response {
 	 *
 	 * @return string
 	 */
-	function getStatusLine() {
-		return "HTTP/{$this->version} {$this->code} {$this->message}";
+	public function getStatusLine() {
+		return "HTTP/{$this->_version} {$this->_code} {$this->_message}";
 	}
 
 	/**
@@ -140,7 +174,7 @@ class Oops_Server_Response {
 	 * @param string $br Line breaks (eg. "\n", "\r\n", "<br />")
 	 * @return string
 	 */
-	function getHeadersAsString($status_line = true, $br = "\n") {
+	public function getHeadersAsString($status_line = true, $br = "\n") {
 		$str = '';
 		
 		if($status_line) {
@@ -148,7 +182,7 @@ class Oops_Server_Response {
 		}
 		
 		// Iterate over the headers and stringify them
-		foreach($this->headers as $name => $value) {
+		foreach($this->_headers as $name => $value) {
 			$name = ucfirst($name);
 			if(is_string($value))
 				$str .= "{$name}: {$value}{$br}";
@@ -167,8 +201,8 @@ class Oops_Server_Response {
 	 *
 	 * @return boolean
 	 */
-	function isRedirect() {
-		$restype = floor($this->code / 100);
+	public function isRedirect() {
+		$restype = floor($this->_code / 100);
 		if($restype == 3) {
 			return true;
 		}
@@ -176,28 +210,28 @@ class Oops_Server_Response {
 		return false;
 	}
 
-	function redirect($location, $permanent = false, $dontThrowException = false) {
+	public function redirect($location, $permanent = false, $dontThrowException = false) {
 		$this->setHeader('Location', $location);
 		$this->setCode($permanent ? 301 : 302, $dontThrowException);
 	}
 
-	function getReady() {
+	public function getReady() {
 		if(!$this->isReady()) $this->setCode(200, true);
 	}
 
-	function __toString() {
+	public function __toString() {
 		return $this->toString();
 	}
 
-	function toString() {
+	public function toString() {
 		return $this->body;
 	}
 
-	function setBody($body) {
+	public function setBody($body) {
 		$this->body = $body;
 	}
 
-	function reportErrors($errorHandler) {
+	public function reportErrors($errorHandler) {
 		if(!is_object($errorHandler)) return;
 		foreach($errorHandler->getErrors() as $err)
 			$this->setHeader("Oops-Error", $err, false);

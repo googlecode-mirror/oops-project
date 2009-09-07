@@ -169,11 +169,13 @@ class Oops_File {
 			if(!$dir->exists) {
 				require_once "Oops/File/Utils.php";
 				try {
-					Oops_File_Utils::autoCreateDir($dir->filename);
+					Oops_File_Utils::autoCreateDir($dir->filename, 0777);
 				} catch(Exception $e) {
 					return false;
 				}
 				return true;
+			} else {
+				return $dir->makeWriteable();
 			}
 		} else {
 			if(is_file($this->_filename))

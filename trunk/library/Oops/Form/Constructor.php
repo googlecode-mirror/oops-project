@@ -35,7 +35,7 @@ class Oops_Form_Constructor
     /*
      * Group field names by parent container 
      */
-    public $groupNames = true;
+    public $groupNames = false;
     
     /*
      * The variable showing whether the form's settings have been automatically redefined

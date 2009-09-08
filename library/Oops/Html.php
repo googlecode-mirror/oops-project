@@ -59,7 +59,7 @@ class Oops_Html {
 		$key = strtolower($key);
 		switch($key) {
 			case 'id':
-				$value = preg_replace('/[^\-_0-9a-zA-Z/', '', $value);
+				$value = preg_replace('/[^\-_0-9a-zA-Z]+/', '', $value);
 				return "id=\"$value\"";
 			case 'multiple':
 			case 'disabled':
@@ -73,7 +73,22 @@ class Oops_Html {
 		}
 		return '';
 	}
-
+	
+	/**
+	 * Simple info field
+	 * 
+	 * @param string $value value
+	 * @return string
+	 */
+	public static function info($value = '',$class = '', $extra = array()) {
+		$params = array();
+		$params[] = self::_putClass($class);	
+	    if(is_array($extra)) foreach($extra as $key => $value) {
+			$params[] = self::_putExtra($key, $value, 'text');
+		}
+		return '<label ' . join(' ', $params) . ' > ' . $value . '</label>';
+	}
+	
 	/**
 	 * Simple text field
 	 * 
@@ -365,6 +380,64 @@ class Oops_Html {
 			$out .= self::radio($name, $optionValue, $optionLabel, $optionValue == $value, $class, $optionExtra);
 		}
 		return $out;
+		
 	}
-
+	/**
+	 * Date field
+	 * 
+	 * @param string $name Input name
+	 * @param string $value Input value
+	 * @param string $class Input CSS class
+	 * @param array $extra Additional HTML tag and DHTMLCalendar parameters
+	 * @return string
+	 */
+	public static function date($name, $value = '', $class = '', $extra = array())
+	{
+	    $params = array();
+	    $cal_params = array();
+	    $calDefaults = array(
+		                        'cal_but_img'		=>    '/i/b.gif',
+		                        'cal_but_id'		=>    $name . '_date_event_icon',
+		                        'cal_but_class'		=>    'icon date',
+		                        'cal_format'		=>    '%Y-%m-%d',
+		                        'cal_align'			=>    'Tl',
+		                        'cal_singleClick'	=>    'true', 
+		);  
+		
+		$params[] = self::_putName($name);
+		$params[] = self::_putClass($class);
+		$params[] = self::_putValue($value);
+				
+		if(!isset($extra['id']))
+		    $extra['id'] = 'id_' . $name;
+		
+		if(is_array($extra)) {
+    		foreach($extra as $key => $value) {
+    		    if(substr($key,0,4)!='cal_')
+    			    $params[] = self::_putExtra($key, $value, 'text');
+    			else
+    			    $cal_params[$key] = $value; 
+    		}
+		}   
+		 
+		foreach($calDefaults as $k => $v)
+		    if(!isset($cal_params[$k]))
+		        $cal_params[$k] = $v;
+		   
+		    	
+		return '<input type="text" ' . join(' ', $params) . '/>
+				<img src="'.$cal_params['cal_but_img'].'" class="'. $cal_params['cal_but_class'] . '" id="'. $cal_params['cal_but_id'] . '" />
+				<script type="text/javascript">
+		            		try{
+								Calendar.setup({
+								 inputField : "' . $extra['id'] . '", // id of the input field			
+								 ifFormat : "' . $cal_params['cal_format'] . '", // format of the input field
+								 button : "' . $cal_params['cal_but_id'] . '", // trigger for the calendar (button ID)
+								 align : "' . $cal_params['cal_align'] . '", // alignment (defaults to "Bl")
+								 singleClick : ' . $cal_params['cal_singleClick']. '
+								});}
+							catch(e){debugger;}
+							</script>			
+		';
+	}
 }

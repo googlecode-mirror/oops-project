@@ -186,9 +186,10 @@ class Oops_Form_Constructor
     {
        if(empty($this->_data))
             return false;
-
+       
        $this->_result = $this->_processData($this->_data);
        
+       $this->_data = false;
     }
     
     protected function _processData(array & $data , $parentGroupName = false) 
@@ -198,17 +199,16 @@ class Oops_Form_Constructor
         foreach($data as $v)
         {
             
-           if( ($v['type']=='group') && isset($v['items'])  &&  !empty($v['items']))
+           if( ($v['type'] === 'group') && isset($v['items'])  &&  !empty($v['items']))
            {
                if($this->groupNames && $parentGroupName)
                    $newName = $parentGroupName . '[' . $v['name'] . ']';
                elseif($this->groupNames && !$parentGroupName)
-                   $newName =   $v['name'];
+                   $newName = $v['name'];
                else
                    $newName = false;
                          
-               
-                $result[$v['name']] = array(    
+                $result[] = array(    			'name' => $v['name'],
     											'text'  => $v['text'],
     											'items' => $this->_processData($v['items'],$newName),                            
                                              );
@@ -218,7 +218,8 @@ class Oops_Form_Constructor
                if($this->groupNames && $parentGroupName)
                    $v['name'] = $parentGroupName . '[' . $v['name'] . ']';
                
-                $result[$v['name']] = array(    
+                $result[] = array(    
+                                                'name' => $v['name'],
     											'text' => $v['text'],
     											'html' => $this->_makeField($v)                              
                                               );
@@ -331,10 +332,13 @@ class Oops_Form_Constructor
             case 'kaptcha'      : return Oops_Html::$type($name,$class); 
                                     break;       
                                     
-            case 'info'         : return Oops_Html::$type($value); 
-                                    break;       
+            case 'info'         : return Oops_Html::$type($value,$class,$extra); 
+                                    break;
+                                           
+            case 'date'         : return Oops_Html::$type($name,$value,$class,$extra); 
+                                    break;                        
 
-            default             : return Oops_Html::info($value); 
+            default             : return Oops_Html::info($value,$class,$extra); 
                                     break;              
         }
     }

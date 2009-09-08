@@ -42,6 +42,23 @@ class Oops_Form_Constructor
      */
     protected $_defined = false;
     
+    /*
+     * Automatic addition of the "Submit" button
+     */
+    public $submitButton = true;
+    
+    /*
+     * Submit button properties
+     */
+    public $submitButtonConfig = array(
+                                          "text"	=> "",
+		                        		  "name"    => "submit",
+		                        		  "type"    => "submit",
+		                        		  "value"   => "Сохранить",
+		                        		  "extra"   => ""          
+                                );
+    
+    
     /**
      * @param array $attr  - form tag properties
      * @return void
@@ -193,15 +210,17 @@ class Oops_Form_Constructor
        if(empty($this->_data))
             return false;
        
+       if($this->submitButton)
+           $this->_data[] = $this->submitButtonConfig;
+            
        $this->_result = $this->_processData($this->_data);
-       
        $this->_data = false;
     }
     
     protected function _processData(array & $data , $parentGroupName = false) 
     {
         $result = array();
-        
+           
         foreach($data as $v)
         {
            if($v['type']=='file' && !$this->_defined)
@@ -236,7 +255,7 @@ class Oops_Form_Constructor
     											'html' => $this->_makeField($v)                              
                                               );
            }  
-       }
+       }   
        return $result;
     }
     

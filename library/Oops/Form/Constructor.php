@@ -37,10 +37,16 @@ class Oops_Form_Constructor
      */
     public $groupNames = true;
     
+    /*
+     * The variable showing whether the form's settings have been automatically redefined
+     */
+    protected $_defined = false;
+    
     /**
      * @param array $attr  - form tag properties
      * @return void
      */
+    
     public function __construct($attr = false)
     {
         if(empty($attr))
@@ -198,6 +204,12 @@ class Oops_Form_Constructor
         
         foreach($data as $v)
         {
+           if($v['type']=='file' && !$this->_defined)
+           {
+               $this->setAttr('method','post');
+               $this->setAttr('type','multipart/form-data');
+               $this->_defined = true;
+           }
             
            if( ($v['type'] === 'group') && isset($v['items'])  &&  !empty($v['items']))
            {

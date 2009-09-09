@@ -27,6 +27,12 @@ class Oops_Form_Constructor
      */
     protected $_groupDecorator;
     
+    /**
+     * Form field error decorator 
+     * 
+     */
+    protected $_errorDecorator;
+    
     /*
      *  Form properties
      */
@@ -62,6 +68,13 @@ class Oops_Form_Constructor
      * Fields values array
      */
     protected $_values;
+    
+    /**
+     * 
+     * @var array
+     */
+    protected $_errors;
+    
                                 
                                 
     /**
@@ -110,6 +123,10 @@ class Oops_Form_Constructor
         $this->_values[$name] = $value;
     }
     
+    
+    /*
+     * @return array
+     */
     public function getValues()
     {
         return $this->_values;
@@ -167,6 +184,18 @@ class Oops_Form_Constructor
     
     
     /**
+     * 
+     * @param array $errors
+     * @return void
+     */
+    public function setErrors(array $errors)
+    {
+        foreach ($errors as $value)
+            $this->_errors[$value['data']][] = $value['string'];
+    }
+    
+    
+    /**
      * Set decorator for form fields
      * 
      * @param Oops_Form_Constructor_Decorator $decorator
@@ -175,6 +204,17 @@ class Oops_Form_Constructor
     public function setFieldDecorator(Oops_Form_Constructor_Decorator & $decorator)
     {
         $this->_fieldDecorator = $decorator;
+    }
+    
+	/**
+     * Set error decorator for form fields
+     * 
+     * @param Oops_Form_Constructor_Decorator $decorator
+     * @return void
+     */
+    public function setErrorDecorator(Oops_Form_Constructor_Decorator & $decorator)
+    {
+        $this->_errorDecorator = $decorator;
     }
     
      /**
@@ -196,6 +236,9 @@ class Oops_Form_Constructor
             
         if(!is_object($this->_groupDecorator))
             $this->_groupDecorator = new Oops_Form_Constructor_Decorator_Group();  
+            
+        if(!is_object($this->_errorDecorator))
+            $this->_errorDecorator = new Oops_Form_Constructor_Decorator_Error();      
     }
     
     
@@ -282,6 +325,9 @@ class Oops_Form_Constructor
                $this->_defined = true;
            }
             
+          if(!isset($v['text']))
+               $v['text'] = '';    
+           
            if( ($v['type'] === 'group') && isset($v['items'])  &&  !empty($v['items']))
            {
                if($this->groupNames && $parentGroupName)
@@ -290,7 +336,9 @@ class Oops_Form_Constructor
                    $newName = $v['name'];
                else
                    $newName = false;
-                         
+
+                
+                   
                 $result[] = array(    			'name' => $v['name'],
     											'text'  => $v['text'],
     											'items' => $this->_processData($v['items'],$newName),                            

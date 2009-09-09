@@ -6,7 +6,7 @@ class Oops_Form_Constructor_Decorator_Error extends Oops_Form_Constructor_Decora
         $errStr ='<ul style="color:red">';
         
         foreach ($errors as $v)
-            $errStr.='<li>'.$v.'</li><br>';
+            $errStr.='<li>'.$v.'</li>';
         
         $errStr.='</ul>' ;  
             

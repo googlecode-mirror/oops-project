@@ -5,6 +5,8 @@
  * @subpackage Sql
  */
 
+define("OOPS_SQL_EXCEPTION", 1);
+
 /**
  * MySQL connection and query functionality
  */
@@ -55,8 +57,11 @@ class Oops_Sql {
 		$errStr = mysql_error(self::$_link);
 		// @todo Refactor, now we can't see mysql errors in response, maybe we should use exceptions
 		trigger_error("MySQL/QueryError/$errCode - $errStr", E_USER_ERROR);
-		if($dieOnError) die();
-		return false;
+		if(!$dieOnError) return false;
+		if($dieOnError == OOPS_SQL_EXCEPTION) {
+			throw new Exception("MySQL/QueryError/$errCode - $errStr");
+		}
+		die();
 	}
 
 	/**
@@ -103,7 +108,7 @@ class Oops_Sql {
 		if($loggerEnabled) {
 			require_once ('Oops/Sql/Logger.php');
 			static $l = null;
-			if(!is_object($l)) $l = & Oops_Sql_Logger::getInstance(self::$_config->logger->table);
+			if(!is_object($l)) $l = Oops_Sql_Logger::getInstance(self::$_config->logger->table);
 				
 			if(self::$_config->logger->probability > mt_rand(0, 1)) {
 				return $l->Analyze($query);

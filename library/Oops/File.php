@@ -142,7 +142,7 @@ class Oops_File {
 	 * 
 	 * @return string File contents
 	 */
-	function getContents() {
+	public function getContents() {
 		if($this->_exists && $this->_isFile) return file_get_contents($this->_filename);
 		return "";
 	}
@@ -152,7 +152,7 @@ class Oops_File {
 	 * @param $content
 	 * @return unknown_type
 	 */
-	function putContents($content) {
+	public function putContents($content) {
 		if(!$this->makeWritable()) return false;
 		if($this->isDirectory()) return false;
 		return file_put_contents($this->_filename, $content);
@@ -162,7 +162,7 @@ class Oops_File {
 	 * Make a file (or directory) writable
 	 * @return bool True on success
 	 */
-	function makeWriteable() {
+	public function makeWriteable() {
 		//if($this->isWritable()) return true;
 		if(!$this->_exists) {
 			$dir = new Oops_File($this->_dirname);
@@ -185,5 +185,9 @@ class Oops_File {
 			else
 				return false;
 		}
+	}
+	
+	public function remove() {
+		throw new Exception("Oops_File::remove not implemented");
 	}
 }

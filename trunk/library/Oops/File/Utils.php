@@ -51,7 +51,8 @@ class Oops_File_Utils {
 	}
 
 	public static function splitPath($prefix, $splitable, $chunkLength = 2, $skipLeading = 0) {
-		$ret = rtrim($prefix, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+		$ret = '';
+		if(strlen($prefix)) $ret = rtrim($prefix, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
 		if($skipLeading > 0) {
 			$ret .= substr($splitable, 0, $skipLeading);
 			$ret .= DIRECTORY_SEPARATOR;

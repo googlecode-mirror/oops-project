@@ -58,7 +58,12 @@ class Oops_Form_Constructor
 		                        		  "extra"   => ""          
                                 );
     
-    
+    /**
+     * Fields values array
+     */
+    protected $_values;
+                                
+                                
     /**
      * @param array $attr  - form tag properties
      * @return void
@@ -72,6 +77,42 @@ class Oops_Form_Constructor
             $this->_attr = $attr;
         
         $this->result = array();
+        $this->values = array();
+    }
+    
+    /**
+     * Delete all fields values 
+     * @return void
+     */
+    public function clearValues()
+    {
+        $this->_values = array();
+    }
+    
+    /**
+     * Set form fields values from array
+     * @param array $data
+     * @return void
+     */
+    public function setValues(array $data)
+    {
+        foreach($data as $k=>$v)
+            $this->_values[$k] = $v;
+    }
+    
+    /**
+     * @param string $name field name
+     * @param var $value field value
+     * @return void
+     */
+    public function setValue($name,$value)
+    {
+        $this->_values[$name] = $value;
+    }
+    
+    public function getValues()
+    {
+        return $this->_values;
     }
     
     /**
@@ -120,7 +161,8 @@ class Oops_Form_Constructor
     {
         $this->_data = $data;
         $this->_result = array();
-        $this->_run();
+        $this->_getValuesFromData($this->_data);
+        //$this->_run();
     }
     
     
@@ -168,6 +210,7 @@ class Oops_Form_Constructor
      */
     public function getHtml()
     {    
+        $this->_run();
         $this->_checkDecorators();
         
           $result ='<form ';
@@ -183,6 +226,7 @@ class Oops_Form_Constructor
           
 
           $result.='</form>';       
+          
           return $result;       
     }
     
@@ -216,6 +260,14 @@ class Oops_Form_Constructor
        $this->_result = $this->_processData($this->_data);
        $this->_data = false;
     }
+    protected function _getValuesFromData(array & $data)
+    {
+       foreach($data as $v)
+           if( ($v['type'] === 'group') && isset($v['items'])  &&  !empty($v['items']))
+               $this->_getValuesFromData($v['items']);                                                                         
+           else
+               $this->_values[$v['name']] =  $v['value'];             
+    }
     
     protected function _processData(array & $data , $parentGroupName = false) 
     {
@@ -246,10 +298,13 @@ class Oops_Form_Constructor
            }
            else
            {
+               if(isset($this->_values[$v['name']]))
+                  $v['value'] = $this->_values[$v['name']];
+               
                if($this->groupNames && $parentGroupName)
                    $v['name'] = $parentGroupName . '[' . $v['name'] . ']';
-               
-                $result[] = array(    
+                       
+                            $result[] = array( 
                                                 'name' => $v['name'],
     											'text' => $v['text'],
     											'html' => $this->_makeField($v)                              
@@ -267,6 +322,7 @@ class Oops_Form_Constructor
      */
     public function getFormData()
     { 
+       $this->_run(); 
        return $this->_result;
     }
     
@@ -324,14 +380,15 @@ class Oops_Form_Constructor
                         
         switch ($type)
         {
+            
             case 'text'         : return Oops_Html::$type($name,$value,$class,$extra); 
                                     break;
                                     
             case 'password'     : return Oops_Html::$type($name,$value,$class,$extra);
-                                    break;
+                                   break;
                                     
             case 'file'         : return Oops_Html::$type($name,$class,$extra);
-                                    break;
+                                   break;
                                 
             case 'hidden'       : return Oops_Html::$type($name,$value);
                                     break;
@@ -340,13 +397,13 @@ class Oops_Form_Constructor
                                     break;
                                     
             case 'submit'     	: return Oops_Html::$type($value,$class,$extra);
-                                    break;
+                                  break;
                                     
             case 'button'     	: return Oops_Html::$type($value,$class,$extra);
-                                    break; 
+                                   break; 
                                       
             case 'select'       : return Oops_Html::$type($name,$options,$value,$class,$empty,$extra);
-                                    break;       
+                                  break;       
 
             case 'multiSelect'	: return Oops_Html::$type($name,$options,$value,$class,$empty,$extra);
                                     break;                       
@@ -367,8 +424,16 @@ class Oops_Form_Constructor
                                     break;
                                            
             case 'date'         : return Oops_Html::$type($name,$value,$class,$extra); 
-                                    break;                        
-
+                                    break;              
+                                    
+         /*
+          *  Special Fields
+          */         
+                                                      
+            case 'object'		:  $extra['readonly'] = true;
+                                   return Oops_Html::$type($name,$value,$class,$extra,$data['ref_class']); 
+                                    break;                           
+			
             default             : return Oops_Html::info($value,$class,$extra); 
                                     break;              
         }

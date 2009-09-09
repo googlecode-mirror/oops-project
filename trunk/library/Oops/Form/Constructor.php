@@ -281,9 +281,16 @@ class Oops_Form_Constructor
           foreach ($items as $k => $v)
           {
               if(!isset($v['items']))
-                  $result.=$this->_fieldDecorator->createElement($k, $v['text'], $v['html']);
+              {
+                  if(isset($this->_errors[$v['name']]))
+                      $result.= $this->_errorDecorator->createElement($v['name'], $v['text'], $v['html'],$this->_errors[$v['name']]);
+                  else
+                      $result.=$this->_fieldDecorator->createElement($v['name'], $v['text'], $v['html']);
+              }
               else
-                  $result.= $this->_getFormGroup($v['items'],$v['text'],$k);   
+              {
+                  $result.= $this->_getFormGroup($v['items'],$v['text'],$k);  
+              } 
           }
 
          if($first)

@@ -118,7 +118,7 @@ class Oops_Sql_Common {
 		foreach($data as $k => $v) {
 			$sets[] = "`$k` = ".(is_null($v) ? 'NULL' : ("'" . Oops_Sql::Escape($v) . "'"));
 		}
-		$query = "UPDATE `$table` SET " . join(', ', $sets) . " WHERE $where";
+		$query = "UPDATE $table SET " . join(', ', $sets) . " WHERE $where";
 		if($returnQuery) return $query;
 		Oops_Sql::Query($query);
 		

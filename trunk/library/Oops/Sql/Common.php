@@ -29,7 +29,7 @@ class Oops_Sql_Common {
 		foreach($data as $k => $v) {
 			$k = trim($k, "`");
 			$keys[] = "`$k`";
-			$values[] = "'" . Oops_Sql::Escape((string) $v) . "'";
+			$values[] = is_null($v) ? 'NULL' : "'" . Oops_Sql::Escape((string) $v) . "'";
 		}
 		
 		$query = "INSERT INTO $table (" . join(', ', $keys) . ") VALUES (" . join(', ', $values) . ")";
@@ -60,7 +60,7 @@ class Oops_Sql_Common {
 		foreach($data as $k => $v) {
 			$k = trim($k, "`");
 			$keys[] = "`$k`";
-			$values[] = "'" . Oops_Sql::Escape((string) $v) . "'";
+			$values[] = is_null($v) ? 'NULL' : "'" . Oops_Sql::Escape((string) $v) . "'";
 		}
 		
 		$query = "REPLACE INTO $table (" . join(', ', $keys) . ") VALUES (" . join(', ', $values) . ")";
@@ -88,16 +88,16 @@ class Oops_Sql_Common {
 		
 		if(is_string($match)) {
 			if(!isset($data[$match])) {
-				require_once("Oops/Sql/Exception.php");
+				require_once ("Oops/Sql/Exception.php");
 				throw new Oops_Sql_Exception("Invalid match conditions");
 			}
-			$where = "`$match` = '".Oops_Sql::Escape($data[$match])."'";
+			$where = "`$match` = '" . Oops_Sql::Escape($data[$match]) . "'";
 			unset($data[$match]);
-			
+		
 		} elseif(is_array($match)) {
 			$wheres = array();
-			foreach($match as $k=>$v) {
-				$wheres[] = "`$k` = '".Oops_Sql::Escape($v)."'";
+			foreach($match as $k => $v) {
+				$wheres[] = "`$k` = ".(is_null($v) ? 'NULL' : ("'" . Oops_Sql::Escape($v) . "'"));
 			}
 			$where = join(' AND ', $wheres);
 		}
@@ -110,8 +110,8 @@ class Oops_Sql_Common {
 		}
 		
 		$sets = array();
-		foreach($data as $k=>$v) {
-			$sets[] = "`$k` = '".Oops_Sql::Escape($v)."'"; 
+		foreach($data as $k => $v) {
+			$sets[] = "`$k` = ".(is_null($v) ? 'NULL' : ("'" . Oops_Sql::Escape($v) . "'"));
 		}
 		$query = "UPDATE `$table` SET " . join(', ', $sets) . " WHERE $where";
 		Oops_Sql::Query($query);
@@ -137,8 +137,8 @@ class Oops_Sql_Common {
 		}
 		
 		$wheres = array();
-		foreach($match as $k=>$v) {
-			$wheres[] = "`$k` = '".Oops_Sql::Escape($v)."'";
+		foreach($match as $k => $v) {
+			$wheres[] = "`$k` = ".(is_null($v) ? 'NULL' : ("'" . Oops_Sql::Escape($v) . "'"));
 		}
 		$where = join(' AND ', $wheres);
 		

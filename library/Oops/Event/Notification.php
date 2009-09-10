@@ -83,7 +83,7 @@ class Oops_Event_Notification {
 	 * 
 	 * @param string $Error
 	 */
-	function Cancel($Error = null) {
+	public function Cancel($Error = null) {
 		$this->_state = self::STATE_CANCELLED;
 		if(!is_null($Error)) {
 			if(is_array($Error))

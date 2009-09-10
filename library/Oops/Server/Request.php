@@ -143,7 +143,7 @@ class Oops_Server_Request implements ArrayAccess, Countable, Iterator {
 	
 	public function rewind() {
 		$this->_arrayPosition = 0;
-		rewind($this->_params);
+		reset($this->_params);
 	}
 	
 	public function valid() {

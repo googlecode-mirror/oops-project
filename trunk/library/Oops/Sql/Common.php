@@ -9,11 +9,12 @@ class Oops_Sql_Common {
 	 * 
 	 * @param string $table Table
 	 * @param array $data Row fields and values ('field' => 'value')
-	 * @return number of affected rows
+	 * @param bool $returnQuery whenever to return query or run it. Default is false.
+	 * @return number of affected rows or sql query string
 	 * 
 	 * @throws Oops_Sql_Exception
 	 */
-	public static function insert($table, $data) {
+	public static function insert($table, $data, $returnQuery = false) {
 		if(!strlen($table)) {
 			require_once ("Oops/Sql/Exception.php");
 			throw new Oops_Sql_Exception("Invalid table name");
@@ -33,6 +34,7 @@ class Oops_Sql_Common {
 		}
 		
 		$query = "INSERT INTO $table (" . join(', ', $keys) . ") VALUES (" . join(', ', $values) . ")";
+		if($returnQuery) return $query;
 		Oops_Sql::Query($query);
 		return mysql_affected_rows();
 	}
@@ -42,9 +44,10 @@ class Oops_Sql_Common {
 	 * 
 	 * @param string $table Table
 	 * @param array $data Row fields and values ('field' => 'value')
-	 * @return number of affected rows
+	 * @param bool $returnQuery whenever to return query or run it. Default is false.
+	 * @return number of affected rows or sql query string
 	 */
-	public static function replace($table, $data) {
+	public static function replace($table, $data, $returnQuery = false) {
 		if(!strlen($table)) {
 			require_once ("Oops/Sql/Exception.php");
 			throw new Oops_Sql_Exception("Invalid table name");
@@ -64,6 +67,7 @@ class Oops_Sql_Common {
 		}
 		
 		$query = "REPLACE INTO $table (" . join(', ', $keys) . ") VALUES (" . join(', ', $values) . ")";
+		if($returnQuery) return $query;
 		Oops_Sql::Query($query);
 		return mysql_affected_rows();
 	}
@@ -74,9 +78,10 @@ class Oops_Sql_Common {
 	 * @param string $table Database table
 	 * @param array $data New row values
 	 * @param string|array Match definitions as array of field=>value, or string field from $data
-	 * @return int number of affected rows
+	 * @param bool $returnQuery whenever to return query or run it. Default is false.
+	 * @return int number of affected rows or sql query string
 	 */
-	public static function update($table, $data, $match) {
+	public static function update($table, $data, $match, $returnQuery = false) {
 		if(!strlen($table)) {
 			require_once ("Oops/Sql/Exception.php");
 			throw new Oops_Sql_Exception("Invalid table name");
@@ -114,6 +119,7 @@ class Oops_Sql_Common {
 			$sets[] = "`$k` = ".(is_null($v) ? 'NULL' : ("'" . Oops_Sql::Escape($v) . "'"));
 		}
 		$query = "UPDATE `$table` SET " . join(', ', $sets) . " WHERE $where";
+		if($returnQuery) return $query;
 		Oops_Sql::Query($query);
 		
 		return mysql_affected_rows();
@@ -124,9 +130,10 @@ class Oops_Sql_Common {
 	 * 
 	 * @param string $table Table name
 	 * @param array $match Rows match criterias as 'field'=>'value'
-	 * @return int Number of affected rows
+	 * @param bool $returnQuery whenever to return query or run it. Default is false.
+	 * @return int Number of affected rows or sql query string
 	 */
-	public static function delete($table, $match) {
+	public static function delete($table, $match, $returnQuery = false) {
 		if(!strlen($table)) {
 			require_once ("Oops/Sql/Exception.php");
 			throw new Oops_Sql_Exception("Invalid table name");
@@ -143,6 +150,7 @@ class Oops_Sql_Common {
 		$where = join(' AND ', $wheres);
 		
 		$query = "DELETE FROM `$table` WHERE $where";
+		if($returnQuery) return $query;
 		Oops_Sql::Query($query);
 		return mysql_affected_rows();
 	}

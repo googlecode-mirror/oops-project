@@ -28,12 +28,11 @@ class Oops_Sql_Common {
 		$values = array();
 		
 		foreach($data as $k => $v) {
-			$k = trim($k, "`");
-			$keys[] = "`$k`";
-			$values[] = is_null($v) ? 'NULL' : "'" . Oops_Sql::Escape((string) $v) . "'";
+			$keys[] = self::escapeIdentifiers($k);
+			$values[] = self::quoteValue($v);
 		}
 		
-		$query = "INSERT INTO $table (" . join(', ', $keys) . ") VALUES (" . join(', ', $values) . ")";
+		$query = "INSERT INTO ".self::escapeIdentifiers($table)." (" . join(', ', $keys) . ") VALUES (" . join(', ', $values) . ")";
 		if($returnQuery) return $query;
 		Oops_Sql::Query($query);
 		return mysql_affected_rows();
@@ -61,12 +60,11 @@ class Oops_Sql_Common {
 		$values = array();
 		
 		foreach($data as $k => $v) {
-			$k = trim($k, "`");
-			$keys[] = "`$k`";
-			$values[] = is_null($v) ? 'NULL' : "'" . Oops_Sql::Escape((string) $v) . "'";
+			$keys[] = self::escapeIdentifiers($k);
+			$values[] = self::quoteValue($v);
 		}
 		
-		$query = "REPLACE INTO $table (" . join(', ', $keys) . ") VALUES (" . join(', ', $values) . ")";
+		$query = "REPLACE INTO ".self::escapeIdentifiers($table)." (" . join(', ', $keys) . ") VALUES (" . join(', ', $values) . ")";
 		if($returnQuery) return $query;
 		Oops_Sql::Query($query);
 		return mysql_affected_rows();
@@ -96,13 +94,13 @@ class Oops_Sql_Common {
 				require_once ("Oops/Sql/Exception.php");
 				throw new Oops_Sql_Exception("Invalid match conditions");
 			}
-			$where = "`$match` = '" . Oops_Sql::Escape($data[$match]) . "'";
+			$where = self::escapeIdentifiers($match)." = " . self::quoteValue($data[$match]);
 			unset($data[$match]);
 		
 		} elseif(is_array($match)) {
 			$wheres = array();
 			foreach($match as $k => $v) {
-				$wheres[] = "`$k` = ".(is_null($v) ? 'NULL' : ("'" . Oops_Sql::Escape($v) . "'"));
+				$wheres[] = self::escapeIdentifiers($k)." = " . self::quoteValue($v);
 			}
 			$where = join(' AND ', $wheres);
 		}
@@ -116,9 +114,9 @@ class Oops_Sql_Common {
 		
 		$sets = array();
 		foreach($data as $k => $v) {
-			$sets[] = "`$k` = ".(is_null($v) ? 'NULL' : ("'" . Oops_Sql::Escape($v) . "'"));
+			$sets[] = self::escapeIdentifiers($k)." = " . self::quoteValue($v);
 		}
-		$query = "UPDATE $table SET " . join(', ', $sets) . " WHERE $where";
+		$query = "UPDATE ".self::escapeIdentifiers($table)." SET " . join(', ', $sets) . " WHERE $where";
 		if($returnQuery) return $query;
 		Oops_Sql::Query($query);
 		
@@ -145,14 +143,44 @@ class Oops_Sql_Common {
 		
 		$wheres = array();
 		foreach($match as $k => $v) {
-			$wheres[] = "`$k` = ".(is_null($v) ? 'NULL' : ("'" . Oops_Sql::Escape($v) . "'"));
+			$wheres[] = self::escapeIdentifiers($k)." = " . self::quoteValue($v);
 		}
 		$where = join(' AND ', $wheres);
 		
-		$query = "DELETE FROM `$table` WHERE $where";
+		$query = "DELETE FROM ".self::escapeIdentifiers($table)." WHERE $where";
 		if($returnQuery) return $query;
 		Oops_Sql::Query($query);
 		return mysql_affected_rows();
+	}
+
+	public static function escapeIdentifiers($string) {
+		$string = str_replace('`', '', $string);
+		$parts = explode('.', $string);
+		return '`' . join('`.`', $parts) . '`';
+	}
+	
+	public static function quoteValue($v) {
+		static $userVarPatterns = array(
+			'{^@[a-zA-Z_\.$]+$}',
+			"{^@'[^'\s]'$}",
+			"{^@`[^`\s]`$}",
+			'{^@"[^"\s]"$}',
+		);
+		
+		if(is_null($v)) return 'NULL';
+		
+		/**
+		 * Check if value is a MySQL user variable
+		 */
+		foreach($userVarPatterns as $pattern) {
+			if(preg_match($pattern, $v)) return $v;
+		}
+
+		// return numeric as is
+		if(is_numeric($v)) return $v;
+		
+		// it's a string
+		return "'".Oops_Sql::Escape((string) $v)."'";
 	}
 
 }

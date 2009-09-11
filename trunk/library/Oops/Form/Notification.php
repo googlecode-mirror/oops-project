@@ -16,7 +16,7 @@ class Oops_Form_Notification extends Oops_Event_Notification {
 	 * @param $data Error additional info
 	 * @return unknown_type
 	 */
-	public function Cancel($errorString, $data) {
+	public function Cancel($errorString = null, $data = null) {
 		$this->_formErrors[] = array('string' => $errorString, 'data' => $data);
 		parent::Cancel($errorString);
 	}

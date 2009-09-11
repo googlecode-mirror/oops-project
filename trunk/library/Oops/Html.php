@@ -423,21 +423,37 @@ class Oops_Html {
 		foreach($calDefaults as $k => $v)
 		    if(!isset($cal_params[$k]))
 		        $cal_params[$k] = $v;
-		   
-		    	
+		     	
 		return '<input type="text" ' . join(' ', $params) . '/>
 				<img src="'.$cal_params['cal_but_img'].'" class="'. $cal_params['cal_but_class'] . '" id="'. $cal_params['cal_but_id'] . '" />
 				<script type="text/javascript">
-		            		try{
-								Calendar.setup({
-								 inputField : "' . $extra['id'] . '", // id of the input field			
-								 ifFormat : "' . $cal_params['cal_format'] . '", // format of the input field
-								 button : "' . $cal_params['cal_but_id'] . '", // trigger for the calendar (button ID)
-								 align : "' . $cal_params['cal_align'] . '", // alignment (defaults to "Bl")
-								 singleClick : ' . $cal_params['cal_singleClick']. '
-								});}
-							catch(e){debugger;}
-							</script>			
+					try{
+						Calendar.setup({
+							inputField		: "' . $extra['id']                   . '",			
+							ifFormat 		: "' . $cal_params['cal_format']      . '",
+							button			: "' . $cal_params['cal_but_id']      . '", 
+							align 			: "' . $cal_params['cal_align']       . '", 
+							singleClick 	: '  . $cal_params['cal_singleClick'] . ',
+						});
+					}
+					catch(e){debugger;}
+				</script>';
+	}
+	public static function object($name,$value='',$class='',$extra = array(), $refClass)
+	{	    
+	    
+	    $params = array();
+		$params[] = self::_putName($name);
+		$params[] = self::_putClass($class);
+		$params[] = self::_putValue($value);
+		if(is_array($extra)) foreach($extra as $key => $value) {
+			$params[] = self::_putExtra($key, $value, 'text');
+		}
+		
+		$js ='
+		
 		';
+		
+		return '<input type="text" ' . join(' ', $params) . ' /><input type="button" value="select" onClick="registry_showSelectObject(\'' . $refClass . '\')" >';		
 	}
 }

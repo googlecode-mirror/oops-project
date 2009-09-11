@@ -328,7 +328,7 @@ class Oops_Form_Constructor
            if($v['type']=='file' && !$this->_defined)
            {
                $this->setAttr('method','post');
-               $this->setAttr('type','multipart/form-data');
+               $this->setAttr('enctype','multipart/form-data');
                $this->_defined = true;
            }
             

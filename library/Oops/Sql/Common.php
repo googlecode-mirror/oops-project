@@ -160,20 +160,13 @@ class Oops_Sql_Common {
 	}
 	
 	public static function quoteValue($v) {
-		static $userVarPatterns = array(
-			'{^@[a-zA-Z_\.$]+$}',
-			"{^@'[^'\s]'$}",
-			"{^@`[^`\s]`$}",
-			'{^@"[^"\s]"$}',
-		);
-		
 		if(is_null($v)) return 'NULL';
 		
 		/**
 		 * Check if value is a MySQL user variable
 		 */
-		foreach($userVarPatterns as $pattern) {
-			if(preg_match($pattern, $v)) return $v;
+		if($v instanceof Oops_Sql_Variable) {
+			return (string) $v;
 		}
 
 		// return numeric as is

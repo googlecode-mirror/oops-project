@@ -76,9 +76,9 @@ class Oops_File {
 
 	protected function _stat() {
 		$pathInfo = pathinfo($this->_filename);
-		$this->_dirname = $pathInfo['dirname'];
-		$this->_basename = $pathInfo['basename'];
-		$this->_extension = $pathInfo['extension'];
+		$this->_dirname = @$pathInfo['dirname'];
+		$this->_basename = @$pathInfo['basename'];
+		$this->_extension = @$pathInfo['extension'];
 		if(is_file($this->_filename)) $this->_size = filesize($this->_filename);
 	}
 

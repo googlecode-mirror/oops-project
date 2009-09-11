@@ -36,7 +36,7 @@ class Oops_File_Uploaded extends Oops_File {
 	 * Prohibited
 	 * 
 	 */
-	public function copy() {
+	public function copy($dest, $mode) {
 		throw new Exception("Copying uploaded files is deprecated");
 	}
 	

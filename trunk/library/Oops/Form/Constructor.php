@@ -330,11 +330,16 @@ class Oops_Form_Constructor
                $this->setAttr('method','post');
                $this->setAttr('enctype','multipart/form-data');
                $this->_defined = true;
-               $data[] = array('type'=>'hidden',
+               require_once 'Oops/Utils.php';
+               $max_file_size = min(Oops_Utils::toBytes(ini_get('upload_max_filesize')),
+               						Oops_Utils::toBytes(ini_get('post_max_size')));
+               array_unshift($data, array('type'=>'hidden',
                				   'name'=>'MAX_FILE_SIZE',
-               				   'value'=>min(return_bytes(ini_get('upload_max_filesize')), return_bytes(ini_get('post_max_size'))));
+               				   'value'=>$max_file_size));
               
            }
+        }
+        foreach($data as $v) {
             
           if(!isset($v['text']))
                $v['text'] = '';    

@@ -21,7 +21,7 @@ class Oops_Utils {
 	public static function ToArray(&$a) {
 		if(is_array($a)) return;
 		if(!is_null($a) && $a !== false) {
-			$a = array($a );
+			$a = array($a);
 			return;
 		}
 		$a = array();
@@ -183,4 +183,20 @@ class Oops_Utils {
 		}
 		return $ret;
 	}
+
+	public static function toBytes($string) {
+		$string = trim($string);
+		$int = intval($string);
+		$last = strtolower(substr($string, -1));
+		switch($last) {
+			case 'g':
+				$int *= 1024;
+			case 'm':
+				$int *= 1024;
+			case 'k':
+				$int *= 1024;
+		}
+		return $int;
+	}
+
 }

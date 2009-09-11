@@ -330,6 +330,10 @@ class Oops_Form_Constructor
                $this->setAttr('method','post');
                $this->setAttr('enctype','multipart/form-data');
                $this->_defined = true;
+               $data[] = array('type'=>'hidden',
+               				   'name'=>'MAX_FILE_SIZE',
+               				   'value'=>min(return_bytes(ini_get('upload_max_filesize')), return_bytes(ini_get('post_max_size'))));
+              
            }
             
           if(!isset($v['text']))

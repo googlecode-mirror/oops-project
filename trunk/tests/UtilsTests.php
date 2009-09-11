@@ -186,6 +186,12 @@ class tests_Utils extends PHPUnit_Framework_TestCase {
 		$this->assertEquals($expected, $tree, 'Line to tree more depth error');
 	
 	}
+
+	public function test_toBytes() {
+		$this->assertEquals(1024, Oops_Utils::toBytes('1K'));
+		$this->assertEquals(2 * 1024, Oops_Utils::toBytes(' 2K '));
+		$this->assertEquals(8 * 1024 * 1024, Oops_Utils::toBytes('8M'));
+	}
 	// }}}
 }
 

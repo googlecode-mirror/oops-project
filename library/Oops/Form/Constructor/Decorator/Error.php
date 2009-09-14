@@ -10,6 +10,9 @@ class Oops_Form_Constructor_Decorator_Error extends Oops_Form_Constructor_Decora
         
         $errStr.='</ul>' ;  
             
-        return $errStr.'<label>' . $text . '</label>' . $html .'<br>'."\n";
+        if(!empty($text))
+            return $errStr .'<label>' . $text . '</label>' . $html .'<br>'."\n";
+        else
+            return $errStr . $html .'<br>'."\n";    
     }
 }

@@ -441,7 +441,12 @@ class Oops_Html {
 	}
 	public static function object($name,$value='',$class='',$extra = array(), $refClass)
 	{	    
-	    
+	    if(!isset($extra['id']))
+	        $extra['id'] = 'id_'.$name;
+
+        $id = $extra['id'];
+        
+	        
 	    $params = array();
 		$params[] = self::_putName($name);
 		$params[] = self::_putClass($class);
@@ -454,6 +459,6 @@ class Oops_Html {
 		
 		';
 		
-		return '<input type="text" ' . join(' ', $params) . ' /><input type="button" value="select" onClick="registry_showSelectObject(\'' . $refClass . '\')" >';		
+		return '<input type="hidden" ' . join(' ', $params) . ' ><input type="text" id="'.$id.'_title" value="" /><input type="button" value="select" onClick="registry_showSelectObject(\'' . $refClass . '\',\''.$id.'\')" >';		
 	}
 }

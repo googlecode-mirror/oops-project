@@ -255,7 +255,7 @@ class Oops_Form_Constructor
     {    
         $this->_run();
         $this->_checkDecorators();
-        
+
           $result ='<form ';
           
           if(!empty($this->_attr))

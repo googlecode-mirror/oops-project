@@ -173,6 +173,10 @@ class Oops_Server {
 					set_include_path($incPath . PATH_SEPARATOR . get_include_path());
 				}
 			}
+			
+			if(strlen($default_timezone = @$oopsConfig->default_timezone)) {
+				date_default_timezone_set($default_timezone);
+			}
 		}
 	}
 

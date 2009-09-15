@@ -439,26 +439,21 @@ class Oops_Html {
 					catch(e){debugger;}
 				</script>';
 	}
-	public static function object($name,$value='',$class='',$extra = array(), $refClass)
+	public static function object($name,$value='',$class='',$extra = array(), $refClass,$title ='')
 	{	    
 	    if(!isset($extra['id']))
 	        $extra['id'] = 'id_'.$name;
 
         $id = $extra['id'];
-        
-	        
+                
 	    $params = array();
 		$params[] = self::_putName($name);
 		$params[] = self::_putClass($class);
 		$params[] = self::_putValue($value);
 		if(is_array($extra)) foreach($extra as $key => $value) {
 			$params[] = self::_putExtra($key, $value, 'text');
-		}
+		}		  
 		
-		$js ='
-		
-		';
-		
-		return '<input type="hidden" ' . join(' ', $params) . ' ><input type="text" id="'.$id.'_title" value="" /><input type="button" value="select" onClick="registry_showSelectObject(\'' . $refClass . '\',\''.$id.'\')" >';		
+		return '<input type="hidden" ' . join(' ', $params) . ' ><input type="text" id="'.$id.'_title" value="'.$title.'" /><input type="button" value="select" onClick="registry_showSelectObject(\'' . $refClass . '\',\''.$id.'\')" >';		
 	}
 }

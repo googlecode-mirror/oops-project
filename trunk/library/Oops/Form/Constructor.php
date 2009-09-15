@@ -495,7 +495,17 @@ class Oops_Form_Constructor
           */         
                                                       
             case 'object'		:  $extra['readonly'] = true;
-                                   return Oops_Html::$type($name,$value,$class,$extra,$data['ref_class']); 
+                                        
+                                    if(!empty($value)) {
+                                        $obj = new Registry_Object($value);
+                                        $title = $obj->__tostring();
+                                    }
+                                    else{
+                                        $title='';
+                                    } 
+                                    
+                                   return Oops_Html::$type($name,$value,$class,$extra,$data['ref_class'],$title); 
+                                   
                                     break;                           
 			
             default             : return Oops_Html::info($value,$class,$extra); 

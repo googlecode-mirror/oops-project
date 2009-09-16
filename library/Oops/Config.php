@@ -11,10 +11,11 @@
  * Config class
  *
  */
-class Oops_Config {
+class Oops_Config implements Countable, Iterator {
 	protected $_data = array();
 	public $used = false;
 	protected $_cache = array();
+	protected $_arrayPosition = 0;
 	
 	private static $instances = array();
 
@@ -99,5 +100,35 @@ class Oops_Config {
 
 	public function isValidConfig() {
 		return true;
+	}
+	
+	public function count() {
+		return count($this->_data);
+	}
+	
+	/**
+	 * Iterator interface method
+	 */
+	public function current() {
+		return current($this->_data);
+	}
+	
+	public function key() {
+		return key($this->_data);
+	}
+	
+	public function next() {
+		++$this->_arrayPosition;
+		next($this->_data);
+	}
+	
+	public function rewind() {
+		$this->_arrayPosition = 0;
+		reset($this->_data);
+	}
+	
+	public function valid() {
+		if($this->_arrayPosition < count($this->_data) && $this->_arrayPosition >= 0) return true;
+		return false;
 	}
 }

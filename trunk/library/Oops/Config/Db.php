@@ -23,10 +23,13 @@ class Oops_Config_Db extends Oops_Config {
 			while(($row = mysql_fetch_row($r)) !== false) {
 				if(strtoupper($row[3]) == 'PRI') $keyFields[] = $row[0];
 			}
+			
 		} else {
 			require_once 'Oops/Utils.php';
 			Oops_Utils::ToArray($keyFields);
 		}
+		
+		if(!count($keyFields)) throw new Exception("No key fields for config");
 		
 		if(is_null($valueFields)) {
 			$sql = "SELECT * FROM $table";

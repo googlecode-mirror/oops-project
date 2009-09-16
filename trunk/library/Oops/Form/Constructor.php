@@ -488,7 +488,10 @@ class Oops_Form_Constructor
                                     break;
                                            
             case 'date'         : return Oops_Html::$type($name,$value,$class,$extra); 
-                                    break;              
+                                    break;    
+                                    
+            case 'dateinterval' : return Oops_Html::$type($name,$value,$class,$extra); 
+                                    break;                                      
                                     
          /*
           *  Special Fields

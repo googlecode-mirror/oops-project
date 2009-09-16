@@ -439,6 +439,74 @@ class Oops_Html {
 					catch(e){debugger;}
 				</script>';
 	}
+/**
+	 * Date field
+	 * 
+	 * @param string $name Input name
+	 * @param string $value Input value
+	 * @param string $class Input CSS class
+	 * @param array $extra Additional HTML tag and DHTMLCalendar parameters
+	 * @return string
+	 */
+	public static function dateinterval($name, $value = array('',''), $class = '', $extra = array())
+	{
+	    $params = array();
+	    $cal_params = array();
+	    $calDefaults = array(
+		                        'cal_but_img'		=>    '/i/b.gif',
+		                        'cal_but_id_f'		=>    'f_' . $name . '_date_event_icon',
+	                            'cal_but_id_t'		=>    't_' . $name . '_date_event_icon',
+		                        'cal_but_class'		=>    'icon date',
+		                        'cal_format'		=>    '%Y-%m-%d',
+		                        'cal_align'			=>    'Tl',
+		                        'cal_singleClick'	=>    'true', 
+		);  
+		
+		$params[] = self::_putClass($class);       
+		
+		if(is_array($extra)) {
+    		foreach($extra as $key => $value) {
+    		    if(substr($key,0,4)!='cal_')
+    			    $params[] = self::_putExtra($key, $value, 'text');
+    			else
+    			    $cal_params[$key] = $value; 
+    		}
+		}   
+		 
+		foreach($calDefaults as $k => $v)
+		    if(!isset($cal_params[$k]))
+		        $cal_params[$k] = $v;
+		     	
+		return '<input id="'.$name.'_f" type="text" ' . join(' ', $params) . ' name="' . $name . '[0]" value="'.$value[0].'"/>
+				<img src="'.$cal_params['cal_but_img'].'" class="'. $cal_params['cal_but_class'] . '" id="'. $cal_params['cal_but_id_f'] . '" />
+				<script type="text/javascript">
+					try{
+						Calendar.setup({
+							inputField		: "' . $name . '_f'                   . '",			
+							ifFormat 		: "' . $cal_params['cal_format']      . '",
+							button			: "' . $cal_params['cal_but_id_f']    . '", 
+							align 			: "' . $cal_params['cal_align']       . '", 
+							singleClick 	: '  . $cal_params['cal_singleClick'] . ',
+						});
+					}
+					catch(e){debugger;}
+				</script>
+				<input id="' . $name . '_t" type="text" ' . join(' ', $params) . ' name="' . $name . '[1]" value="'.$value[1].'"/>
+				<img src="'.$cal_params['cal_but_img'].'" class="'. $cal_params['cal_but_class'] . '" id="'. $cal_params['cal_but_id_t'] . '" />
+				<script type="text/javascript">
+					try{
+						Calendar.setup({
+							inputField		: "' . $name . '_t'                   . '",			
+							ifFormat 		: "' . $cal_params['cal_format']      . '",
+							button			: "' . $cal_params['cal_but_id_t']    . '", 
+							align 			: "' . $cal_params['cal_align']       . '", 
+							singleClick 	: '  . $cal_params['cal_singleClick'] . ',
+						});
+					}
+					catch(e){debugger;}
+				</script>
+				';
+	}
 	public static function object($name,$value='',$class='',$extra = array(), $refClass,$title ='')
 	{	    
 	    if(!isset($extra['id']))

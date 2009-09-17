@@ -251,13 +251,12 @@ class Oops_Grid
         
         $k=0;
         foreach ($this->_data as $rkey=>$value)   
-        {
-            
-                
+        {   
             $row = '';
-            foreach ($value as $key=>$item)
-                if(isset($this->_titles[$key]))
-                    $row.=$this->_itemDecorator->createElement($key,$item,false);
+            
+            foreach($this->_titles as $k=>$v)
+                if(isset($value[$k]))
+                $row.=$this->_itemDecorator->createElement($k,$value[$k],false);
                                
             if($k==1){
                 $key = true;

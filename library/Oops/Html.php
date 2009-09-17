@@ -450,6 +450,11 @@ class Oops_Html {
 	 */
 	public static function dateinterval($name, $value = array('',''), $class = '', $extra = array())
 	{
+	    if(!isset($value[0]))
+	        $value[0]='';
+	    if(!isset($value[1]))
+	        $value[1]='';   
+	         
 	    $params = array();
 	    $cal_params = array();
 	    $calDefaults = array(

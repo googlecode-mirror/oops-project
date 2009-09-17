@@ -75,6 +75,11 @@ class Oops_Form_Constructor
      */
     protected $_errors;
     
+    /*
+     *  Form Display Type
+     */
+    public $viewOnly = false;
+    
                                 
                                 
     /**
@@ -256,6 +261,7 @@ class Oops_Form_Constructor
         $this->_run();
         $this->_checkDecorators();
 
+        if(!$this->viewOnly)
           $result ='<form ';
           
           if(!empty($this->_attr))
@@ -267,8 +273,8 @@ class Oops_Form_Constructor
           if(!empty($this->_result))
               $result.=$this->_getFormGroup($this->_result,'','',true);
           
-
-          $result.='</form>';       
+         if(!$this->viewOnly)
+              $result.='</form>';       
           
           return $result;       
     }
@@ -405,7 +411,7 @@ class Oops_Form_Constructor
      * 			
      * @return string
      */
-    protected final function _makeField($data)
+    protected function _makeField($data)
     {     
         if(isset($data['type']))
             $type = $data['type'];
@@ -441,56 +447,64 @@ class Oops_Form_Constructor
              
         if(isset($data['options']) && is_array($data['options']))
             $options = $data['options'];    
-                        
+
+            
+        $name = 'Oops_Form_Field_';   
+        $oClass ='';
+        $obj = false;
+        
         switch ($type)
         {
+            $oClass = strtolower($type);
+            $oClass[0] = strtoupper($oClass[0]);
+            $oClass = $name.$oClass;
             
-            case 'text'         : return Oops_Html::$type($name,$value,$class,$extra); 
+            case 'text'         : $obj =  new $oClass($name,$value,$class,$extra); 
                                     break;
                                     
-            case 'password'     : return Oops_Html::$type($name,$value,$class,$extra);
+            case 'password'     : $obj =  new $oClass($name,$value,$class,$extra);
                                    break;
                                     
-            case 'file'         : return Oops_Html::$type($name,$class,$extra);
+            case 'file'         : $obj =  new$oClass($name,$class,$extra);
                                    break;
                                 
-            case 'hidden'       : return Oops_Html::$type($name,$value);
+            case 'hidden'       : $obj =  new $oClass($name,$value);
                                     break;
                                     
-            case 'reset'     	: return Oops_Html::$type($value,$class,$extra);
+            case 'reset'     	: $obj =  new $oClass($value,$class,$extra);
                                     break;
                                     
-            case 'submit'     	: return Oops_Html::$type($value,$class,$extra);
+            case 'submit'     	: $obj =  new $oClass($value,$class,$extra);
                                   break;
                                     
-            case 'button'     	: return Oops_Html::$type($value,$class,$extra);
+            case 'button'     	: $obj =  new $oClass($value,$class,$extra);
                                    break; 
                                       
-            case 'select'       : return Oops_Html::$type($name,$options,$value,$class,$empty,$extra);
+            case 'select'       : $obj =  new $oClass($name,$options,$value,$class,$empty,$extra);
                                   break;       
 
-            case 'multiSelect'	: return Oops_Html::$type($name,$options,$value,$class,$empty,$extra);
+            case 'multiSelect'	: $obj =  new $oClass($name,$options,$value,$class,$empty,$extra);
                                     break;                       
 
-            case 'textarea'     : return Oops_Html::$type($name,$value,$class,$extra); 
+            case 'textarea'     : $obj =  new $oClass($name,$value,$class,$extra); 
                                     break;
 
-            case 'checkbox'		: return Oops_Html::$type($name,$label,$value,$class,$extra); 
+            case 'checkbox'		: $obj =  new $oClass($name,$label,$value,$class,$extra); 
                                     break;
                                     
-            case 'radioGroup'	: return Oops_Html::$type($name,$options,$value,$class,$extra); 
+            case 'radioGroup'	: $obj =  new $oClass($name,$options,$value,$class,$extra); 
                                     break;  
 
-            case 'kaptcha'      : return Oops_Html::$type($name,$class); 
+            case 'kaptcha'      : $obj =  new $oClass($name,$class); 
                                     break;       
                                     
-            case 'info'         : return Oops_Html::$type($value,$class,$extra); 
+            case 'info'         : $obj =  new $oClass($value,$class,$extra); 
                                     break;
                                            
-            case 'date'         : return Oops_Html::$type($name,$value,$class,$extra); 
+            case 'date'         : $obj =  new $oClass($name,$value,$class,$extra); 
                                     break;    
                                     
-            case 'dateinterval' : return Oops_Html::$type($name,$value,$class,$extra); 
+            case 'dateinterval' : $obj =  new $oClass($name,$value,$class,$extra); 
                                     break;                                      
                                     
          /*
@@ -507,12 +521,14 @@ class Oops_Form_Constructor
                                         $title='';
                                     } 
                                     
-                                   return Oops_Html::$type($name,$value,$class,$extra,$data['ref_class'],$title); 
+                                   $obj =  new $oClass($name,$value,$class,$extra,$data['ref_class'],$title); 
                                    
                                     break;                           
 			
-            default             : return Oops_Html::info($value,$class,$extra); 
+            default             : return Oops_Form_Field_Info($value,$class,$extra); 
                                     break;              
         }
+        
+        return 
     }
 }

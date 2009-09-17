@@ -449,62 +449,55 @@ class Oops_Form_Constructor
             $options = $data['options'];    
 
             
-        $name = 'Oops_Form_Field_';   
-        $oClass ='';
-        $obj = false;
-        
         switch ($type)
         {
-            $oClass = strtolower($type);
-            $oClass[0] = strtoupper($oClass[0]);
-            $oClass = $name.$oClass;
             
-            case 'text'         : $obj =  new $oClass($name,$value,$class,$extra); 
+            case 'text'         : return Oops_Html::$type($name,$value,$class,$extra); 
                                     break;
                                     
-            case 'password'     : $obj =  new $oClass($name,$value,$class,$extra);
+            case 'password'     : return Oops_Html::$type($name,$value,$class,$extra);
                                    break;
                                     
-            case 'file'         : $obj =  new$oClass($name,$class,$extra);
+            case 'file'         : return Oops_Html::$type($name,$class,$extra);
                                    break;
                                 
-            case 'hidden'       : $obj =  new $oClass($name,$value);
+            case 'hidden'       : return Oops_Html::$type($name,$value);
                                     break;
                                     
-            case 'reset'     	: $obj =  new $oClass($value,$class,$extra);
+            case 'reset'     	: return Oops_Html::$type($value,$class,$extra);
                                     break;
                                     
-            case 'submit'     	: $obj =  new $oClass($value,$class,$extra);
+            case 'submit'     	: return Oops_Html::$type($value,$class,$extra);
                                   break;
                                     
-            case 'button'     	: $obj =  new $oClass($value,$class,$extra);
+            case 'button'     	: return Oops_Html::$type($value,$class,$extra);
                                    break; 
                                       
-            case 'select'       : $obj =  new $oClass($name,$options,$value,$class,$empty,$extra);
+            case 'select'       : return Oops_Html::$type($name,$options,$value,$class,$empty,$extra);
                                   break;       
 
-            case 'multiSelect'	: $obj =  new $oClass($name,$options,$value,$class,$empty,$extra);
+            case 'multiSelect'	: return Oops_Html::$type($name,$options,$value,$class,$empty,$extra);
                                     break;                       
 
-            case 'textarea'     : $obj =  new $oClass($name,$value,$class,$extra); 
+            case 'textarea'     : return Oops_Html::$type($name,$value,$class,$extra); 
                                     break;
 
-            case 'checkbox'		: $obj =  new $oClass($name,$label,$value,$class,$extra); 
+            case 'checkbox'		: return Oops_Html::$type($name,$label,$value,$class,$extra); 
                                     break;
                                     
-            case 'radioGroup'	: $obj =  new $oClass($name,$options,$value,$class,$extra); 
+            case 'radioGroup'	: return Oops_Html::$type($name,$options,$value,$class,$extra); 
                                     break;  
 
-            case 'kaptcha'      : $obj =  new $oClass($name,$class); 
+            case 'kaptcha'      : return Oops_Html::$type($name,$class); 
                                     break;       
                                     
-            case 'info'         : $obj =  new $oClass($value,$class,$extra); 
+            case 'info'         : return Oops_Html::$type($value,$class,$extra); 
                                     break;
                                            
-            case 'date'         : $obj =  new $oClass($name,$value,$class,$extra); 
+            case 'date'         : return Oops_Html::$type($name,$value,$class,$extra); 
                                     break;    
                                     
-            case 'dateinterval' : $obj =  new $oClass($name,$value,$class,$extra); 
+            case 'dateinterval' : return Oops_Html::$type($name,$value,$class,$extra); 
                                     break;                                      
                                     
          /*
@@ -521,14 +514,12 @@ class Oops_Form_Constructor
                                         $title='';
                                     } 
                                     
-                                   $obj =  new $oClass($name,$value,$class,$extra,$data['ref_class'],$title); 
+                                   return Oops_Html::$type($name,$value,$class,$extra,$data['ref_class'],$title); 
                                    
                                     break;                           
 			
-            default             : return Oops_Form_Field_Info($value,$class,$extra); 
+            default             : return Oops_Html::info($value,$class,$extra); 
                                     break;              
         }
-        
-        return 
     }
 }

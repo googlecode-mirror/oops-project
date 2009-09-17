@@ -262,15 +262,16 @@ class Oops_Form_Constructor
         $this->_checkDecorators();
 
         if(!$this->viewOnly)
-          $result ='<form ';
+        { $result ='<form ';
           
           if(!empty($this->_attr))
               foreach($this->_attr as $k => $v)  
                       $result.= $k . '="'.$v.'" ';
                 
           $result.='>';    
-
-          if(!empty($this->_result))
+        }
+        
+         if(!empty($this->_result))
               $result.=$this->_getFormGroup($this->_result,'','',true);
           
          if(!$this->viewOnly)

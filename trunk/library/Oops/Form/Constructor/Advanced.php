@@ -111,10 +111,9 @@ class Oops_Form_Constructor_Advanced extends Oops_Form_Constructor
             default             : return Oops_Html::info($value,$class,$extra); 
                                     break;              
         }
-        
         if($this->viewOnly)
            return $obj->getAsText();
         else
-           return $obj->tostring();
+            return $obj->_tostring();
     }
 }

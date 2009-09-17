@@ -37,7 +37,7 @@ class Oops_Form_Field_Dateinterval extends Oops_Form_Field
 		                        'cal_singleClick'	=>    'true', 
 		);  
 		
-		parent::__construct($name,$class,$value,$fieldParams);			
+		parent::__construct($name,$value,$class,$fieldParams);			
     }
     
     protected function _make()

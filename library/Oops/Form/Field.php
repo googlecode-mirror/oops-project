@@ -47,7 +47,7 @@ abstract class Oops_Form_Field
         $this->_make();
         return $this->html;
     }
-    public function __construct($name,$class,$value,$extra)
+    public function __construct($name,$value,$class,$extra)
     {
         $this->_name = $name;
         $this->_class = $class;

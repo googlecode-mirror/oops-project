@@ -6,14 +6,13 @@ class Oops_Form_Field_Date extends Oops_Form_Field
     
     public function __construct($name, $value = '', $class = '', $extra = array())
     {
+        if(!is_array($extra))
+	        $extra = array();
         
-        $fieldParams = array();
-	    $this->_calParams = array();
-	    
-	    if(!isset($extra['id']))
-		    $extra['id'] = 'id_' . $name;
-		
-		if(is_array($extra)) {
+	    $fieldParams = array();
+	    $this->_calParams = array();    
+	        
+        if(!empty($extra)) {
     		foreach($extra as $key => $value) {
     		    if(substr($key,0,4)!='cal_')
     			    $fieldParams[$key]  = $value;
@@ -21,7 +20,16 @@ class Oops_Form_Field_Date extends Oops_Form_Field
     			    $this->_calParams[$key] = $value; 
     		}
 		}   
-	    	    
+		
+	    if(!isset($fieldParams['id']))
+		    $fieldParams['id'] = 'id_' . $name;	    
+        
+        parent::__construct($name,$value,$class,$fieldParams);	
+        
+	   if(!isset($this->_extra['id']))
+		    $this->_extra['id'] = 'id_' . $name;
+		
+		
 	    $this->_calDefaults = array(
 		                        'cal_but_img'		=>    '/i/b.gif',
 		                        'cal_but_id'		=>    $name . '_date_event_icon',
@@ -29,14 +37,10 @@ class Oops_Form_Field_Date extends Oops_Form_Field
 		                        'cal_format'		=>    '%Y-%m-%d',
 		                        'cal_align'			=>    'Tl',
 		                        'cal_singleClick'	=>    'true', 
-		);  
-		
-		parent::__construct($name,$class,$value,$fieldParams);			
+		);  			
     }
-    
     protected function _make()
-    {
-        		 
+    {		 
 		foreach($this->_calDefaults as $k => $v)
 		    if(!isset($this->_calParams[$k]))
 		        $this->_calParams[$k] = $v;

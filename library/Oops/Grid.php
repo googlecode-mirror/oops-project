@@ -115,7 +115,7 @@ class Oops_Grid
              $this->_make();
              
          return $this->_result;   
-    }
+    }/*
     protected function _makeExtGrid()
     {
         if(empty($this->extParams))
@@ -204,7 +204,7 @@ class Oops_Grid
                grid.render(\''.$this->extParams['id'].'\');       	
          	}
          </script>';
-    }
+    }*/
     protected function _checkDecorators()
     {
         if(!is_object($this->_headItemDecorator))
@@ -254,10 +254,13 @@ class Oops_Grid
         {   
             $row = '';
             
-            foreach($this->_titles as $k=>$v)
-                if(isset($value[$k]))
-                $row.=$this->_itemDecorator->createElement($k,$value[$k],false);
-                               
+            foreach($this->_titles as $k=>$v){
+                if(!isset($value[$k]))
+                    $value[$k] = '&nbsp;';
+               
+               $row.= $this->_itemDecorator->createElement($k,$value[$k],false);
+              
+            }                   
             if($k==1){
                 $key = true;
                 $k=0;

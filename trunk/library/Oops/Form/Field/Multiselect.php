@@ -7,8 +7,7 @@ class Oops_Form_Field_Multiselect extends Oops_Form_Field_Select
     
     public function __construct($name, array $options, array $values, $class = '', $empty = false, $extra = array())
     {
-        $value='';
-        parent::__construct($name,$value,$class,$extra);  
+        parent::__construct($name,$options,$value = '', $class, $empty, $extra);  
         $this->_values = $values;
         $this->_options = $options;   
         $this->_empty = $empty; 

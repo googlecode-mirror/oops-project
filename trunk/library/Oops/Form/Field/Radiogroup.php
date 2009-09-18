@@ -5,7 +5,7 @@ class Oops_Form_Field_Radiogroup extends Oops_Form_Field
     
     public function __construct($name = '', array $options, $value = null, $class = '', $extra = array())
     {
-        parent::__construct($name,$class,$value,$extra);      
+        parent::__construct($name,$value,$class,$extra);      
         $this->_options = $options;   
     }
     

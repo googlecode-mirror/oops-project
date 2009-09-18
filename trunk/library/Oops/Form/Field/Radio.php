@@ -6,7 +6,7 @@ class Oops_Form_Field_Radio extends Oops_Form_Field
     
     public function __construct($name, $value, $label, $checked = false, $class = '', $extra = array())
     {
-        parent::__construct($name,$class,$value,$extra); 
+        parent::__construct($name,$value,$class,$extra); 
          
         $this->_label = $label;
         $this->_checked = $checked;   

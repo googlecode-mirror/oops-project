@@ -535,5 +535,6 @@ class Oops_Form_Constructor
             default             : return Oops_Html::info($value,$class,$extra); 
                                     break;              
         }
+        
     }
 }

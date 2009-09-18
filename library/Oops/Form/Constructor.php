@@ -322,8 +322,9 @@ class Oops_Form_Constructor
        foreach($data as $v)
            if( ($v['type'] === 'group') && isset($v['items'])  &&  !empty($v['items']))
                $this->_getValuesFromData($v['items']);                                                                         
-           else
-               $this->_values[$v['name']] =  $v['value'];             
+          else
+              if(isset($v['value']))
+                 $this->_values[$v['name']] =  $v['value'];                             
     }
     
     protected function _processData(array & $data , $parentGroupName = false) 

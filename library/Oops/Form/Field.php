@@ -88,7 +88,7 @@ abstract class Oops_Form_Field
 		     $this->_class = '';
 		     
 		if(!preg_match("/^[a-zA-Z_][a-zA-Z0-9_\-\[\] ]+$/", $class)) {
-			throw new Exception("Invalid input name: $class");
+			throw new Exception("Invalid input class: $class");
 		}	
 		return 'class ="' . $class .'"';
 	}

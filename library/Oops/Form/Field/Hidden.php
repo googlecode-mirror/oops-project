@@ -6,7 +6,7 @@ class Oops_Form_Field_Hidden extends Oops_Form_Field
         $class ='';
         $extra = false;
                 
-        parent::__construct($name,$class,$value,$extra);      
+        parent::__construct($name,$value,$class,$extra);      
     }
     protected function _make()
     {

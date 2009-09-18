@@ -3,9 +3,7 @@ class Oops_Form_Field_Reset extends Oops_Form_Field
 {
     public function __construct($value,$class,$extra)
     {
-        $name='';
-        
-        parent::__construct($name,$class,$value,$extra);      
+         parent::__construct('',$value,$class,$extra);     
     }
     protected function _make()
     {

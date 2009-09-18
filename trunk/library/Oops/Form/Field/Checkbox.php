@@ -5,7 +5,7 @@ class Oops_Form_Field_Checkbox extends Oops_Form_Field
     
     public function __construct($name, $label = false, $value = false, $class = '', $extra = array())
     {
-        parent::__construct($name,$class,$value,$extra); 
+        parent::__construct($name,$value,$class,$extra); 
          
         $this->_label = $label;   
        

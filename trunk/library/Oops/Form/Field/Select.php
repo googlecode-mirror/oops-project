@@ -6,7 +6,7 @@ class Oops_Form_Field_Select extends Oops_Form_Field
     
     public function __construct($name, array $options, $value = '', $class = '', $empty = false, $extra = array())
     {
-        parent::__construct($name,$class,$value,$extra);  
+        parent::__construct($name,$value,$class,$extra);  
         $this->_options = $options;   
         $this->_empty = $empty; 
     }

@@ -34,6 +34,11 @@ class Oops_Form_Constructor
     protected $_errorDecorator;
     
     /*
+     * Layout decorator
+     */
+    protected $_layoutDecorator;
+    
+    /*
      *  Form properties
      */
     protected $_attr;
@@ -211,6 +216,10 @@ class Oops_Form_Constructor
         $this->_fieldDecorator = $decorator;
     }
     
+    public function setLayoutDecorator(Oops_Form_Constructor_Decorator & $decorator)
+    {
+        $this->_layoutDecorator = $decorator;
+    }
 	/**
      * Set error decorator for form fields
      * 
@@ -243,7 +252,10 @@ class Oops_Form_Constructor
             $this->_groupDecorator = new Oops_Form_Constructor_Decorator_Group();  
             
         if(!is_object($this->_errorDecorator))
-            $this->_errorDecorator = new Oops_Form_Constructor_Decorator_Error();      
+            $this->_errorDecorator = new Oops_Form_Constructor_Decorator_Error();  
+
+        if(!is_object($this->_layoutDecorator))
+            $this->_layoutDecorator = new Oops_Form_Constructor_Decorator_Layout();    
     }
     
     
@@ -277,7 +289,7 @@ class Oops_Form_Constructor
          if(!$this->viewOnly)
               $result.='</form>';       
           
-          return $result;       
+          return $this->_layoutDecorator->createElement(false,false,$result,false);       
     }
     
     

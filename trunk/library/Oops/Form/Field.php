@@ -74,6 +74,11 @@ abstract class Oops_Form_Field
             $this->_required = false;    
     }
 
+    public function isRequired()
+    {
+        return $this->_required;
+    }
+    
     /**
 	 * Checks if valid element name is given and makes name="$name" string
 	 * 

@@ -16,8 +16,8 @@ class Oops_Form_Field_Radio extends Oops_Form_Field
     
     protected function _make()
     {
-        if($this->checked) 
-            $this->params[] = 'checked';
+        if($this->_checked) 
+            $this->_params[] = 'checked';
 		
 		$this->html = '<input type="radio" ' . join(' ', $this->_params) . '/>';
 		

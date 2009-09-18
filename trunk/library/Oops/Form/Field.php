@@ -32,6 +32,10 @@ abstract class Oops_Form_Field
      */
     protected $_params;
     
+    /*
+     * 
+     */
+    protected $_required;
     
     /*
      * Field html
@@ -52,6 +56,7 @@ abstract class Oops_Form_Field
         $this->_name = $name;
         $this->_class = $class;
         $this->_value = $value;
+        $this->_required = false;
         
         if(is_array($extra))
             $this->_extra = $extra;
@@ -60,6 +65,13 @@ abstract class Oops_Form_Field
 
         $this->_params = array();
         
+    }
+    public  function required($bool = true)
+    {
+        if($bool)
+            $this->_required = true;
+        else
+            $this->_required = false;    
     }
 
     /**

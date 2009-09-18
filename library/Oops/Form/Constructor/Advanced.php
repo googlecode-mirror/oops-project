@@ -67,7 +67,7 @@ class Oops_Form_Constructor_Advanced extends Oops_Form_Constructor
             case 'submit'     	: $obj = new $oClass($value,$class,$extra);
                                   break;
                                     
-            case 'button'     	: $obj = new $oClass($value,$class,$extra);
+            case 'button'     	: $obj = new $oClass($name,$value,$class,$extra);
                                    break; 
                                       
             case 'select'       : $obj = new $oClass($name,$options,$value,$class,$empty,$extra);
@@ -122,6 +122,6 @@ class Oops_Form_Constructor_Advanced extends Oops_Form_Constructor
         if($this->viewOnly)
            return $obj->getAsText();
         else
-           return $obj->_tostring();
+           return $obj->__toString();
     }
 }

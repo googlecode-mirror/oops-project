@@ -13,6 +13,12 @@ class Oops_Form_Constructor_Advanced extends Oops_Form_Constructor
             $name = $data['name'];
         else
              throw new Exception('FormCreator :: _makeField - data name is not defined');   
+
+             
+        $required = false;
+             
+        if(isset($data['required']))     
+            $required = $data['required'];
                 
         $class = 'inputField';
         $extra = array();
@@ -119,9 +125,11 @@ class Oops_Form_Constructor_Advanced extends Oops_Form_Constructor
                                     break;              
         }
 
+        $obj->required($required );
+        
         if($this->viewOnly)
            return $obj->getAsText();
         else
-           return $obj->__toString();
+           return $obj;
     }
 }

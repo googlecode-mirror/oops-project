@@ -42,7 +42,7 @@ abstract class Oops_Form_Field
      */
     protected $html='';
     
-    
+      
     abstract protected function _make();
     
     public function __toString()
@@ -65,6 +65,12 @@ abstract class Oops_Form_Field
 
         $this->_params = array();
         
+    }
+    public function getType()
+    {
+        $name = str_replace('Oops_Form_Field_','',get_class($this));
+        $name[0] = strtolower($name[0]); 
+        return $name;
     }
     public  function required($bool = true)
     {

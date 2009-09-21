@@ -45,7 +45,7 @@ class Oops_Form_Field_Date extends Oops_Form_Field
 		    if(!isset($this->_calParams[$k]))
 		        $this->_calParams[$k] = $v;
 		     	
-		$html= '<input type="text" ' . join(' ', $this->_params) . '/>
+		$this->html= '<input type="text" ' . join(' ', $this->_params) . '/>
 				<img src="' . $this->_calParams['cal_but_img'].'" class="'. $this->_calParams['cal_but_class'] . '" id="'. $this->_calParams['cal_but_id'] . '" />
 				<script type="text/javascript">
 					try{

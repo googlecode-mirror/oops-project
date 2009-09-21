@@ -10,4 +10,11 @@ class Oops_Sql_Variable {
 	public function __toString() {
 		return '@`'.$this->varname.'`';
 	}
+	
+	public function getValue() {
+		require_once 'Oops/Sql.php';
+		$r = Oops_Sql::Query("SELECT $this");
+		list($value) = mysql_fetch_row($r);
+		return $value;
+	}
 }

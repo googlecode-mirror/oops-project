@@ -1,7 +1,6 @@
 <?php
 class Oops_Form_Constructor_Advanced extends Oops_Form_Constructor
 {
-    
     protected function _makeField($data)
     {     
         if(isset($data['type']))
@@ -13,8 +12,7 @@ class Oops_Form_Constructor_Advanced extends Oops_Form_Constructor
             $name = $data['name'];
         else
              throw new Exception('FormCreator :: _makeField - data name is not defined');   
-
-             
+          
         $required = false;
              
         if(isset($data['required']))     
@@ -119,7 +117,7 @@ class Oops_Form_Constructor_Advanced extends Oops_Form_Constructor
             default             :  $obj = new Oops_Form_Field_Info('',$value,$class,$extra); 
                                     break;              
         }
-
+ 
         $obj->required($required );
         
         if($this->viewOnly)

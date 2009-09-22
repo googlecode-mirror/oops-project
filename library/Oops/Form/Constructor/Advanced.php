@@ -117,7 +117,11 @@ class Oops_Form_Constructor_Advanced extends Oops_Form_Constructor
                                         $title='';
                                     } 
                                     
-                                   return $obj = new $oClass($name,$value,$class,$extra,$data['ref_class'],$title); 
+                                    $obj = new $oClass($name,$value,$class,$extra,$data['ref_class'],$title); 
+                                   
+                                    break;     
+
+            case 'objectsarray'	:   $obj = new $oClass($name,$value,$class,$extra,$data['ref_class'],$data['m2m_table']); 
                                    
                                     break;                           
 			

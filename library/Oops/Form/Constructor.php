@@ -462,7 +462,7 @@ class Oops_Form_Constructor
         if(isset($data['options']) && is_array($data['options']))
             $options = $data['options'];    
 
-            
+   
         switch ($type)
         {
             
@@ -521,7 +521,7 @@ class Oops_Form_Constructor
             case 'object'		:  $extra['readonly'] = true;
                                         
                                     if(!empty($value)) {
-                                        $obj = new Registry_Object($value);
+                                        $obj = Registry_Factory::getObject($value);
                                         $title = $obj->__tostring();
                                     }
                                     else{
@@ -530,7 +530,11 @@ class Oops_Form_Constructor
                                     
                                    return Oops_Html::$type($name,$value,$class,$extra,$data['ref_class'],$title); 
                                    
-                                    break;                           
+                                    break;     
+
+            case 'objectsarray'	:  return Oops_Html::$type($name,$value,$class,$extra,$data['ref_class'],$data['m2m_table']); 
+                                   
+                                    break;                       
 			
             default             : return Oops_Html::info($value,$class,$extra); 
                                     break;              

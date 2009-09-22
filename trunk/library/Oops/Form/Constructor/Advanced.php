@@ -26,6 +26,8 @@ class Oops_Form_Constructor_Advanced extends Oops_Form_Constructor
         $empty = false;  
         $value ='';  
         $label='';
+        $className='';
+        $classParams = array();
              
         if(isset($data['class']))
             $class = $data['class'];
@@ -43,16 +45,21 @@ class Oops_Form_Constructor_Advanced extends Oops_Form_Constructor
             $label = $data['label'];
              
         if(isset($data['options']) && is_array($data['options']))
-            $options = $data['options'];    
+            $options = $data['options'];  
 
+         if(isset($data['className']) )
+            $className = $data['className'];
             
+         if(isset($data['classParams']) && is_array($data['classParams']))
+            $classParams = $data['classParams'];     
+              
         $namePrefix = 'Oops_Form_Field_';    
         $object = false;
         
         $oClass = strtolower($type);
         $oClass[0] = strtoupper($oClass[0]);
         $oClass = $namePrefix.$oClass; 
-              
+ 
         switch ($type)
         {      
             case 'text'         : $obj = new $oClass($name,$value,$class,$extra); 
@@ -102,29 +109,13 @@ class Oops_Form_Constructor_Advanced extends Oops_Form_Constructor
                                     
             case 'dateinterval' : $obj = new $oClass($name,$value,$class,$extra); 
                                     break;                                      
-                                    
-         /*
-          *  Special Fields
-          */         
-                                                      
-            case 'object'		:  $extra['readonly'] = true;
-                                        
-                                    if(!empty($value)) {
-                                        $obj = new Registry_Object($value);
-                                        $title = $obj->__tostring();
-                                    }
-                                    else{
-                                        $title='';
-                                    } 
-                                    
-                                    $obj = new $oClass($name,$value,$class,$extra,$data['ref_class'],$title); 
-                                   
-                                    break;     
 
-            case 'objectsarray'	:   $obj = new $oClass($name,$value,$class,$extra,$data['ref_class'],$data['m2m_table']); 
+            case 'adapter'		:   if(empty($className))
+                                     throw new Exception('Invaild className for'.$name.' field');
                                    
-                                    break;                           
-			
+                                    $obj =  new $className($name,$value,$class,$extra,$classParams); 
+                                    break;                     
+
             default             :  $obj = new Oops_Form_Field_Info('',$value,$class,$extra); 
                                     break;              
         }

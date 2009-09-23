@@ -49,7 +49,7 @@ class Oops_Template_Helper {
 
 	static protected function _initDefaultBasename() {
 		if(isset(self::$defaultBasename)) return;
-		if(strlen($configValue = Oops_Server::getConfig()->oops->default_basename))
+		if(strlen($configValue = (string) Oops_Server::getConfig()->oops->default_basename))
 			self::$defaultBasename = $configValue;
 		else
 			self::$defaultBasename = '_default.php';

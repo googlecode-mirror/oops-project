@@ -24,7 +24,8 @@ class Oops_Config_Default extends Oops_Config {
 				"default_action" => "index", 
 				"default_extension" => "php", 
 				"include_path" => "./application/library", 
-				"templates_path" => "./application/templates", 
+				"templates_path" => "./application/templates",
+				"default_basename" => "_default.php", 
 				"strict_views" => true ), 
 			"router" => array("class" => "Oops_Server_Router", "source" => "" ) ));
 	}

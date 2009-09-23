@@ -52,16 +52,16 @@ class Oops_Sql {
 		throw new Oops_Sql_Exception("Mysql connection error (" . mysql_errno() . ": " . mysql_error());
 	}
 
-	protected static function Error($dieOnError = false) {
+	protected static function Error($dieOnError = false, $query = '') {
 		$errCode = mysql_errno(self::$_link);
 		$errStr = mysql_error(self::$_link);
 		// @todo Refactor, now we can't see mysql errors in response, maybe we should use exceptions
-		trigger_error("MySQL/QueryError/$errCode - $errStr", E_USER_ERROR);
-		if(!$dieOnError) return false;
 		if($dieOnError == OOPS_SQL_EXCEPTION) {
-			throw new Exception("MySQL/QueryError/$errCode - $errStr");
+			throw new Exception("MySQL/QueryError/$errCode - $errStr/$query");
 		}
-		die();
+		trigger_error("MySQL/QueryError/$errCode - $errStr/$query", E_USER_ERROR);
+		if($dieOnError) die();
+		return false;
 	}
 
 	/**
@@ -117,7 +117,7 @@ class Oops_Sql {
 
 		$result = mysql_query($query, self::$_link);
 
-		if(mysql_errno(self::$_link)) return self::Error($dieOnError);
+		if(mysql_errno(self::$_link)) return self::Error($dieOnError, $query);
 
 		return $result;
 	}

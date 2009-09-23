@@ -131,4 +131,12 @@ class Oops_Config implements Countable, Iterator {
 		if($this->_arrayPosition < count($this->_data) && $this->_arrayPosition >= 0) return true;
 		return false;
 	}
+	
+	public function __toArray() {
+		$array = $this->_data;
+		foreach($array as $k=>$v) {
+			if($v instanceof Oops_Config) $array[$k] = $v->__toArray();
+		}
+		return $array;
+	}
 }

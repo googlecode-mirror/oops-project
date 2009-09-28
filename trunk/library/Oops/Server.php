@@ -133,8 +133,12 @@ class Oops_Server {
 		return $server->_response;
 	}
 
+	/**
+	 * 
+	 * @return Oops_Server_Router
+	 */
 	public static function getRouter() {
-		$server = Oops_Server::getRouter();
+		$server = Oops_Server::getInstance();
 		return $server->_router;
 	}
 
@@ -297,6 +301,12 @@ class Oops_Server {
 		$this->_uri_parts = $coolparts;
 	}
 
+	/**
+	 * Initializes router object using server's config
+	 * 
+	 * @ignore
+	 * @return void
+	 */
 	protected function _initRouter() {
 		$routerConfig = $this->_config->router;
 		if(is_object($routerConfig)) {
@@ -400,8 +410,9 @@ class Oops_Server {
 	/**
 	 * Initial server run using http request and processing http response
 	 * Uses default config location of ./application/config/oops.ini
+	 * Outputs the response
 	 *
-	 * @static
+	 * @return void
 	 */
 	public static function RunHttpDefault() {
 		require_once ("Oops/Config/Ini.php");

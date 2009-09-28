@@ -34,6 +34,10 @@ class Oops_Server_View_Php extends Oops_Server_View {
 		return $content;
 	}
 
+	/**
+	 * Instantiates content template for current path, action, view and router controller 
+	 * @return Oops_Template
+	 */
 	function _getContentTemplate() {
 		$templateName = $this->_params['controller'] . '/' . $this->_params['ext'];
 		
@@ -45,6 +49,10 @@ class Oops_Server_View_Php extends Oops_Server_View {
 		return $template;
 	}
 
+	/**
+	 * Instantiates content template for current path, action, view and router controller 
+	 * @return Oops_Template
+	 */
 	function _getFilterTemplate() {
 		$templateName = "_filter/" . $this->_params['ext'];
 		

@@ -5,6 +5,7 @@ require_once 'Oops/Event/Dispatcher.php';
 class Oops_Form_Dispatcher extends Oops_Event_Dispatcher {
 	
 	public function __construct($name) {
+		$this->_name = "auto-Oops_Form_Dispatcher";
 		$dispatcher = Oops_Event_Dispatcher::getInstance($name);
 		$this->addNestedDispatcher($dispatcher);		
 	}

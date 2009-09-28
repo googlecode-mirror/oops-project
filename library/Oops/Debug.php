@@ -69,7 +69,7 @@ class Oops_Debug {
 		switch ($type) {
 			case "object":
 				$type .= " <i>".get_class($value)."</i>";
-				$value = get_object_vars($value);
+				$value = array('__dump__' => print_r($value, true));
 			case "array":
 				echo "<a onclick=\"document.getElementById('_ate_$i').style.display = ";
 				echo "document.getElementById('_ate_$i";

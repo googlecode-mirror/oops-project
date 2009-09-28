@@ -169,8 +169,9 @@ class Oops_Sql_Common {
 			return (string) $v;
 		}
 
+		// @todo correct for floats
 		// return numeric as is
-		if(is_numeric($v)) return $v;
+		if(is_numeric($v) && strlen($v) == strlen((int) $v)) return $v;
 		
 		// it's a string
 		return "'".Oops_Sql::Escape((string) $v)."'";

@@ -13,27 +13,42 @@ class Oops_Event_Dispatcher {
 	protected $_ro = array();
 	protected $_nestedDispatchers = array();
 
-	protected function __construct($name) {
-		$this->_name = $name;
+	protected function __construct($name = '') {
+		if(strlen($name)) $this->_name = $name;
 	}
 
 	/**
 	 * Returns a notification dispatcher singleton
 	 *
 	 * @param string $name Name of the notification dispatcher. Default notification dispatcher is named __default.
-	 * @return object Oops_Event_Dispatcher
+	 * @return Oops_Event_Dispatcher
 	 */
 	function getInstance($name = '__default') {
 		static $dispatchers = array();
 		$name = strtolower($name);
 		if(!isset($dispatchers[$name])) {
 			$dispatchers[$name] = new Oops_Event_Dispatcher($name);
-			if($name != '__default') {
-				// @todo use Oops_Config for observers registration
-				Oops_Loader::load("Oops_Event_Registator_$name");
+			$cfg = self::_getConfig($name);
+			foreach($cfg as $event => $observersString) {
+				$observers = explode(',', $observersString);
+				foreach($observers as $callback) {
+					if(strpos($callback, '::')) $callback = explode('::', $callback);
+					if(is_callable($callback, true)) {
+						$dispatchers[$name]->addObserver($callback, $event);
+					}
+				}
 			}
+		
 		}
 		return $dispatchers[$name];
+	}
+
+	protected static function _getConfig($name) {
+		static $config = null;
+		if(!isset($config)) {
+			$config = new Oops_Config_Ini('./application/config/events.ini');
+		}
+		return $config->$name;
 	}
 
 	/**
@@ -50,6 +65,8 @@ class Oops_Event_Dispatcher {
 			// @todo Consider throwing exception here
 			return false;
 		}
+
+		$event = strtolower($event);
 		
 		if(!($reg = $this->_identifyCallback($callback))) {
 			return false;
@@ -65,6 +82,7 @@ class Oops_Event_Dispatcher {
 	}
 
 	function removeObserver($callback, $event) {
+		$event = strtolower($event);
 		if(!isset($this->_ro[$event])) return false;
 		if(!($reg = $this->_identifyCallback($callback))) return false;
 		if(!isset($this->_ro[$event][$reg])) return false;
@@ -115,7 +133,7 @@ class Oops_Event_Dispatcher {
 	 * @return object  The notification object //!!!! not necessary
 	 */
 	function postNotification($notification) {
-		$event = $notification->getEvent();
+		$event = strtolower($notification->getEvent());
 		if(!isset($this->_ro[$event])) return $notification;
 		foreach($this->_ro[$event] as $callback) {
 			if($notification->isCancelled()) return $notification;

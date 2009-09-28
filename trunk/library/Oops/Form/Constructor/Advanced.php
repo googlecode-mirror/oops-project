@@ -66,7 +66,7 @@ class Oops_Form_Constructor_Advanced extends Oops_Form_Constructor
             case 'password'     : $obj = new $oClass($name,$value,$class,$extra);
                                    break;
                                     
-            case 'file'         : $obj = new $oClass($name,$class,$extra);
+            case 'file'         : $obj = new $oClass($name,$value, $class,$extra);
                                    break;
                                 
             case 'hidden'       : $obj = new $oClass($name,$value);

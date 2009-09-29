@@ -18,7 +18,7 @@ class Oops_Config_Ini extends Oops_Config {
 	/**
 	 * @param string Ini file name
 	 */
-	function __construct($filename) {
+	function __construct($filename, $keyDelimiter = '.', $allowModifications = false) {
 		set_error_handler(array($this, "_parseIniErrorHandler" ));
 		$data = parse_ini_file($filename, true);
 		restore_error_handler();
@@ -26,7 +26,7 @@ class Oops_Config_Ini extends Oops_Config {
 			trigger_error("Config/InvalidIniFile/$filename", E_USER_WARNING);
 			return;
 		}
-		parent::__construct($data);
+		parent::__construct($data, $keyDelimiter, $allowModifications);
 	}
 
 	function _parseIniErrorHandler($errno, $errstr) {

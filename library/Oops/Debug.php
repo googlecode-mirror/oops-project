@@ -50,7 +50,9 @@ class Oops_Debug {
 		static $ret = null;
 		if(!isset($ret)) {
 			$ret = false;
-			if($_SERVER['REMOTE_ADDR'] == '127.0.0.1') $ret = true;
+			$remote = ip2long($_SERVER['REMOTE_ADDR']);
+			$allowed = ip2long('127.0.0.1');
+			if($remote >> 8 == $allowed >> 8) $ret = true;
 		}
 		return $ret;
 	}

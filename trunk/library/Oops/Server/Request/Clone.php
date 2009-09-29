@@ -18,7 +18,6 @@ class Oops_Server_Request_Clone extends Oops_Server_Request {
 	}
 	
 	public function offsetSet($offset, $value) {
-		debugPrint($value, $offset);
 		$this->_params[$offset] = $value;
 	}
 }

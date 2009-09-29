@@ -13,7 +13,7 @@ class Oops_Config_Db extends Oops_Config {
 	 * @param string|array $valueFields Field name(s) to use as config value. If not given all fields excluding keys will be used
 	 * @param string $keyDelimiter Explode keys by this delimiter and group values for each exploded part  
 	 */
-	public function __construct($table, $keyFields = null, $valueFields = null, $keyDelimiter = '.') {
+	public function __construct($table, $keyFields = null, $valueFields = null, $keyDelimiter = '.', $allowModifications = false) {
 		require_once 'Oops/Sql/Common.php';
 		$table = Oops_Sql_Common::escapeIdentifiers($table);
 		
@@ -23,7 +23,7 @@ class Oops_Config_Db extends Oops_Config {
 			while(($row = mysql_fetch_row($r)) !== false) {
 				if(strtoupper($row[3]) == 'PRI') $keyFields[] = $row[0];
 			}
-			
+		
 		} else {
 			require_once 'Oops/Utils.php';
 			Oops_Utils::ToArray($keyFields);
@@ -53,6 +53,6 @@ class Oops_Config_Db extends Oops_Config {
 			if(count($row) == 1) $row = array_pop($row);
 			$data[join($keyDelimiter, $keyParts)] = $row;
 		}
-		parent::__construct($data, $keyDelimiter);
+		parent::__construct($data, $keyDelimiter, $allowModifications);
 	}
 }

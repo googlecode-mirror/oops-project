@@ -35,7 +35,7 @@ class Oops_Server_Request_Http extends Oops_Server_Request {
 		
 		$this->_proceedRequestFiles($_FILES, $this->_files);
 
-		$this->_params = array_merge($this->_files, $this->_post, $this->_get);
+		$this->_params = array_merge($this->_get, $this->_post, $this->_files);
 
 		$parsed = parse_url($_SERVER['REQUEST_URI']);
 		foreach($parsed as $name=>$value) $this->$name = $value;

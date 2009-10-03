@@ -77,7 +77,7 @@ class Oops_File {
 	protected function _stat() {
 		$pathInfo = pathinfo($this->_filename);
 		if(isset($pathInfo['dirname'])) $this->_dirname = $pathInfo['dirname'];
-		if(isset($pathInfo['extension'])) $this->_basename = $pathInfo['basename'];
+		if(isset($pathInfo['basename'])) $this->_basename = $pathInfo['basename'];
 		if(isset($pathInfo['extension'])) $this->_extension = $pathInfo['extension'];
 		if(is_file($this->_filename)) $this->_size = filesize($this->_filename);
 	}
@@ -153,9 +153,13 @@ class Oops_File {
 	 * @return unknown_type
 	 */
 	public function putContents($content) {
-		if(!$this->makeWritable()) return false;
-		if($this->isDirectory()) return false;
+		if(!$this->makeWriteable()) return false;
+		if($this->isDir()) return false;
 		return file_put_contents($this->_filename, $content);
+	}
+	
+	public function isDir() {
+		return is_dir($this->_filename);
 	}
 
 	/**

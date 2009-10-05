@@ -11,8 +11,9 @@ class Oops_Form_Field_Select extends Oops_Form_Field
         $this->_empty = $empty; 
     }
     protected function _make()
-    {
-        $this->html = '<select ' . join(' ', $this->_params) . '>';
+    {    
+        $this->html = '<select ' . join(' ', $this->_params) . ' ' . $this->events->getList() . '>';
+        
 		if($this->_empty !== false && !isset($this->_options[''])) {
 			$this->html .= '<option value=""' . ($this->_value === '' ? ' selected' : '') . '>';
 			$this->html .= self::_formsafe($this->_empty) . '</option>';
@@ -22,6 +23,6 @@ class Oops_Form_Field_Select extends Oops_Form_Field
 			$this->html .= '<option ' . self::_putValue($optionValue) . $selected . '>' . self::_formsafe($optionLabel) . '</option>';
 		}
 		
-		return $this->html . '</select>';
+		return $this->html .= "</select>";
     }
 }

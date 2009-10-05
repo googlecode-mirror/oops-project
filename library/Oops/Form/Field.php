@@ -37,6 +37,12 @@ abstract class Oops_Form_Field
      */
     protected $_required;
     
+    
+    /*
+     *  Field Events & Oops_Form_Field_Events
+     */
+    public $events;
+    
     /*
      * Field html
      */
@@ -49,6 +55,7 @@ abstract class Oops_Form_Field
     {
         $this->_getParams();
         $this->_make();
+        
         return $this->html;
     }
     public function __construct($name,$value,$class,$extra)
@@ -57,8 +64,9 @@ abstract class Oops_Form_Field
         $this->_class = $class;
         $this->_value = $value;
         $this->_required = false;
+        $this->events = new Oops_Form_Field_Events();
         
-        if(is_array($extra))
+        if(is_array($extra) && !empty($extra))
             $this->_extra = $extra;
         else
             $this->_extra = array();

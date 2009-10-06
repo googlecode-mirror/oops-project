@@ -53,11 +53,17 @@ abstract class Oops_Form_Field
     
     public function __toString()
     {
+        return $this->getHtml();
+    }
+    
+    public function getHtml()
+    {
         $this->_getParams();
         $this->_make();
         
         return $this->html;
     }
+    
     public function make()
     {
         $this->_make();

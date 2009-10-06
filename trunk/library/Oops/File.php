@@ -47,6 +47,11 @@ class Oops_File {
 	}
 
 	function __set($var, $value) {
+		switch($var) {
+			case 'type':
+				$this->_type = $value;
+				break;
+		}
 		return;
 	}
 
@@ -109,6 +114,7 @@ class Oops_File {
 	 * @return Oops_File
 	 */
 	public function copy($dest, $mode) {
+		// @todo check if this file is a directory
 		$destFile = new Oops_File($dest);
 		$destFile->makeWriteable();
 		if(copy($this->_filename, $dest)) return false;
@@ -128,6 +134,7 @@ class Oops_File {
 		$destFile = new Oops_File($dest);
 		// @todo Consider using exception here
 		if(!$destFile->makeWriteable()) return false;
+		if($destFile->exists) unlink($destFile->filename);
 		
 		if(rename($this->_filename, $destFile->filename)) {
 			$this->_filename = $destFile->filename;
@@ -155,9 +162,12 @@ class Oops_File {
 	public function putContents($content) {
 		if(!$this->makeWriteable()) return false;
 		if($this->isDir()) return false;
-		return file_put_contents($this->_filename, $content);
+		if(file_put_contents($this->_filename, $content)) {
+			$this->_size = filesize($this->_filename);
+			$this->_exists = is_file($this->_filename);
+		}
 	}
-	
+
 	public function isDir() {
 		return is_dir($this->_filename);
 	}
@@ -190,7 +200,7 @@ class Oops_File {
 				return false;
 		}
 	}
-	
+
 	public function remove() {
 		throw new Exception("Oops_File::remove not implemented");
 	}

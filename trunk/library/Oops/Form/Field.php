@@ -53,7 +53,12 @@ abstract class Oops_Form_Field
     
     public function __toString()
     {
-        return $this->getHtml();
+    	try {
+        	return $this->getHtml();
+    	} catch (Exception $e) {
+    		Oops_Debug::Dump($e, 'exception', true);
+    		return '';
+    	}
     }
     
     public function getHtml()
@@ -195,6 +200,22 @@ abstract class Oops_Form_Field
 	public function getAsText()
 	{
 	    return $this->_value;
+	}
+	
+	public function __set($var, $value) {
+		switch($var) {
+			case 'class':
+			case 'extra':
+			case 'name':
+			case 'params':
+			case 'required':
+			case 'value':
+				$this->{'_' . $var} = $value;
+				break;
+			default:
+				$this->{$var} = $value;
+				break;
+		}
 	}
 	
 }

@@ -110,15 +110,22 @@ class Oops_Form_Constructor_Advanced extends Oops_Form_Constructor
 
             case 'adapter'		:   if(empty($className))
                                      throw new Exception('Invaild className for'.$name.' field');
-                                   
-                                    $obj =  new $className($name,$value,$class,$extra,$classParams); 
+                                    require_once 'Oops/Factory.php';
+                                    $obj = Oops_Factory::instantiate($className, $classParams['id']);
+                                    $obj->name = $name;
+                                    $obj->value = $value;
+                                    $obj->class = $class;
+                                    $obj->extra = $extra;
+                                    $obj->data = $classParams;
+                                    //$obj =  new $className($name,$value,$class,$extra,$classParams); 
                                     break;                     
 
             default             :  $obj = new Oops_Form_Field_Info('',$value,$class,$extra); 
                                     break;              
         }
  
-        $obj->required($required );
+        $obj->required($required);
+        //$obj->_make();
         
         if($this->viewOnly)
            return $obj->getAsText();

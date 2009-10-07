@@ -46,7 +46,11 @@ class Oops_Event_Dispatcher {
 	protected static function _getConfig($name) {
 		static $config = null;
 		if(!isset($config)) {
-			$config = new Oops_Config_Ini('./application/config/events.ini');
+			if(file_exists('./application/config/events.ini')) {
+				$config = new Oops_Config_Ini('./application/config/events.ini');
+			} else {
+				$config = new Oops_Config();
+			}
 		}
 		return $config->$name;
 	}
@@ -65,7 +69,7 @@ class Oops_Event_Dispatcher {
 			// @todo Consider throwing exception here
 			return false;
 		}
-
+		
 		$event = strtolower($event);
 		
 		if(!($reg = $this->_identifyCallback($callback))) {

@@ -247,7 +247,8 @@ class Oops_Server {
 		} catch(Exception $e) {
 			trigger_error($e->getMessage(), E_USER_ERROR);
 		}
-		$this->_response->reportErrors($this->_errorHandler);
+		require_once 'Oops/Debug.php';
+		if(Oops_Debug::allow()) $this->_response->reportErrors($this->_errorHandler);
 		restore_error_handler();
 		
 		return $this->_response;

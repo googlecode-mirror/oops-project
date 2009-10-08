@@ -220,16 +220,7 @@ class Oops_Kcaptcha_Image {
 		
 		$this->saveKeyString();
 		
-		if(function_exists("imagejpeg")) {
-			header("Content-Type: image/jpeg");
-			imagejpeg($img2, null, $this->config->jpeg_quality);
-		} else if(function_exists("imagegif")) {
-			header("Content-Type: image/gif");
-			imagegif($img2);
-		} else if(function_exists("imagepng")) {
-			header("Content-Type: image/x-png");
-			imagepng($img2);
-		}
+		return $img2;
 	}
 
 	// returns keystring

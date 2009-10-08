@@ -21,7 +21,7 @@ class Oops_Kcaptcha_Image {
 
 	function __construct($config = null) {
 		if(!is_object($config)) {
-			require_once ("Oops/Kcaptcha/Config.php");
+			require_once 'Oops/Kcaptcha/Config.php';
 			$config = new Oops_Kcaptcha_Config();
 		}
 		$this->config = $config;
@@ -231,6 +231,7 @@ class Oops_Kcaptcha_Image {
 	//PHP5 private
 	function saveKeyString() {
 		require_once ("Oops/Kcaptcha/Storage.php");
-		Oops_Kcaptcha_Storage::Store($this->keystring);
+		$storage = new Oops_Kcaptcha_Storage();
+		$storage->Store($this->keystring);
 	}
 }

@@ -150,7 +150,7 @@ class Oops_File {
 	 * @return string File contents
 	 */
 	public function getContents() {
-		if($this->_exists && $this->_isFile) return file_get_contents($this->_filename);
+		if(file_exists($this->_filename) && is_file($this->_filename)) return file_get_contents($this->_filename);
 		return "";
 	}
 

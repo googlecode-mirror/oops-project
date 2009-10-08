@@ -23,7 +23,7 @@ class Oops_Event_Dispatcher {
 	 * @param string $name Name of the notification dispatcher. Default notification dispatcher is named __default.
 	 * @return Oops_Event_Dispatcher
 	 */
-	function getInstance($name = '__default') {
+	public static function getInstance($name = '__default') {
 		static $dispatchers = array();
 		$name = strtolower($name);
 		if(!isset($dispatchers[$name])) {
@@ -64,7 +64,7 @@ class Oops_Event_Dispatcher {
 	 * @param string	Event name
 	 * @return bool		True if the observer has been registered, false otherwise
 	 */
-	function addObserver($callback, $event) {
+	public function addObserver($callback, $event) {
 		if(!is_string($event)) {
 			// @todo Consider throwing exception here
 			return false;
@@ -85,7 +85,7 @@ class Oops_Event_Dispatcher {
 		return true;
 	}
 
-	function removeObserver($callback, $event) {
+	public function removeObserver($callback, $event) {
 		$event = strtolower($event);
 		if(!isset($this->_ro[$event])) return false;
 		if(!($reg = $this->_identifyCallback($callback))) return false;
@@ -94,7 +94,7 @@ class Oops_Event_Dispatcher {
 		return true;
 	}
 
-	function _identifyCallback($callback) {
+	protected function _identifyCallback($callback) {
 		static $objectsCounter = 0;
 		//Let's identify the callback
 		if(is_array($callback)) {
@@ -124,7 +124,7 @@ class Oops_Event_Dispatcher {
 	 * @param mixed    Event information of any kind
 	 * @return object  The notification object
 	 */
-	function post($event, $info = array()) {
+	public function post($event, $info = array()) {
 		require_once ("Oops/Event/Notification.php");
 		$notification = new Oops_Event_Notification($event, $info);
 		return $this->postNotification($notification);
@@ -136,7 +136,7 @@ class Oops_Event_Dispatcher {
 	 * @param object   The notification object
 	 * @return object  The notification object //!!!! not necessary
 	 */
-	function postNotification($notification) {
+	public function postNotification($notification) {
 		$event = strtolower($notification->getEvent());
 		if(!isset($this->_ro[$event])) return $notification;
 		foreach($this->_ro[$event] as $callback) {
@@ -155,7 +155,7 @@ class Oops_Event_Dispatcher {
 		return $notification;
 	}
 
-	function addNestedDispatcher($dispatcher) {
+	public function addNestedDispatcher($dispatcher) {
 		if(!is_object($dispatcher)) {
 			/**
 			 * consider throwing exception here
@@ -170,7 +170,7 @@ class Oops_Event_Dispatcher {
 		return false;
 	}
 
-	function removeNestedDispatcher($dispatcher) {
+	public function removeNestedDispatcher($dispatcher) {
 		$dispatcherName = (string) $dispatcher;
 		if(isset($this->_nestedDispatchers[$dispatcherName])) {
 			unset($this->_nestedDispatchers[$dispatcher]);
@@ -179,11 +179,11 @@ class Oops_Event_Dispatcher {
 		return false;
 	}
 
-	function getName() {
+	public function getName() {
 		return $this->_name;
 	}
 
-	function __toString() {
+	public function __toString() {
 		return $this->_name;
 	}
 

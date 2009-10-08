@@ -50,10 +50,37 @@ class Oops_Debug {
 		static $ret = null;
 		if(!isset($ret)) {
 			$ret = false;
+			
+			$debug_ip = (string) Oops_Server::getConfig()->oops->debug_ip;
+			if(!strlen($debug_ip)) $debug_ip = '127.0.0.1/24';
+			
 			$remote = ip2long($_SERVER['REMOTE_ADDR']);
-			$allowed = ip2long('127.0.0.1');
-			if($remote >> 8 == $allowed >> 8) $ret = true;
+			if($remote === false) {
+				$ret = false;
+				return $ret;
+			}
+			
+			$ips = explode(',', $debug_ip);
+			foreach($ips as $ip) {
+				list($ip, $mask) = explode('/', trim($ip));
+				$mask = (int) $mask;
+				if($mask > 32 || $mask < 0) {
+					// Invalid mask 
+					continue;
+				}
+				$allowed = ip2long($ip);
+				if($allowed === false) {
+					// Invalid IP
+					continue;
+				}
+				$push = 32 - $mask;
+				if($remote >> $push == $allowed >> $push) {
+					$ret = true;
+					break;
+				}
+			}
 		}
+		
 		return $ret;
 	}
 
@@ -75,8 +102,7 @@ class Oops_Debug {
 		switch($type) {
 			case "object":
 				$type .= " <i>" . get_class($value) . "</i>";
-				$value = array(
-					'__dump__' => print_r($value, true));
+				$value = array('__dump__' => print_r($value, true));
 			case "array":
 				echo "<a onclick=\"document.getElementById('_ate_$i').style.display = ";
 				echo "document.getElementById('_ate_$i";

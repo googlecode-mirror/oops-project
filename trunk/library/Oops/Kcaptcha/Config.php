@@ -31,7 +31,7 @@ class Oops_Kcaptcha_Config {
 	/**
 	*  @var int Symbol's vertical fluctuation amplitude divided by 2
 	*/
-	var $fluctualtion_amplitude = 4;	
+	var $fluctuation_amplitude = 4;	
 
 	/**
 	* @var boolean Increase safety by prevention of spaces between symbols

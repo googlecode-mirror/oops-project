@@ -12,7 +12,7 @@ class Oops_Kcaptcha_Controller extends Oops_Controller {
 		
 		if(function_exists("imagejpeg")) {
 			$this->_response->setHeader("Content-type", "image/jpeg");
-			imagejpeg($img, $file->filename, $this->config->jpeg_quality);
+			imagejpeg($img, $file->filename, $captcha->config->jpeg_quality);
 		} elseif(function_exists("imagegif")) {
 			$this->_response->setHeader("Content-type", "image/gif");
 			imagegif($img, $file->filename);
@@ -20,7 +20,7 @@ class Oops_Kcaptcha_Controller extends Oops_Controller {
 			$this->_response->setHeader("Content-type", "image/png");
 			imagepng($img, $file->filename);
 		}
-		
+
 		$this->_response->setBody($file->getContents());
 		$this->_response->setCode(200);
 	}

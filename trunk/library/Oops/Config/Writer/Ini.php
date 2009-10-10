@@ -29,7 +29,7 @@ class Oops_Config_Writer_Ini {
 		
 		$iniString .= "\n" . $sectionsPart;
 		
-		file_put_contents($this->_filename, $iniString);
+		return (bool) file_put_contents($this->_filename, $iniString);
 	}
 	
 	public function setKeyDelimiter($keyDelimiter) {

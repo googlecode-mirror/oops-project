@@ -60,13 +60,12 @@ class Oops_Server_Request_Http extends Oops_Server_Request {
 	protected function _proceedRequestFiles($from, &$to) {
 		foreach($from as $k => $v) {
 			if(!is_array($v['name'])) {
-				/*
-				if(isset($to[$k]) && is_array($to[$k])) {
-					$to[$k] = array_merge($to[$k], $v);
-				} else $to[$k] = $v;
-				*/
-				require_once 'Oops/File/Uploaded.php';
-				$to[$k] = new Oops_File_Uploaded($v);
+				if($v['error']) {
+					unset($to[$k]);
+				} else {
+					require_once 'Oops/File/Uploaded.php';
+					$to[$k] = new Oops_File_Uploaded($v);
+				}
 
 			} else {
 				if(!isset($to[$k]) || !is_array($to[$k])) $to[$k] = array();

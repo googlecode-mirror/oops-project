@@ -43,6 +43,12 @@ class Oops_Event_Dispatcher {
 		return $dispatchers[$name];
 	}
 
+	/**
+	 * Reads config from ini file ./application/config/events.ini
+	 *  returns section according to passed name
+	 *  
+	 * @param string $name Dispatcher name
+	 */
 	protected static function _getConfig($name) {
 		static $config = null;
 		if(!isset($config)) {
@@ -170,6 +176,10 @@ class Oops_Event_Dispatcher {
 		return false;
 	}
 
+	/**
+	 * Removes nested dispatcher
+	 * @param unknown_type $dispatcher
+	 */
 	public function removeNestedDispatcher($dispatcher) {
 		$dispatcherName = (string) $dispatcher;
 		if(isset($this->_nestedDispatchers[$dispatcherName])) {
@@ -179,6 +189,10 @@ class Oops_Event_Dispatcher {
 		return false;
 	}
 
+	/**
+	 * Returns dispatcher name
+	 * @return string
+	 */
 	public function getName() {
 		return $this->_name;
 	}

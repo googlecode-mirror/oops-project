@@ -56,8 +56,6 @@ class Oops_Template {
 			trigger_error($e->getMessage(), E_USER_ERROR);
 		 	$this->_valid = false;
 		}
-		$this->_request = Oops_Server::getRequest();
-		$this->_response = Oops_Server::getResponse();
 	}
 
 	/**
@@ -84,6 +82,8 @@ class Oops_Template {
 		$tplname = strtolower($tplname);
 		static $a = array();
 		if(!isset($a[$tplname])) $a[$tplname] = new Oops_Template($tplname);
+		$a[$tplname]->_request = Oops_Server::getRequest();
+		$a[$tplname]->_response = Oops_Server::getResponse();
 		return $a[$tplname];
 	}
 

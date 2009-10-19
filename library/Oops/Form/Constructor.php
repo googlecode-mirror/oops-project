@@ -72,7 +72,19 @@ class Oops_Form_Constructor
     /**
      * Fields values array
      */
-    protected $_values;
+   // protected $_values;
+    
+    
+    /**
+     * Fields types array
+     */
+   // protected $_types;
+    
+    
+    /**
+     * Fields params array
+     */
+    protected $_params;
     
     /**
      * 
@@ -100,7 +112,9 @@ class Oops_Form_Constructor
             $this->_attr = $attr;
         
         $this->result = array();
-        $this->values = array();
+        //$this->_values = array();
+        //$this->_types = array();
+        $this->_params = array();
     }
     
     /**
@@ -109,7 +123,13 @@ class Oops_Form_Constructor
      */
     public function clearValues()
     {
-        $this->_values = array();
+        foreach($this->_params as $k=>&$v)
+            unset($v['value']);
+    }
+    
+    public function setFieldParam($field,$param,$paramValue)
+    {
+        $this->_params[$field][$param] = $paramValue;
     }
     
     /**
@@ -120,7 +140,7 @@ class Oops_Form_Constructor
     public function setValues(array $data)
     {
         foreach($data as $k=>$v)
-            $this->_values[$k] = $v;
+            $this->setFieldParam($k,'value',$v);
     }
     
     /**
@@ -130,7 +150,7 @@ class Oops_Form_Constructor
      */
     public function setValue($name,$value)
     {
-        $this->_values[$name] = $value;
+        $this->setFieldParam($name,'value',$value);
     }
     
     
@@ -139,7 +159,12 @@ class Oops_Form_Constructor
      */
     public function getValues()
     {
-        return $this->_values;
+        $array = array();
+        foreach($this->_params as $k=>$v)
+            if(isset($v['value']))
+                $array[$k] = $v;
+        
+        return $array;
     }
     
     /**
@@ -189,7 +214,6 @@ class Oops_Form_Constructor
         $this->_data = $data;
         $this->_result = array();
         $this->_getValuesFromData($this->_data);
-        //$this->_run();
     }
     
     
@@ -336,7 +360,7 @@ class Oops_Form_Constructor
                $this->_getValuesFromData($v['items']);                                                                         
           else
               if(isset($v['value']))
-                 $this->_values[$v['name']] =  $v['value'];                             
+                 $this->_params[$v['name']]['value'] =  $v['value'];                             
     }
     
     protected function _processData(array & $data , $parentGroupName = false) 
@@ -382,8 +406,12 @@ class Oops_Form_Constructor
            }
            else
            {
-               if(isset($this->_values[$v['name']]))
-                  $v['value'] = $this->_values[$v['name']];
+               if(isset($this->_params[$v['name']]))
+                   foreach($this->_params[$v['name']] as $paramKey=>$paramVal)
+                       $v[$paramKey] = $paramVal;
+               
+             //  if(isset($this->_values[$v['name']]))
+             //     $v['value'] = $this->_values[$v['name']];
                
                if($this->groupNames && $parentGroupName)
                    $v['name'] = $parentGroupName . '[' . $v['name'] . ']';

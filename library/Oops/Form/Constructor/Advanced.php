@@ -1,6 +1,54 @@
 <?php
 class Oops_Form_Constructor_Advanced extends Oops_Form_Constructor
 {
+    
+    
+   protected function _processData(array & $data , $parentGroupName = false) 
+    {
+    	$result = array();
+        foreach($data as $v) 
+        {    
+        	if(!isset($v['text']))
+               $v['text'] = '';  
+
+           
+           if( ($v['type'] === 'group') && isset($v['items'])  &&  !empty($v['items']))
+           {
+               if(isset($this->_params[$v['name']]))
+                	foreach($this->_params[$v['name']] as $paramKey=>$paramVal)
+                    	$v[$paramKey] = $paramVal;
+               
+               if($this->groupNames && $parentGroupName)
+                   $newName = $parentGroupName . '[' . $v['name'] . ']';
+               elseif($this->groupNames && !$parentGroupName)
+                   $newName = $v['name'];
+               else
+                   $newName = false;
+
+                
+                $result[] = array(    			'name' => $v['name'],
+    											'text'  => $v['text'],
+    											'items' => $this->_processData($v['items'],$newName),                            
+                                             );
+           }
+           else
+           {
+                if(isset($this->_params[$v['name']]['display']) && $this->_params[$v['name']]['display'] == false) 
+                   continue;  
+               
+           		if(isset($this->_params[$v['name']]))
+                	foreach($this->_params[$v['name']] as $paramKey=>$paramVal)
+                    	$v[$paramKey] = $paramVal;
+               
+               if($this->groupNames && $parentGroupName)
+                   $v['name'] = $parentGroupName . '[' . $v['name'] . ']';
+               $html = $this->_makeField($v);
+               $result[] = array('name' => $v['name'],'text' => $v['text'], 'html' =>  $html);
+           }  
+       }
+       return $result;
+    }
+    
     protected function _makeField($data)
     {     
         if(isset($data['type']))
@@ -129,7 +177,15 @@ class Oops_Form_Constructor_Advanced extends Oops_Form_Constructor
             default             :  $obj = new Oops_Form_Field_Info('',$value,$class,$extra); 
                                     break;              
         }
- 
+        
+        if($obj->isFile && !$this->_defined)
+        {
+             $this->setAttr('method','post');
+             $this->setAttr('enctype','multipart/form-data');
+             $this->_defined = true;
+        }
+        
+        
         $obj->required($required);
         
         if($this->viewOnly)

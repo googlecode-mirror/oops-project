@@ -37,6 +37,8 @@ abstract class Oops_Form_Field
      */
     protected $_required;
     
+    protected $_isFile = false;
+    
     
     /*
      *  Field Events & Oops_Form_Field_Events
@@ -212,10 +214,17 @@ abstract class Oops_Form_Field
 			case 'value':
 				$this->{'_' . $var} = $value;
 				break;
+			case 'isFile':
+				break;
 			default:
 				$this->{$var} = $value;
 				break;
 		}
+	}
+	
+	public function __get($var) {
+		if(isset($this->{'_' . $var})) return $this->{'_' . $var};
+		return null; 
 	}
 	
 }

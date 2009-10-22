@@ -68,6 +68,8 @@ class Oops_Form_Constructor
 		                        		  "value"   => "Сохранить",
 		                        		  "extra"   => ""          
                                 );
+
+     public $file = false;                            
     
     /**
      * Fields values array
@@ -195,17 +197,7 @@ class Oops_Form_Constructor
     }
        
     /**
-     * @param array $data  like :  array(
-		                				array(
-            		                        "text"	  => "Field Text",  - string
-            		                        "name"    => "fieldName",   - string
-            		                        "type"    => "text",		- string
-            		                        "value"   => "Field Value", - string
-            		                        "extra"   => "array()		- array
-            		                        
-		                				),
-		                			...
-		                		  )		
+     * @param array $data 	
      * @return void
      * 
      */
@@ -306,8 +298,7 @@ class Oops_Form_Constructor
                 
           $result.='>';    
         }
-       // echo '<pre>';print_r($this->_result);echo '<pre>';
-    	
+        
         if(!empty($this->_result))
               $result.=$this->_getFormGroup($this->_result,'','',true);
           
@@ -321,7 +312,10 @@ class Oops_Form_Constructor
     public function _getFormGroup(array & $items, $text , $name , $first = false)
     {
        $result='';
-         
+       
+       if(isset($this->_params[$name]['display']) && $this->_params[$name]['display'] == false) 
+               return ''; 
+           
           foreach ($items as $k => $v)
           {
               if(!isset($v['items']))
@@ -334,12 +328,11 @@ class Oops_Form_Constructor
               else
               {
                 if(isset($v['name']))
-                {	
-                	//echo '<pre>';print_r($item); die();
-                	$groupName = $v['name'];
-                }	
+                    $groupName = $v['name'];            	
                 else 	
                 	$groupName = $k;
+                	
+                	
               	$result.= $this->_getFormGroup($v['items'],$v['text'],$groupName);  
               } 
           }
@@ -378,7 +371,15 @@ class Oops_Form_Constructor
         {
            if($v['type']=='file' && !$this->_defined)
            {
-               $this->setAttr('method','post');
+               $this->file=true;
+                   break;
+           }
+        }
+        
+        
+        if($this->file  && !$this->_defined)
+        {
+            $this->setAttr('method','post');
                $this->setAttr('enctype','multipart/form-data');
                $this->_defined = true;
                require_once 'Oops/Utils.php';
@@ -387,17 +388,22 @@ class Oops_Form_Constructor
                array_unshift($data, array('type'=>'hidden',
                				   'name'=>'MAX_FILE_SIZE',
                				   'value'=>$max_file_size));
-              
-           }
         }
+        
+        
+        
         foreach($data as $v) 
         {    
-          	
         	if(!isset($v['text']))
-               $v['text'] = '';    
+               $v['text'] = '';  
+
            
            if( ($v['type'] === 'group') && isset($v['items'])  &&  !empty($v['items']))
            {
+               if(isset($this->_params[$v['name']]))
+                	foreach($this->_params[$v['name']] as $paramKey=>$paramVal)
+                    	$v[$paramKey] = $paramVal;
+               
                if($this->groupNames && $parentGroupName)
                    $newName = $parentGroupName . '[' . $v['name'] . ']';
                elseif($this->groupNames && !$parentGroupName)
@@ -413,12 +419,13 @@ class Oops_Form_Constructor
            }
            else
            {
+                if(isset($this->_params[$v['name']]['display']) && $this->_params[$v['name']]['display'] == false) 
+                   continue;  
+               
            		if(isset($this->_params[$v['name']]))
                 	foreach($this->_params[$v['name']] as $paramKey=>$paramVal)
                     	$v[$paramKey] = $paramVal;
                
-             //  if(isset($this->_values[$v['name']]))
-             //     $v['value'] = $this->_values[$v['name']];
                if($this->groupNames && $parentGroupName)
                    $v['name'] = $parentGroupName . '[' . $v['name'] . ']';
                $html = $this->_makeField($v);
@@ -427,8 +434,6 @@ class Oops_Form_Constructor
        }
        return $result;
     }
-    
-    
     
     /**
      * @return array

@@ -15,7 +15,7 @@ class Oops_Form_Field_Checkbox extends Oops_Form_Field
        if($this->_value) 
            $this->_params[] = 'checked';
 		
-		$this->html= '<input type="checkbox" ' . join(' ', $this->_params) . '/>';
+		$this->html= '<input type="checkbox" ' . join(' ', $this->_params) . ' ' . $this->events->getList() . '/>';
 		
 		if($this->_label !== false) {
 			$this->html='<label>' . $this->html . ' ' . self::_formsafe($this->_label) . '</label>';

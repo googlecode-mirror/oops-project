@@ -131,7 +131,6 @@ class Oops_Form_Constructor_Advanced extends Oops_Form_Constructor
         }
  
         $obj->required($required);
-        //$obj->_make();
         
         if($this->viewOnly)
            return $obj->getAsText();

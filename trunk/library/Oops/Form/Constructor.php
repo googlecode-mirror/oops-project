@@ -390,8 +390,6 @@ class Oops_Form_Constructor
                				   'value'=>$max_file_size));
         }
         
-        
-        
         foreach($data as $v) 
         {    
         	if(!isset($v['text']))

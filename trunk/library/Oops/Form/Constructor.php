@@ -300,10 +300,23 @@ class Oops_Form_Constructor
         }
         
         if(!empty($this->_result))
-              $result.=$this->_getFormGroup($this->_result,'','',true);
+              $groupsHtml = $this->_getFormGroup($this->_result,'','',true);
           
-         if(!$this->viewOnly)
-              $result.='</form>';       
+
+        if(!$this->viewOnly)
+        { $result ='<form ';
+          
+          if(!empty($this->_attr))
+              foreach($this->_attr as $k => $v)  
+                      $result.= $k . '="'.$v.'" ';
+                
+          $result.='>'.$groupsHtml.'</form>';    
+        } 
+        else
+        {
+            $result = & $groupsHtml;
+        }    
+                
           
         return $this->_layoutDecorator->createElement(false,false,$result,false);       
     }

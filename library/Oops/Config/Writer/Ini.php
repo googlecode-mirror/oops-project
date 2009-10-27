@@ -23,6 +23,7 @@ class Oops_Config_Writer_Ini {
 			} else {
 				if($value === true) $value = 'On';
 				elseif($value === false) $value = 'Off';
+				elseif(preg_match('/[^a-zA-Z0-9 ]/', $value)) $value = "\"$value\"";
 				$iniString .= "$key = $value\n";
 			}
 		}
@@ -52,6 +53,7 @@ class Oops_Config_Writer_Ini {
 			} else {
 				if($value === true) $value = 'On';
 				elseif($value === false) $value = 'Off';
+				elseif(preg_match('/[^a-zA-Z0-9 ]/', $value)) $value = "\"$value\"";
 				$string .= $prefix . $key . " = $value\n";
 			}			
 		}

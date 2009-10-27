@@ -49,7 +49,7 @@ class Oops_Config_Writer_Ini {
 		$string = '';
 		foreach($config as $key => $value) {
 			if($value instanceof Oops_Config && count($value)) {
-				$string .= $this->_config2string($value, $key . $this->_keyDelimiter) . "\n";
+				$string .= $this->_config2string($value, $prefix . $key . $this->_keyDelimiter) . "\n";
 			} else {
 				if($value === true) $value = 'On';
 				elseif($value === false) $value = 'Off';

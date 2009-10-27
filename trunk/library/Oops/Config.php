@@ -71,7 +71,7 @@ class Oops_Config implements Countable, Iterator {
 		$key = strtolower($key);
 		if(!isset($this->_data[$key])) {
 			require_once 'Oops/Config/Fake.php';
-			$this->_data[$key] = new Oops_Config_Fake();
+			$this->_data[$key] = new Oops_Config_Fake($this->_allowModifications);
 		}
 		return $this->_data[$key];
 	}
@@ -90,6 +90,13 @@ class Oops_Config implements Countable, Iterator {
 	 */
 	function __set($var, $value) {
 		if(!$this->_allowModifications) return false;
+
+		if(!strlen((string) $var)) {
+			trigger_error("Config/InvalidConfigKey/$var", E_USER_WARNING);
+			return null;
+		}
+		$var = strtolower($var);
+		
 		if(is_array($value)) {
 			$value = new Oops_Config($value, $this->_keyDelimiter, $this->_allowModifications);
 		}

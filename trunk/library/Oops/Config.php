@@ -95,7 +95,12 @@ class Oops_Config implements Countable, Iterator {
 		}
 		
 		if(isset($this->_data[$var]) && $this->_data[$var] instanceof Oops_Config_Fake) {
-			unset($this->_data[$var]);
+			$fakeData = $this->_data[$var]->getData();
+			if(count($fakeData)) {
+				$this->_data[$var] = new Oops_Config($fakeData, $this->_keyDelimiter, true);
+			} else {
+				unset($this->_data[$var]);
+			}
 		}
 		
 		if(isset($this->_data[$var]) && $this->_data[$var] instanceof Oops_Config && $value instanceof Oops_Config) {

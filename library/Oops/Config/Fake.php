@@ -21,10 +21,6 @@ class Oops_Config_Fake extends Oops_Config {
 		return false;
 	}
 
-	public function __get($key) {
-		return new self();
-	}
-
 	public function __toString() {
 		return '';
 	}

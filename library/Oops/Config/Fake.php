@@ -13,7 +13,8 @@ require_once 'Oops/Config.php';
  */
 class Oops_Config_Fake extends Oops_Config {
 
-	public function __construct() {
+	public function __construct($allowModifications = false) {
+		$this->_allowModifications = $allowModifications;
 	}
 
 	public function isValidConfig() {
@@ -21,10 +22,14 @@ class Oops_Config_Fake extends Oops_Config {
 	}
 
 	public function __get($key) {
-		return $this;
+		return new self();
 	}
 
 	public function __toString() {
 		return '';
+	}
+	
+	protected function getData() {
+		return $this->_data;
 	}
 }

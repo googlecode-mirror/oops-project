@@ -27,9 +27,10 @@ class Oops_Server_Response_Http extends Oops_Server_Response {
 	function _sendHeaders() {
 		header($this->getStatusLine());
 		foreach($this->headers as $name=>$value) {
-			if(is_string($value)) {
+			$name = ucfirst($name);
+			if(!is_array($value)) {
 				header("$name: $value");
-			} elseif(is_array($value)) {
+			} else {
 				for($i=0,$cnt=count($value);$i<$cnt;$i++) {
 					$subvalue = array_shift($value);
 					header("$name: $subvalue",!(boolean)$i);

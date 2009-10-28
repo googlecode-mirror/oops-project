@@ -184,10 +184,10 @@ class Oops_Server_Response {
 		// Iterate over the headers and stringify them
 		foreach($this->_headers as $name => $value) {
 			$name = ucfirst($name);
-			if(is_string($value))
+			if(!is_array($value))
 				$str .= "{$name}: {$value}{$br}";
 			
-			elseif(is_array($value)) {
+			else {
 				foreach($value as $subval) {
 					$str .= "{$name}: {$subval}{$br}";
 				}

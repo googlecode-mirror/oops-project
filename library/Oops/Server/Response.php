@@ -11,7 +11,7 @@
  * 
  * @property integer $code Response code (HTTP)
  * @property-read string $message Response message according to code
- * @property-read string $version Protocol version
+ * @property string $version Protocol version
  * @property array $headers Response headers array
  */
 class Oops_Server_Response {
@@ -100,7 +100,9 @@ class Oops_Server_Response {
 			case 'code':
 				return $this->setCode($value);
 			case 'headers':
-				return $this->_setHeaders($value);
+				return $this->setHeaders($value);
+			case 'version':
+				return $this->setVersion($value);
 		}
 	}
 
@@ -122,6 +124,10 @@ class Oops_Server_Response {
 
 	public function setHeaders($headers) {
 		$this->_headers = $headers;
+	}
+	
+	public function setVersion($version) {
+		if(preg_match('/^1\.[x\d]$/', $version)) $this->_version = $version;
 	}
 
 	public function setHeader($name, $value, $replace = true) {
@@ -183,7 +189,7 @@ class Oops_Server_Response {
 		
 		// Iterate over the headers and stringify them
 		foreach($this->_headers as $name => $value) {
-			$name = ucfirst($name);
+			$name = str_replace(' ', '-', ucwords(str_replace('-',' ',$name)));
 			if(!is_array($value))
 				$str .= "{$name}: {$value}{$br}";
 			

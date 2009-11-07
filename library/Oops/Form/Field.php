@@ -133,9 +133,9 @@ abstract class Oops_Form_Field
 	 */
 	protected static function _putClass($class) {
 	    
-		if(!strlen($class))
+/*		if(!strlen($class))
 		     $this->_class = '';
-		     
+*/		     
 		if(!preg_match("/^[a-zA-Z_][a-zA-Z0-9_\-\[\] ]+$/", $class)) {
 			throw new Exception("Invalid input class: $class");
 		}	
@@ -147,12 +147,12 @@ abstract class Oops_Form_Field
 	 * @param string $value
 	 * @return void
 	 */
-	protected  static function _putValue($value) {
+	protected static function _putValue($value) {
 		$value = (string) $value;
-		
-		if(!strlen($value)) 
-		    $this->_value='';
-		    
+
+/*		if(!strlen($value)) 
+		    $this->_value = '';
+*/
 		return 'value="'.self::_formsafe($value).'"';
 	}
 	
@@ -189,7 +189,7 @@ abstract class Oops_Form_Field
          if(!empty($this->_class))
 	        $this->_params[] = self::_putClass($this->_class);
 	    
-	     if(!empty($this->_value))
+	     if(isset($this->_value))
 	        $this->_params[] = self::_putValue($this->_value);
 	    	    
 	    if(is_array($this->_extra)) 

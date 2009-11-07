@@ -117,7 +117,7 @@ abstract class Oops_Form_Field
 	 * @param string $name
 	 * @return void
 	 */
-	protected static function _putName($name) {
+	protected  function _putName($name) {
 	    
 		if(!preg_match("/^[a-zA-Z_][a-zA-Z0-9_\-\[\]]+$/", $name)) {
 			throw new Exception("Invalid input name: $name");
@@ -131,7 +131,7 @@ abstract class Oops_Form_Field
 	 * @param string $class
 	 * @return void
 	 */
-	protected static function _putClass($class) {
+	protected  function _putClass($class) {
 	    
 		if(!strlen($class))
 		     $this->_class = '';
@@ -147,16 +147,16 @@ abstract class Oops_Form_Field
 	 * @param string $value
 	 * @return void
 	 */
-	protected static function _putValue($value) {
+	protected  function _putValue($value) {
 		$value = (string) $value;
 
 		if(!strlen($value)) 
 		    $this->_value = '';
 
-		return 'value="'.self::_formsafe($value).'"';
+		return 'value="'.$this->_formsafe($value).'"';
 	}
 	
-    protected static function _formsafe($string) {
+    protected  function _formsafe($string) {
 		return str_replace(array('"', "'", "<", ">" ), array(
 															"&quot", 
 															"&#039;", 
@@ -164,7 +164,7 @@ abstract class Oops_Form_Field
 															"&gt;" ), $string);
 	}
 	
-    protected static function _putExtra($key, $value, $invoker = null) {
+    protected  function _putExtra($key, $value, $invoker = null) {
 		$key = strtolower($key);
 		switch($key) {
 			case 'id':
@@ -184,17 +184,17 @@ abstract class Oops_Form_Field
 	protected function _getParams()
 	{
 	    if(!empty($this->_name))
-	        $this->_params[] = self::_putName($this->_name);
+	        $this->_params[] = $this->_putName($this->_name);
 	    
          if(!empty($this->_class))
-	        $this->_params[] = self::_putClass($this->_class);
+	        $this->_params[] = $this->_putClass($this->_class);
 	    
 	     if(isset($this->_value))
-	        $this->_params[] = self::_putValue($this->_value);
+	        $this->_params[] = $this->_putValue($this->_value);
 	    	    
 	    if(is_array($this->_extra)) 
 	        foreach($this->_extra as $key => $value) {
-			    $this->_params[] = self::_putExtra($key, $value, 'text');
+			    $this->_params[] = $this->_putExtra($key, $value, 'text');
 		}
 
 	}

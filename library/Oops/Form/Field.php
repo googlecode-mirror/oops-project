@@ -201,7 +201,10 @@ abstract class Oops_Form_Field
 	
 	public function getAsText()
 	{
-	    return $this->_value;
+	    if(strlen($this->value)>0)
+	        return $this->_value;
+	    else
+	        return '';
 	}
 	
 	public function __set($var, $value) {

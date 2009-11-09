@@ -25,11 +25,12 @@ class Oops_Form_Constructor_Advanced extends Oops_Form_Constructor
                else
                    $newName = false;
 
-                
+                if(!isset($v['display']) || $v['display']==true){
                 $result[] = array(    			'name' => $v['name'],
     											'text'  => $v['text'],
     											'items' => $this->_processData($v['items'],$newName),                            
                                              );
+                }
            }
            else
            {
@@ -43,7 +44,9 @@ class Oops_Form_Constructor_Advanced extends Oops_Form_Constructor
                if($this->groupNames && $parentGroupName)
                    $v['name'] = $parentGroupName . '[' . $v['name'] . ']';
                $html = $this->_makeField($v);
-               $result[] = array('name' => $v['name'],'text' => $v['text'], 'html' =>  $html);
+
+               if(!isset($v['display']) || $v['display']==true)
+                   $result[] = array('name' => $v['name'],'text' => $v['text'], 'html' =>  $html);
            }  
        }
        return $result;

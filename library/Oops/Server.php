@@ -249,6 +249,9 @@ class Oops_Server {
 		}
 		require_once 'Oops/Debug.php';
 		if(Oops_Debug::allow()) $this->_response->reportErrors($this->_errorHandler);
+		if((string) $this->_config->oops->errorlog->enabled) {
+			Oops_Log_Error::report($this->_errorHandler, $this->_config->oops->errorlog->path);
+		}
 		restore_error_handler();
 		
 		return $this->_response;

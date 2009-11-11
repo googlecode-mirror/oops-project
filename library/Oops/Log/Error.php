@@ -16,6 +16,7 @@ class Oops_Log_Error {
 
 		$logFile = new Oops_File($path . "/error.log");
 		if($logFile->size > 50*1024) {
+			if(file_exists($logFile->filename . ".1")) unlink($logFile->filename . ".1");
 			$logFile->rename($logFile->filename . ".1");
 			$logFile = new Oops_File($path . "/error.log");
 		}

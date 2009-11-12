@@ -32,7 +32,7 @@ class Oops_Sql_Common {
 			$values[] = self::quoteValue($v);
 		}
 		
-		$query = "INSERT INTO ".self::escapeIdentifiers($table)." (" . join(', ', $keys) . ") VALUES (" . join(', ', $values) . ")";
+		$query = "INSERT INTO ".self::escapeIdentifiers(str_ireplace(' ','',$table))." (" . join(', ', $keys) . ") VALUES (" . join(', ', $values) . ")";
 		if($returnQuery) return $query;
 		Oops_Sql::Query($query, OOPS_SQL_EXCEPTION);
 		return mysql_affected_rows();

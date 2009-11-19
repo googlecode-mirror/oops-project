@@ -1,5 +1,5 @@
 <?php
-class Oops_Grid_Decorator_Headitem
+class Oops_Grid_Decorator_Headitem extends Oops_Grid_Decorator
 {
     public function createElement($id,$value,$flag = false)
     {

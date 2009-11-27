@@ -21,6 +21,7 @@ class Oops_Config_Writer_Ini {
 				$sectionsPart  .= "[$key]\n";
 				$sectionsPart .= $this->_config2string($value);
 			} else {
+				if(is_null($value)) continue;
 				if($value === true) $value = 'On';
 				elseif($value === false) $value = 'Off';
 				elseif(preg_match('/[^a-zA-Z0-9 ]/', $value)) $value = "\"$value\"";

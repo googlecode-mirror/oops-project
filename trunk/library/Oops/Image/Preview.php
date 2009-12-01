@@ -7,6 +7,12 @@ class Oops_Image_Preview {
 		$this->_config = Oops_Image_Preview_Config::getInstance($previewType);
 	}
 
+	/**
+	 * Singleton pattern implementation
+	 * 
+	 * @param string $previewType Preview type id given in config
+	 * @return Oops_Image_Preview
+	 */
 	public static function getInstance($previewType) {
 		static $instances = array();
 		if(!isset($instances[$previewType])) {

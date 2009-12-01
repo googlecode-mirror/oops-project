@@ -50,6 +50,15 @@ class Oops_File_Utils {
 		return true;
 	}
 
+	/**
+	 * Splits file path for efficient storing large amounts of file named by ny kind of ID
+	 * 
+	 * @param string $prefix File path prefix (i.e. /var/www/myfiles)
+	 * @param string $splitable File name to split (1234567)
+	 * @param int $chunkLength Chunk size (defaults to 2)
+	 * @param int $skipLeading How much leading symbols to skip in $spitable (defaults to 0)
+	 * @return string Splitted file path (i.e. /var/www/myfiles/12/34/56/7)
+	 */
 	public static function splitPath($prefix, $splitable, $chunkLength = 2, $skipLeading = 0) {
 		$ret = '';
 		if(strlen($prefix)) $ret = rtrim($prefix, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;

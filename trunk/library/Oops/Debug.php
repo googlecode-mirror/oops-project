@@ -8,6 +8,8 @@
  * Runtime debug tools
  */
 class Oops_Debug {
+	
+	protected static $_allow;
 
 	/**
 	 * Dumps a given value with optional name and backtrace if dump is allowed for current user state
@@ -47,17 +49,16 @@ class Oops_Debug {
 	}
 
 	public static function allow() {
-		static $ret = null;
-		if(!isset($ret)) {
-			$ret = false;
+		if(!isset(self::$_allow)) {
+			self::$_allow = false;
 			
 			$debug_ip = (string) Oops_Server::getConfig()->oops->debug_ip;
 			if(!strlen($debug_ip)) $debug_ip = '127.0.0.1/24';
 			
 			$remote = ip2long($_SERVER['REMOTE_ADDR']);
 			if($remote === false) {
-				$ret = false;
-				return $ret;
+				self::$_allow = false;
+				return self::$_allow;
 			}
 			
 			$ips = explode(',', $debug_ip);
@@ -75,14 +76,25 @@ class Oops_Debug {
 				}
 				$push = 32 - $mask;
 				if($remote >> $push == $allowed >> $push) {
-					$ret = true;
+					self::$_allow = true;
 					break;
 				}
 			}
 		}
 		
-		return $ret;
+		return self::$_allow;
 	}
+	
+	/**
+	 * Sets debug mode
+	 * 
+	 * @param boolean $allow
+	 */
+	public static function setAllow($allow) {
+		$allow = (bool) $allow;
+		self::$_allow = $allow;
+	}
+		
 
 	/**
 	 * @ignore

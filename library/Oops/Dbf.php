@@ -3,6 +3,7 @@
 // @todo Optimize file reading
 // @todo Implement ArrayAccess, Iterator, Countable interfaces
 
+
 /**
  * 
  * @author Dmitry Ivanov
@@ -80,6 +81,8 @@ class Oops_Dbf {
 				return $this->_memoFile;
 			case 'fields':
 				return $this->_fields;
+			case 'memoData':
+				return $this->_memoData;
 			default:
 				return null;
 		}
@@ -96,8 +99,8 @@ class Oops_Dbf {
 			$this->_memoHeader = false;
 			return;
 		}
-		
-		$this->_memoData = file_get_contents($this->_memoFile);
+		$f = fopen($this->_memoFile, 'rb');
+		$this->_memoData = fread($f, filesize($this->_memoFile));
 		$memo_header_format = 'Nnext/NSize of blocks';
 		$this->_memoHeader = unpack($memo_header_format, substr($this->_memoData, 0, 8));
 		if($this->_memoHeader["Size of blocks"] == 0) $this->_memoHeader["Size of blocks"] = 512;
@@ -139,15 +142,16 @@ class Oops_Dbf {
 		
 		$offset = $num * $this->_header['recordSize'];
 		$record = unpack("@$offset/" . $this->_getRecordFormat(), $this->_data);
-		
+
 		foreach($this->_fields as $i => $field) {
+			$record[$field['name']] = trim($record[$field['name']]);
 			if($field['type'] == 'M' || $field['type'] == 'G') {
 				$record[$field['name']] = $this->_getMemo($record[$field['name']]);
 			}
 		}
 		return $record;
 	}
-	
+
 	protected function _getRecordFormat() {
 		if(!isset($this->_recordFormat)) {
 			$this->_recordFormat = '';
@@ -163,11 +167,13 @@ class Oops_Dbf {
 		$this->_initMemo();
 		if($this->_memoData === false) return null;
 		$sizeOfBlock = $this->_memoHeader['Size of blocks'];
-		
+		if(!preg_match('/^\d+$/',$block)) {
+			$b = unpack("S", $block);
+			$block = $b[1];
+		}
 		$offset = ($block) * $sizeOfBlock;
 		$block_format = 'N/N';
 		$block_data = unpack("@$offset/$block_format", $this->_memoData);
-		print_r($block_data);
 		return substr($this->_memoData, $offset + 8, $block_data[1]);
 	
 	}
@@ -197,10 +203,14 @@ class Oops_Dbf {
 		$x = 0;
 		for($offset = 0; $offset < strlen($data); $offset += 32) {
 			$x++;
-			$fields[$x] = unpack("@$offset/$record_format", $data);
-			foreach($fields[$x] as $key => $value) {
-				$fields[$x][$key] = $this->_dropAfterNULL(trim($value));
+			$field = unpack("@$offset/$record_format", $data);
+			foreach($field as $key => $value) {
+				$field[$key] = $this->_dropAfterNULL(trim($value));
 			}
+			if(strlen($field['name'])) {
+				$fields[$x] = $field;
+			}
+		
 		}
 		$this->_fields = $fields;
 	}

@@ -167,23 +167,11 @@ class Oops_Dbf {
 		$this->_initMemo();
 		if($this->_memoData === false) return null;
 		$sizeOfBlock = $this->_memoHeader['Size of blocks'];
-		if(!preg_match('/^\d+$/',$block)) {
-			$b = unpack("S", $block);
-			$block = $b[1];
-		}
 		$offset = ($block) * $sizeOfBlock;
 		$block_format = 'N/N';
 		$block_data = unpack("@$offset/$block_format", $this->_memoData);
 		return substr($this->_memoData, $offset + 8, $block_data[1]);
 	
-	}
-
-	protected function _getMemoEnd($string) {
-		for($i = -1; $i <= strlen($string); $i++) {
-			$temp_s = implode(" ", unpack('H*', substr($string, $i, 1)));
-			if($temp_s == "1a") return substr($string, 0, $i);
-		}
-		return $string;
 	}
 
 	protected function _initDbf() {
@@ -203,7 +191,8 @@ class Oops_Dbf {
 		$x = 0;
 		for($offset = 0; $offset < strlen($data); $offset += 32) {
 			$x++;
-			$field = unpack("@$offset/$record_format", $data);
+			$field = @unpack("@$offset/$record_format", $data);
+			if(!is_array($field)) continue;
 			foreach($field as $key => $value) {
 				$field[$key] = $this->_dropAfterNULL(trim($value));
 			}

@@ -145,8 +145,15 @@ class Oops_Dbf {
 
 		foreach($this->_fields as $i => $field) {
 			$record[$field['name']] = trim($record[$field['name']]);
-			if($field['type'] == 'M' || $field['type'] == 'G') {
-				$record[$field['name']] = $this->_getMemo($record[$field['name']]);
+			switch($field['type']) {
+				case 'M':
+				case 'G':
+					$record[$field['name']] = $this->_getMemo($record[$field['name']]);
+					break;
+				case 'L':
+					$record[$field['name']] = $record[$field['name']] == 'T'?true:false;
+					break;
+				default:
 			}
 		}
 		return $record;

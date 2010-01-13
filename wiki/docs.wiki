@@ -10,4 +10,4 @@
 
 Список модулей:
   * Oops_Form_Controller
-  * Oops_Form_Constructor
+  * Oops_Config_Db

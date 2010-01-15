@@ -41,9 +41,9 @@ class Oops_Html {
 	 * @param string $value
 	 * @return string
 	 */
-	protected static function _putValue($value) {
+	protected static function _putValue($value, $forceEmptyVal = false) {
 		$value = (string) $value;
-		if(!strlen($value)) return "";
+		if(!strlen($value) && !$forceEmptyVal) return "";
 		return 'value="' . self::_formsafe($value) . '"';
 	}
 
@@ -255,7 +255,7 @@ class Oops_Html {
 		}
 		foreach($options as $optionValue => $optionLabel) {
 			$selected = (strval($value) === strval($optionValue)) ? ' selected' : '';
-			$out .= '<option ' . self::_putValue($optionValue) . $selected . '>' . self::_formsafe($optionLabel) . '</option>';
+			$out .= '<option ' . self::_putValue($optionValue, true) . $selected . '>' . self::_formsafe($optionLabel) . '</option>';
 		}
 		
 		return $out . '</select>';

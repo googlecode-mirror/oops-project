@@ -8,6 +8,7 @@ class Oops_File_Temporary extends Oops_File {
 	/**
 	 * Creates new temporary file
 	 * 
+	 * @param string $dir Temporary file location, defaults to /tmp
 	 */
 	public function __construct($dir = "/tmp") {
 		$this->_filename = tempnam($dir, "oft");
@@ -16,7 +17,9 @@ class Oops_File_Temporary extends Oops_File {
 	}
 
 	public function __destruct() {
-		//print_r(debug_backtrace());
+		print_r(debug_backtrace());
+		print_r($this);
+		return;
 		if($this->_isTemp && file_exists($this->_filename)) {
 			if(is_file($this->_filename))
 				unlink($this->_filename);

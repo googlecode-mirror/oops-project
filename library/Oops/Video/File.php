@@ -166,7 +166,7 @@ class Oops_Video_File extends Oops_File {
 		foreach(self::$_config->mencoder as $k => $v) {
 			$execString .= " -$k $v";
 		}
-
+		set_time_limit(0);
 		exec($execString);
 		return $result;
 	}

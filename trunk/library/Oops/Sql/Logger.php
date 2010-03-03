@@ -127,7 +127,7 @@ class Oops_Sql_Logger {
 	 * @param string $table Log table
 	 * @return Oops_Sql_Logger
 	 */
-	function &getInstance($table) {
+	function getInstance($table) {
 		if(!is_object(self::$_instance)) self::$_instance = new self($table);
 		return self::$_instance;
 	}
@@ -137,7 +137,6 @@ class Oops_Sql_Logger {
 	}
 
 	function getLog() {
-		$l = & Oops_Sql_Logger::getInstance();
-		return $l->log;
+		return Oops_Sql_Logger::getInstance();
 	}
 }

@@ -12,7 +12,7 @@ class Oops_Process_Factory {
 	 * @return Oops_Process
 	 * @throws Oops_Process_Exception
 	 */
-	static public function &newProcess($processClass, $inputValues) {
+	static public function newProcess($processClass, $inputValues) {
 		Oops_Loader::load($processClass);
 		$reflectionClass = new ReflectionClass($processClass);
 		if(!($reflectionClass->isSubclassOf('Oops_Process_Abstract'))) {
@@ -40,9 +40,9 @@ class Oops_Process_Factory {
 	 * @return Oops_Process_Abstract
 	 * @throws Oops_Process_Exception
 	 */
-	static public function &getProcess($pid) {
+	static public function getProcess($pid) {
 		if(!is_object(self::$_processes[$pid])) {
-			$storage = & self::getStorage();
+			$storage = self::getStorage();
 			$processClass = $storage->getClass($pid);
 			$reflectionClass = new ReflectionClass($processClass);
 			self::$_processes[$pid] = $reflectionClass->newInstance($pid);
@@ -55,11 +55,11 @@ class Oops_Process_Factory {
 	 * 
 	 * @return Oops_Process_Storage
 	 */
-	static public function &getStorage() {
+	static public function getStorage() {
 		if(!is_object(self::$_storage)) {
 			// @todo Use config
 			require_once ("Oops/Process/Storage.php");
-			self::$_storage = & new Oops_Process_Storage();
+			self::$_storage = new Oops_Process_Storage();
 		}
 		return self::$_storage;
 	}

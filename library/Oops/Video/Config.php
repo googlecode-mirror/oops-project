@@ -43,7 +43,8 @@ class Oops_Video_Config extends Oops_Config implements Countable, Iterator {
 				'forceidx' => '',
 				'endpos' => 10, // Comment this line to get full FLV
 			), 
-			'tmpdir' => '.tmp');
+			'tmpdir' => '.tmp',
+			'keepFLV' => false);
 		
 		parent::__construct($data);
 	}

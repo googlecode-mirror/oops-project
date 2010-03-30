@@ -67,7 +67,12 @@ class Oops_Video_File extends Oops_File {
 		$execString = preg_replace('/\s\s+/', ' ', $execString);
 		exec($execString, $lines);
 		foreach($lines as $line) {
-			list($k, $v) = explode("=", $line);
+			if(strpos($line, '=')) {
+				list($k, $v) = explode("=", $line);
+			} else {
+				$k = $line;
+				$v = NULL;
+			}
 			$k = substr($k, 3);
 			$this->_videoStats[$k] = $v;
 		}
@@ -147,12 +152,19 @@ class Oops_Video_File extends Oops_File {
 			require_once 'Oops/Video/Exception.php';
 			throw new Oops_Video_Exception("Not a video file");
 		}
+		
 		/**
 		 * Prepare tmp file
 		 */
 		require_once 'Oops/File/Temporary.php';
 		$result = new Oops_File_Temporary(self::$_config->tmpdir);
 		$result->filename = $result->filename . ".flv";
+		
+		if(self::$_config->keepFLV) {
+			// @todo Generally it's better to create symlink 
+			return $this->copy($result);
+		}
+		
 		$outfile = $result->filename;
 		if(strpos($outfile, ':') !== false || strpos($outfile, ' ') !== false) {
 			//trying to prevent windows-speciefic path symbols

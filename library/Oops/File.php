@@ -113,15 +113,18 @@ class Oops_File {
 	 * @param $dest string Destination file name
 	 * @return Oops_File
 	 */
-	public function copy($dest, $mode) {
+	public function copy($dest, $mode = null) {
+		if(is_null($mode)) $mode = fileperms($this->_filename);
+		  
 		// @todo check if this file is a directory
 		$destFile = new Oops_File($dest);
 		$destFile->makeWriteable();
-		if(copy($this->_filename, $dest)) return false;
+		if(!copy($this->_filename, $dest)) return false;
 		@chmod($dest, $mode);
 		$destFile = null;
 		$destFile = new Oops_File($dest);
 		$destFile->makeWriteable();
+		return $destFile;
 	}
 
 	/**

@@ -160,7 +160,7 @@ class Oops_Video_File extends Oops_File {
 		$result = new Oops_File_Temporary(self::$_config->tmpdir);
 		$result->filename = $result->filename . ".flv";
 		
-		if(self::$_config->keepFLV) {
+		if(self::$_config->keepFLV && strtolower($this->_extension) == 'flv') {
 			// @todo Generally it's better to create symlink 
 			return $this->copy($result);
 		}
@@ -179,6 +179,7 @@ class Oops_Video_File extends Oops_File {
 			$execString .= " -$k $v";
 		}
 		set_time_limit(0);
+		echo $execString;
 		exec($execString);
 		return $result;
 	}

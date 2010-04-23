@@ -178,8 +178,13 @@ class Oops_Video_File extends Oops_File {
 		foreach(self::$_config->mencoder as $k => $v) {
 			$execString .= " -$k $v";
 		}
+		
+		if($this->_videoStats['VIDEO_FPS'] > 100) {
+			$assumeVideoFps = 30;
+			$execString .= " -fps $assumeVideoFps";
+		}
+
 		set_time_limit(0);
-		echo $execString;
 		exec($execString);
 		return $result;
 	}

@@ -124,6 +124,12 @@ class Oops_Video_File extends Oops_File {
 		$config = clone self::$_config->preview;
 		$config->mergeConfig(new Oops_Config(array("vo" => "jpeg:outdir=$outdir")));
 		
+		if(isset($this->_videoStats['LENGTH'])) {
+			$len = floor($this->_videoStats['LENGTH']);
+			$ss = strtotime($config->ss . " +0000", 0);
+			if($len < $ss) $config->mergeConfig(new Oops_Config(array("ss" => date("H:i:s", round($len / 2))))); 
+		}
+		
 		foreach($config as $k => $v) {
 			$execString .= " -$k $v";
 		}

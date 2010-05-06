@@ -127,7 +127,7 @@ class Oops_Video_File extends Oops_File {
 		if(isset($this->_videoStats['LENGTH'])) {
 			$len = floor($this->_videoStats['LENGTH']);
 			$ss = strtotime($config->ss . " +0000", 0);
-			if($len < $ss) $config->mergeConfig(new Oops_Config(array("ss" => date("H:i:s", round($len / 2))))); 
+			if($len < $ss) $config->mergeConfig(new Oops_Config(array("ss" => gmdate("H:i:s", round($len / 2))))); 
 		}
 		
 		foreach($config as $k => $v) {

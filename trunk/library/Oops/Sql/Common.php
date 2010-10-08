@@ -35,7 +35,7 @@ class Oops_Sql_Common {
 		$query = "INSERT INTO ".self::escapeIdentifiers(str_ireplace(' ','',$table))." (" . join(', ', $keys) . ") VALUES (" . join(', ', $values) . ")";
 		if($returnQuery) return $query;
 		Oops_Sql::Query($query, OOPS_SQL_EXCEPTION);
-		return mysql_affected_rows();
+		return mysql_affected_rows(Oops_Sql::getLink());
 	}
 
 	/**
@@ -67,7 +67,7 @@ class Oops_Sql_Common {
 		$query = "REPLACE INTO ".self::escapeIdentifiers($table)." (" . join(', ', $keys) . ") VALUES (" . join(', ', $values) . ")";
 		if($returnQuery) return $query;
 		Oops_Sql::Query($query, OOPS_SQL_EXCEPTION);
-		return mysql_affected_rows();
+		return mysql_affected_rows(Oops_Sql::getLink());
 	}
 
 	/**
@@ -120,7 +120,7 @@ class Oops_Sql_Common {
 		if($returnQuery) return $query;
 		Oops_Sql::Query($query, OOPS_SQL_EXCEPTION);
 		
-		return mysql_affected_rows();
+		return mysql_affected_rows(Oops_Sql::getLink());
 	}
 
 	/**
@@ -150,7 +150,7 @@ class Oops_Sql_Common {
 		$query = "DELETE FROM ".self::escapeIdentifiers($table)." WHERE $where";
 		if($returnQuery) return $query;
 		Oops_Sql::Query($query, OOPS_SQL_EXCEPTION);
-		return mysql_affected_rows();
+		return mysql_affected_rows(Oops_Sql::getLink());
 	}
 
 	public static function escapeIdentifiers($string) {

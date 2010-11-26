@@ -49,7 +49,7 @@ class Oops_Html {
 
 	protected static function _formsafe($string) {
 		return str_replace(array('"', "'", "<", ">" ), array(
-															"&quot", 
+															"&quot;", 
 															"&#039;", 
 															"&lt;", 
 															"&gt;" ), $string);

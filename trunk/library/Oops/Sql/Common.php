@@ -14,7 +14,7 @@ class Oops_Sql_Common {
 	 * 
 	 * @throws Oops_Sql_Exception
 	 */
-	public static function insert($table, $data, $returnQuery = false) {
+	public static function insert($table, $data, $returnQuery = false, $ignore = false) {
 		if(!strlen($table)) {
 			require_once ("Oops/Sql/Exception.php");
 			throw new Oops_Sql_Exception("Invalid table name");
@@ -32,10 +32,25 @@ class Oops_Sql_Common {
 			$values[] = self::quoteValue($v);
 		}
 		
-		$query = "INSERT INTO ".self::escapeIdentifiers(str_ireplace(' ','',$table))." (" . join(', ', $keys) . ") VALUES (" . join(', ', $values) . ")";
+		$ignore = $ignore ? " IGNORE": "";
+		$query = "INSERT$ignore INTO ".self::escapeIdentifiers(str_ireplace(' ','',$table))." (" . join(', ', $keys) . ") VALUES (" . join(', ', $values) . ")";
 		if($returnQuery) return $query;
 		Oops_Sql::Query($query, OOPS_SQL_EXCEPTION);
 		return mysql_affected_rows(Oops_Sql::getLink());
+	}
+
+	/**
+	 * Inserts data row into the table (with ignore)
+	 * 
+	 * @param string $table Table
+	 * @param array $data Row fields and values ('field' => 'value')
+	 * @param bool $returnQuery whenever to return query or run it. Default is false.
+	 * @return number of affected rows or sql query string
+	 * 
+	 * @throws Oops_Sql_Exception
+	 */
+	public static function insertIgnore($table, $data, $returnQuery = false) {
+		return self::insert($table, $data, $returnQuery, true);
 	}
 
 	/**

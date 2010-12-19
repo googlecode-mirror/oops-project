@@ -188,8 +188,8 @@ abstract class Oops_Form_Field
 	    
          if(!empty($this->_class))
 	        $this->_params[] = $this->_putClass($this->_class);
-	    
-	     if(isset($this->_value))
+	            
+	     if(!($this instanceof Oops_Form_Field_Select) && isset($this->_value))   
 	        $this->_params[] = $this->_putValue($this->_value);
 	    	    
 	    if(is_array($this->_extra)) 

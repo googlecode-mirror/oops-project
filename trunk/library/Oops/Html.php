@@ -245,8 +245,8 @@ class Oops_Html {
 	    $params = array();
 		$params[] = self::_putName($name);
 		$params[] = self::_putClass($class);
-		if(is_array($extra)) foreach($extra as $key => $value) {
-			$params[] = self::_putExtra($key, $value, 'reset');
+		if(is_array($extra)) foreach($extra as $key => $val) {
+			$params[] = self::_putExtra($key, $val, 'reset');
 		}
 		$out = '<select ' . join(' ', $params) . '>';
 		if($empty !== false && !isset($options[''])) {
@@ -295,7 +295,7 @@ class Oops_Html {
 	 * @param $params array of additional parameters such as className (CSS), ID, cols, rows, etc
 	 * @return string
 	 */
-	public static function textarea($name, $value = '', $class, $extra = array()) {
+	public static function textarea($name, $value = '', $class='', $extra = array()) {
 		$params = array();
 		$params[] = self::_putName($name);
 		$params[] = self::_putClass($class);

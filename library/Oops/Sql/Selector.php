@@ -431,7 +431,12 @@ class Oops_Sql_Selector {
 			if(!strlen($alias) || isset($result[$alias])) $alias = $selector->alias;
 			$result[$alias] = $selector->_parseRow($row);
 		}
+		
+		$this->__postParseRow($result);
 		return $result;
+	}
+	
+	protected function __postParseRow(&$row) {
 	}
 
 }

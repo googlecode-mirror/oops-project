@@ -49,6 +49,9 @@ class Oops_Sql_Selector {
 	
 	const ORDER_ASC = 'ASC';
 	const ORDER_DESC = 'DESC';
+	
+	protected static $_aliasCounter = 1;
+	protected static $_aliasesUsed = array();
 
 	public function __construct($table, $primaryKey = null, $selectFields = null) {
 		if($table instanceof Oops_Config) {
@@ -335,8 +338,10 @@ class Oops_Sql_Selector {
 		
 		foreach($this->_joined as $joined) {
 			list($selector) = $joined;
-			$sqlFields .= $selector->_sqlFields($startPosition) . ', ';
-			$startPosition += count($selector->selectFields);
+			if(count($selector->selectFields)) {
+				$sqlFields .= $selector->_sqlFields($startPosition) . ', ';
+				$startPosition += count($selector->selectFields);
+			}
 		}
 		
 		return substr($sqlFields, 0, -2);
@@ -379,7 +384,6 @@ class Oops_Sql_Selector {
 
 	protected function _setQueryAliases($root = true, $preffered = null) {
 		static $used = array();
-		static $i = 1;
 		
 		if($root) {
 			if(!count($this->_joined)) {
@@ -387,15 +391,14 @@ class Oops_Sql_Selector {
 				return;
 			}
 			
-			$used = array();
-			$i = 1;
+			self::$_aliasesUsed = array();
+			self::$_aliasCounter = 1;
 		}
-		
 		$this->_useAlias = true;
-		if(strlen($preffered) && !in_array($preffered, $used)) {
-			$used[] = $this->_alias = $preffered;
+		if(strlen($preffered) && !in_array($preffered, self::$_aliasesUsed)) {
+			self::$_aliasesUsed[] = $this->_alias = $preffered;
 		} else {
-			$this->_alias = 't' . $i++;
+			$this->_alias = 't' . self::$_aliasCounter++;
 		}
 		
 		foreach($this->_joined as $joined) {
@@ -435,7 +438,7 @@ class Oops_Sql_Selector {
 		$this->__postParseRow($result);
 		return $result;
 	}
-	
+
 	protected function __postParseRow(&$row) {
 	}
 

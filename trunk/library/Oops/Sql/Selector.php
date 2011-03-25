@@ -358,22 +358,18 @@ class Oops_Sql_Selector {
 		return $cond;
 	}
 
-	protected function _sqlFields($startPosition = 0) {
-		if(!$startPosition) $this->_ensurePrimaryKeySelected();
+	protected function _sqlFields() {
 		$sqlFields = '';
-		$this->_selectFieldPositions = array();
 		
 		foreach($this->_selectFields as $f) {
 			$sqlFields .= $this->_useAlias ? Oops_Sql_Common::escapeIdentifiers($this->_alias . '.' . $f) : "`$f`";
-			$this->_selectFieldPositions[$f] = $startPosition++;
 			$sqlFields .= ', ';
 		}
 		
 		foreach($this->_joined as $joined) {
 			list($selector) = $joined;
 			if(count($selector->selectFields)) {
-				$sqlFields .= $selector->_sqlFields($startPosition) . ', ';
-				$startPosition += count($selector->selectFields);
+				$sqlFields .= $selector->_sqlFields() . ', ';
 			}
 		}
 		
@@ -409,6 +405,7 @@ class Oops_Sql_Selector {
 
 	protected function _getSelectSql() {
 		$this->_setQueryAliases();
+		$this->_setFieldPositions();
 		$sql = "SELECT " . $this->_sqlFields() . " FROM " . $this->_sqlFrom();
 		if(strlen($where = $this->_sqlWhere())) $sql .= " WHERE " . $where;
 		$sql .= $this->_sqlGroupBy() . $this->_sqlOrderBy() . $this->_sqlLimit();
@@ -438,6 +435,24 @@ class Oops_Sql_Selector {
 			list($selector, $fk, $jk, $jt, $alias) = $joined;
 			$selector->_setQueryAliases(false, $alias);
 		}
+	}
+
+	protected function _setFieldPositions($startPosition = 0) {
+		$this->_selectFieldPositions = array();
+		if(!$startPosition) $this->_ensurePrimaryKeySelected();
+		
+		foreach($this->_selectFields as $f)
+			$this->_selectFieldPositions[$f] = $startPosition++;
+		
+		foreach($this->_joined as $joined) {
+			/**
+			 * @var Oops_Sql_Selector $selector
+			 */
+			list($selector) = $joined;
+			$startPosition = $selector->_setFieldPositions($startPosition);
+		}
+		
+		return $startPosition;
 	}
 
 	protected function _fetchResults($r) {

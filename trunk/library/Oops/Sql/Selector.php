@@ -221,7 +221,7 @@ class Oops_Sql_Selector {
 		if($this->_useAlias) $from .= " AS `{$this->_alias}`";
 		
 		foreach($this->_joined as $joined) {
-			list($selector, $fk, $jk, $joinType, $addCond) = $joined;
+			list($selector, $fk, $jk, $joinType, $alias, $addCond) = $joined;
 			$sFrom = $selector->_sqlFrom();
 			
 			//if selector has joined other selector use brackets
@@ -238,17 +238,17 @@ class Oops_Sql_Selector {
 							$on .= 'IS NULL';
 							break;
 						case self::CMP_NOTNULL:
-							$cond .= 'IS NOT NULL';
+							$on .= 'IS NOT NULL';
 							break;
 						case self::CMP_NE:
-							$cond .= is_array($value) ? 'NOT ' : '!';
+							$on .= is_array($value) ? 'NOT ' : '!';
 						case self::CMP_EQ:
 							if(is_array($value)) {
-								$cond .= 'IN (' . join(',', array_map(array(
+								$on .= 'IN (' . join(',', array_map(array(
 									'Oops_Sql_Common', 
 									'quoteValue'), $value)) . ')';
 							} else
-								$cond .= '= ' . Oops_Sql_Common::quoteValue($value);
+								$on .= '= ' . Oops_Sql_Common::quoteValue($value);
 							break;
 					}
 				}
@@ -259,13 +259,13 @@ class Oops_Sql_Selector {
 					$from .= ", $sFrom";
 					break;
 				case self::JOIN_LEFT:
-					$from .= " LEFT JOIN $sFrom ON $on";
+					$from .= "\n LEFT JOIN $sFrom ON $on";
 					break;
 				case self::JOIN_RIGHT:
-					$from .= " RIGHT JOIN $sFrom ON $on";
+					$from .= "\n RIGHT JOIN $sFrom ON $on";
 					break;
 				case self::JOIN_OUTTER:
-					$from .= " OUTTER JOIN $sFrom ON $on";
+					$from .= "\n OUTTER JOIN $sFrom ON $on";
 					break;
 			}
 		}

@@ -182,7 +182,7 @@ class Oops_Sql_Selector {
 	 * @param const $joinType join type
 	 * @param string $alias joined selector alias in result row
 	 */
-	public function join($selector, $foreignKey, $joinedKey, $joinType = null, $alias = null) {
+	public function join($selector, $foreignKey, $joinedKey, $joinType = null, $alias = null, $additionalConditions = array()) {
 		$this->_useAlias = true;
 		
 		//Ensure joinType is correct
@@ -197,7 +197,13 @@ class Oops_Sql_Selector {
 		}
 		
 		//Store join setting
-		$this->_joined[] = array($selector, $foreignKey, $joinedKey, $joinType, $alias);
+		$this->_joined[] = array(
+			$selector, 
+			$foreignKey, 
+			$joinedKey, 
+			$joinType, 
+			$alias, 
+			$additionalConditions);
 		
 		if(!is_null($alias)) $this->_joinedAliases[$alias] = $selector;
 	}
@@ -206,8 +212,8 @@ class Oops_Sql_Selector {
 		$this->join($selector, $foreignKey, $joinedKey, self::JOIN_INNER, $alias);
 	}
 
-	final public function leftJoin($selector, $foreignKey, $joinedKey, $alias) {
-		$this->join($selector, $foreignKey, $joinedKey, self::JOIN_LEFT, $alias);
+	final public function leftJoin($selector, $foreignKey, $joinedKey, $alias, $additionalConditions = array()) {
+		$this->join($selector, $foreignKey, $joinedKey, self::JOIN_LEFT, $alias, $additionalConditions);
 	}
 
 	protected function _sqlFrom() {
@@ -215,13 +221,39 @@ class Oops_Sql_Selector {
 		if($this->_useAlias) $from .= " AS `{$this->_alias}`";
 		
 		foreach($this->_joined as $joined) {
-			list($selector, $fk, $jk, $joinType) = $joined;
+			list($selector, $fk, $jk, $joinType, $addCond) = $joined;
 			$sFrom = $selector->_sqlFrom();
 			
 			//if selector has joined other selector use brackets
 			if($selector->hasJoined) $sFrom = "($sFrom)";
 			
 			$on = "`{$this->alias}`.`$fk` = `{$selector->alias}`.`$jk`";
+			if(count($addCond)) {
+				foreach($addCond as $cond) {
+					list($jField, $compare, $value) = $cond;
+					$on .= " AND `{$selector->alias}`.`$jField`";
+					
+					switch($compare) {
+						case self::CMP_NULL:
+							$on .= 'IS NULL';
+							break;
+						case self::CMP_NOTNULL:
+							$cond .= 'IS NOT NULL';
+							break;
+						case self::CMP_NE:
+							$cond .= is_array($value) ? 'NOT ' : '!';
+						case self::CMP_EQ:
+							if(is_array($value)) {
+								$cond .= 'IN (' . join(',', array_map(array(
+									'Oops_Sql_Common', 
+									'quoteValue'), $value)) . ')';
+							} else
+								$cond .= '= ' . Oops_Sql_Common::quoteValue($value);
+							break;
+					}
+				}
+			}
+			
 			switch($joinType) {
 				case self::JOIN_INNER:
 					$from .= ", $sFrom";

@@ -327,6 +327,7 @@ class Oops_Sql_Selector {
 	}
 
 	protected function _sqlFields($startPosition = 0) {
+		if(!$startPosition) $this->_ensurePrimaryKeySelected();
 		$sqlFields = '';
 		$this->_selectFieldPositions = array();
 		

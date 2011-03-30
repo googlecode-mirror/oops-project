@@ -158,6 +158,7 @@ class Oops_Sql_Selector {
 		$this->resetWhere();
 		$this->resetLimit();
 		$this->resetJoins();
+		$this->resetOrder();
 	}
 
 	public function resetWhere() {
@@ -170,6 +171,10 @@ class Oops_Sql_Selector {
 
 	public function resetJoins() {
 		$this->_joined = array();
+	}
+
+	public function resetOrder() {
+		$this->_orderBy = array();
 	}
 
 	/**

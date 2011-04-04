@@ -188,6 +188,14 @@ class Oops_Sql_Common {
 		// return numeric as is
 		if(is_numeric($v) && strlen($v) == strlen((int) $v)) return $v;
 		
+		if(is_bool($v)){
+		   if($v)
+		    	return 1;
+		   else 
+		    	return 0;
+	    }
+		
+		
 		// it's a string
 		return "'" . Oops_Sql::Escape((string) $v) . "'";
 	}

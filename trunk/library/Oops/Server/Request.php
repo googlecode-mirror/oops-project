@@ -80,14 +80,15 @@ class Oops_Server_Request implements ArrayAccess, Countable, Iterator {
 		return $uri;
 	}
 
-	public function getUrl() {
+	public function getUrl($skipAuthInfo = false, $skipPort = false) {
 		$uri = $this->getUri();
 		if(!strlen($this->host)) return $uri;
 		
 		$host = $this->host;
-		if($this->port != 80) $host .= ":{$this->port}";
 		
-		if(strlen($this->user)) {
+		if(!$skipPort && $this->port != 80) $host .= ":{$this->port}";
+		
+		if(!$skipAuthInfo && strlen($this->user)) {
 			$auth = $this->user;
 			if(strlen($this->pass)) $auth .= ":{$this->pass}";
 			$host = "$auth@$host";

@@ -140,6 +140,20 @@ class Oops_Sql_Selector {
 		return $this->select($returnSql);
 	}
 
+	final public function selectFirst() {
+		$this->limit(1);
+		$rows = $this->select();
+		if(!count($rows)) return false;
+		return array_pop($rows);
+	}
+
+	final public function selectById($id) {
+		if(!isset($this->_primaryKey)) throw new Oops_Sql_Exception("no primary key in selector");
+		$this->dropWhere();
+		$this->{$this->_primaryKey} = $id;
+		return $this->selectFirst();
+	}
+
 	public function where($field, $compare = null, $value = null) {
 		if($value === null) $compare = $compare == self::CMP_EQ ? self::CMP_NULL : self::CMP_NOTNULL;
 		$this->_where[] = array($field, $compare, $value);

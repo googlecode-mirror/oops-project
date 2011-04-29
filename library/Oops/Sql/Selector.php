@@ -149,7 +149,7 @@ class Oops_Sql_Selector {
 
 	final public function selectById($id) {
 		if(!isset($this->_primaryKey)) throw new Oops_Sql_Exception("no primary key in selector");
-		$this->dropWhere();
+		$this->resetWhere();
 		$this->{$this->_primaryKey} = $id;
 		return $this->selectFirst();
 	}

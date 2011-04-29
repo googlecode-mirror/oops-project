@@ -216,14 +216,17 @@ class Oops_Sql_Selector {
 		}
 		
 		//Store join setting
-		$this->_joined[] = array(
+		$joinArray =  array(
 			$selector, 
 			$foreignKey, 
 			$joinedKey, 
 			$joinType, 
 			$alias, 
 			$additionalConditions);
-		
+			
+		if($joinType == self::JOIN_INNER) $this->_joined[] = $joinArray;
+		else array_unshift($this->_joined, $joinArray);
+				
 		if(!is_null($alias)) $this->_joinedAliases[$alias] = $selector;
 	}
 

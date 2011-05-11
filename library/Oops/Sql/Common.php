@@ -131,7 +131,9 @@ class Oops_Sql_Common {
 		foreach($data as $k => $v) {
 			$sets[] = self::escapeIdentifiers($k) . " = " . self::quoteValue($v);
 		}
-		$query = "UPDATE " . self::escapeIdentifiers($table) . " SET " . join(', ', $sets) . " WHERE $where";
+		if($where) $where = " WHERE $where";
+		
+		$query = "UPDATE " . self::escapeIdentifiers($table) . " SET " . join(', ', $sets) . $where;
 		if($returnQuery) return $query;
 		Oops_Sql::Query($query, OOPS_SQL_EXCEPTION);
 		

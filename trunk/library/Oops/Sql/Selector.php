@@ -53,7 +53,7 @@ class Oops_Sql_Selector {
 	protected static $_aliasCounter = 1;
 	protected static $_aliasesUsed = array();
 
-	public function __construct($table, $primaryKey = null, $selectFields = null) {
+	public function __construct($table, $primaryKey = null, $selectFields = null, $fields = null) {
 		if($table instanceof Oops_Config) {
 			$this->_initFromConfig($table);
 		} elseif(is_string($table)) {
@@ -64,6 +64,7 @@ class Oops_Sql_Selector {
 		
 		if(!strlen($this->_table)) throw new Oops_Sql_Selector_Exception("Selector table not defined", Oops_Sql_Selector_Exception::NoTable);
 		
+		if(is_array($fields)) $this->_fields = $fields;
 		$this->_ensurePrimaryKeySelected();
 		$this->_ensureFieldsContainSelected();
 	}
@@ -216,17 +217,19 @@ class Oops_Sql_Selector {
 		}
 		
 		//Store join setting
-		$joinArray =  array(
+		$joinArray = array(
 			$selector, 
 			$foreignKey, 
 			$joinedKey, 
 			$joinType, 
 			$alias, 
 			$additionalConditions);
-			
-		if($joinType == self::JOIN_INNER) $this->_joined[] = $joinArray;
-		else array_unshift($this->_joined, $joinArray);
-				
+		
+		if($joinType == self::JOIN_INNER)
+			$this->_joined[] = $joinArray;
+		else
+			array_unshift($this->_joined, $joinArray);
+		
 		if(!is_null($alias)) $this->_joinedAliases[$alias] = $selector;
 	}
 
@@ -510,6 +513,18 @@ class Oops_Sql_Selector {
 	}
 
 	protected function __postParseRow(&$row) {
+	}
+
+	public function getSelectFields() {
+		return $this->_selectFields;
+	}
+
+	public function getFields() {
+		return $this->_fields;
+	}
+
+	public function getTable() {
+		return $this->_table;
 	}
 
 }

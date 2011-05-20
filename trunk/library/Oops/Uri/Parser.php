@@ -15,13 +15,18 @@ class Oops_Uri_Parser {
 	protected $_action;
 	protected $_extension;
 	protected $_parts;
-	
 
 	/**
 	 * Parses URI into parts, action and extension, checks spelling
 	 *
 	 */
 	public function __construct($path, $defaultAction = 'index', $defaultExtension = 'php', $validExtensions = null) {
+		$query = '';
+		if(($qSignPos = strpos($path, '?')) !== false) {
+			$path = substr($path, 0, $qSignPos);
+			$query = substr($path, $qSignPos + 1);
+		}
+		
 		$this->_path = $path;
 		$parts = explode("/", $path);
 		$coolparts = array();
@@ -52,8 +57,10 @@ class Oops_Uri_Parser {
 		$this->_expectedPath = sizeof($coolparts) ? '/' . join('/', $coolparts) . '/' : '/';
 		if($this->_action != $defaultAction || $this->_extension != $defaultExtension) $this->_expectedPath .= "{$this->_action}.{$this->_extension}";
 		$this->_parts = $coolparts;
+		
+		if(strlen($query)) $this->_expectedPath .= '?' . $query;
 	}
-	
+
 	public function __get($name) {
 		switch($name) {
 			case 'path':

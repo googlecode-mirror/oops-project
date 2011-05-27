@@ -186,6 +186,10 @@ class Oops_Sql_Common {
 			return (string) $v;
 		}
 		
+		if($v instanceof Oops_Sql_Exception) {
+			return (string) $v;
+		}
+		
 		// @todo correct for floats
 		// return numeric as is
 		if(is_numeric($v) && strlen($v) == strlen((int) $v)) return $v;

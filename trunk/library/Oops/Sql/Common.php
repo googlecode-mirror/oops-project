@@ -186,7 +186,7 @@ class Oops_Sql_Common {
 			return (string) $v;
 		}
 		
-		if($v instanceof Oops_Sql_Exception) {
+		if($v instanceof Oops_Sql_Expression) {
 			return (string) $v;
 		}
 		

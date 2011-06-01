@@ -407,13 +407,27 @@ class Oops_Sql_Selector {
 
 	protected function _sqlOrderBy() {
 		$orderBy = '';
-		if(count($this->_orderBy)) $orderBy = ' ORDER BY ';
 		foreach($this->_orderBy as $f => $direction) {
-			$orderBy .= Oops_Sql_Common::escapeIdentifiers($this->_useAlias ? $this->_alias . '.' . $f : $f);
+			if(strpos($f, '.') !== false) {
+				list($table, $field) = explode('.', $f);
+				if(!isset($this->_joinedAliases[$table])) {
+					trigger_error("Invalid order field '$f', unknown alias '$table'", E_USER_WARNING);
+					continue;
+				}
+				if(!in_array($field, $this->$table->_fields)) {
+					trigger_error("Invalid order field '$f', unknown field '$field' in '$table'", E_USER_WARNING);
+					continue;
+				}
+			} elseif($this->_useAlias) {
+				$f = $this->_alias . '.' . $f;
+			}
+			
+			$orderBy .= Oops_Sql_Common::escapeIdentifiers($f);
 			if($direction == self::ORDER_DESC) $orderBy .= ' DESC';
 			$orderBy .= ', ';
 		}
-		return substr($orderBy, 0, -2);
+		if(strlen($orderBy)) $orderBy = ' ORDER BY ' . substr($orderBy, 0, -2);
+		return $orderBy;
 	}
 
 	protected function _sqlLimit() {

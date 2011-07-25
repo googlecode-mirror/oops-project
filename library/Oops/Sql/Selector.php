@@ -30,18 +30,61 @@ class Oops_Sql_Selector {
 	
 	protected $_orderBy = array();
 	
+	/**
+	 * != '$value'
+	 * or NULL if null value given
+	 * or IN ($value[0],$value[1],...) if array value given
+	 */
 	const CMP_EQ = 'EQ';
-	const CMP_NULL = 'NULL';
-	const CMP_NOTNULL = 'NOTNULL';
-	const CMP_NE = 'NE';
-	const CMP_GT = 'GT';
-	const CMP_LT = 'LT';
-	const CMP_GE = 'GE';
-	const CMP_LE = 'LE';
-	const CMP_LIKE = 'LIKE'; // LIKE '$value'
-	const CMP_MLIKE = 'MLIKE'; // LIKE '%$value%'
 	
-
+	/**
+	 * NULL 
+	 */
+	const CMP_NULL = 'NULL';
+	
+	/**
+	 * NOT NULL
+	 */
+	const CMP_NOTNULL = 'NOTNULL';
+	
+	/**
+	 * != '$value'
+	 * or NOT NULL if null value given
+	 * or NOT IN ($value[0],$value[1],...) if array value given
+	 */
+	
+	const CMP_NE = 'NE';
+	
+	/**
+	 * > '$value'
+	 */
+	const CMP_GT = 'GT';
+	
+	/**
+	 * < '$value'
+	 */
+	const CMP_LT = 'LT';
+	
+	/**
+	 * >= '$value'
+	 */
+	const CMP_GE = 'GE';
+	
+	/**
+	 * <= '$value'
+	 */
+	const CMP_LE = 'LE';
+	
+	/**
+	 * LIKE '$value'
+	 */
+	const CMP_LIKE = 'LIKE';
+	
+	/**
+	 * LIKE '%$value%'
+	 */
+	const CMP_MLIKE = 'MLIKE';
+	
 	const JOIN_INNER = 'INNER';
 	const JOIN_LEFT = 'LEFT';
 	const JOIN_RIGHT = 'RIGHT';
@@ -157,13 +200,13 @@ class Oops_Sql_Selector {
 		$this->resetWhere();
 		return $res;
 	}
-	
+
 	final public function selectIds() {
 		$reservedSelectFields = $this->_selectFields;
 		$this->_selectFields = array($this->_primaryKey);
 		$res = $this->select();
 		$this->_selectFields = $reservedSelectFields;
-		return $res;
+		return array_keys($res);
 	}
 
 	public function where($field, $compare = null, $value = null) {

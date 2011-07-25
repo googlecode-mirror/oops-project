@@ -152,7 +152,10 @@ class Oops_Sql_Selector {
 		if(!isset($this->_primaryKey)) throw new Oops_Sql_Exception("no primary key in selector");
 		$this->resetWhere();
 		$this->{$this->_primaryKey} = $id;
-		return $this->selectFirst();
+		$res = $this->selectFirst();
+		
+		$this->resetWhere();
+		return $res;
 	}
 
 	public function where($field, $compare = null, $value = null) {

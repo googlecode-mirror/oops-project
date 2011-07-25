@@ -157,6 +157,14 @@ class Oops_Sql_Selector {
 		$this->resetWhere();
 		return $res;
 	}
+	
+	final public function selectIds() {
+		$reservedSelectFields = $this->_selectFields;
+		$this->_selectFields = array($this->_primaryKey);
+		$res = $this->select();
+		$this->_selectFields = $reservedSelectFields;
+		return $res;
+	}
 
 	public function where($field, $compare = null, $value = null) {
 		if($value === null) $compare = $compare == self::CMP_EQ ? self::CMP_NULL : self::CMP_NOTNULL;

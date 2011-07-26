@@ -30,6 +30,8 @@ class Oops_Sql_Selector {
 	
 	protected $_orderBy = array();
 	
+	protected $_skipPostParseRow = false;
+	
 	/**
 	 * != '$value'
 	 * or NULL if null value given
@@ -235,8 +237,10 @@ class Oops_Sql_Selector {
 	final public function selectIds() {
 		$reservedSelectFields = $this->_selectFields;
 		$this->_selectFields = array($this->_primaryKey);
+		$this->_skipPostParseRow = true;
 		$res = $this->select();
 		$this->_selectFields = $reservedSelectFields;
+		$this->_skipPostParseRow = false;
 		return array_keys($res);
 	}
 
@@ -619,7 +623,7 @@ class Oops_Sql_Selector {
 			$result[$alias] = $selector->_parseRow($row);
 		}
 		
-		$this->__postParseRow($result);
+		if(!$this->_skipPostParseRow) $this->__postParseRow($result);
 		return $result;
 	}
 

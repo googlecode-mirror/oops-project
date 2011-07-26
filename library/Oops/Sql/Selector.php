@@ -162,6 +162,12 @@ class Oops_Sql_Selector {
 		}
 	}
 
+	/**
+	 * 
+	 * Perform COUNT(*) query
+	 * @param bool $returnSql just return SQL query
+	 * @return int|string
+	 */
 	public function count($returnSql = false) {
 		$sql = $this->_getCountSql();
 		if($returnSql) return $sql;
@@ -171,6 +177,12 @@ class Oops_Sql_Selector {
 		return $result;
 	}
 
+	/**
+	 * 
+	 * Perform SQL query and return all fetched results as array with selector's primary key values as array keys
+	 * @param bool $returnSql just return SQL query
+	 * @return array|string
+	 */
 	public function select($returnSql = false) {
 		$sql = $this->_getSelectSql();
 		
@@ -180,17 +192,32 @@ class Oops_Sql_Selector {
 		return $this->_fetchResults($r);
 	}
 
+	/**
+	 * @see self::select 
+	 */
 	final public function selectList($returnSql = false) {
 		return $this->select($returnSql);
 	}
 
+	/**
+	 * 
+	 * Fetch only first row according conditions 
+	 * @return array
+	 */
 	final public function selectFirst() {
 		$this->limit(1);
 		$rows = $this->select();
+		$this->resetLimit();
 		if(!count($rows)) return false;
 		return array_pop($rows);
 	}
 
+	/**
+	 * 
+	 * Select one row by given primary key. Resets all where conditions
+	 * @param string|int $id
+	 * @return array
+	 */
 	final public function selectById($id) {
 		if(!isset($this->_primaryKey)) throw new Oops_Sql_Exception("no primary key in selector");
 		$this->resetWhere();
@@ -201,12 +228,28 @@ class Oops_Sql_Selector {
 		return $res;
 	}
 
+	/**
+	 * Select only primary keys
+	 * @return array
+	 */
 	final public function selectIds() {
 		$reservedSelectFields = $this->_selectFields;
 		$this->_selectFields = array($this->_primaryKey);
 		$res = $this->select();
 		$this->_selectFields = $reservedSelectFields;
 		return array_keys($res);
+	}
+
+	/**
+	 * Fetch primary key of the first row
+	 * @return int|string 
+	 */
+	final public function selectFirstId() {
+		$this->limit(1);
+		$ids = $this->selectIds();
+		$this->resetLimit();
+		if(!count($ids)) return false;
+		return array_pop($ids);
 	}
 
 	public function where($field, $compare = null, $value = null) {

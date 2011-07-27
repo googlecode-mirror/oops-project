@@ -30,13 +30,22 @@ class Oops_File_Utils {
 		if(is_dir($path)) return true;
 		if(is_file($path)) throw new Exception("$path is a file");
 		
+		switch(DIRECTORY_SEPARATOR) {
+			case '/':
+				$path = str_replace('\\', DIRECTORY_SEPARATOR, $path);
+				break;
+			case '\\':
+				$path = str_replace('/', DIRECTORY_SEPARATOR, $path);
+				break;
+		}
+		
 		$parts = explode(DIRECTORY_SEPARATOR, $path);
 		$subPath = '';
 		for($i = 0, $cnt = count($parts); $i < $cnt; $i++) {
 			$subPath .= $parts[$i] . DIRECTORY_SEPARATOR;
-
+			
 			if($subPath == '/') continue;
-
+			
 			foreach(self::$openBasedir as $opendir) {
 				if($opendir === $subPath || strpos($opendir . DIRECTORY_SEPARATOR, $subPath) === 0) continue 2;
 			}

@@ -28,7 +28,7 @@ class Oops_Debug {
 	 */
 	public static function Dump($value, $name = null, $fullTrace = false) {
 		if(!Oops_Debug::allow()) return;
-		?><div style="border: 1px solid #FF0000"><?
+		?><div class="oops-debug" style="border: 1px solid #FF0000"><?
 		
 		if(!is_null($name)) echo "<b>" . $name . "</b>=";
 		

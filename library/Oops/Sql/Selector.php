@@ -642,4 +642,17 @@ class Oops_Sql_Selector {
 		return $this->_table;
 	}
 
+	public function setPager($pager) {
+		if(is_array($pager)) $pager = new Oops_Sql_Pager($pager);
+		/**
+		 * @todo check $pager
+		 */
+		
+		if($pager->limit) $this->limit($pager->limit, $pager->start);
+		
+		if($pager->sort && in_array($pager->sort, $this->_fields)) {
+			$this->orderBy($pager->sort, $pager->dir);
+		}
+	}
+
 }

@@ -145,4 +145,8 @@ class Oops_Sql {
 		self::_Init();
 		return self::$_config;
 	}
+
+	public static function lastInsertId() {
+		return mysql_insert_id(self::$_link);
+	}
 }

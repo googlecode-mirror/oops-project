@@ -655,4 +655,15 @@ class Oops_Sql_Selector {
 		}
 	}
 
+	public function getAutoIncrement() {
+		/**
+		 * 
+		 * @todo use INFORMATION_SCHEMA and database name and table name
+		 */
+		
+		$r = Oops_Sql::Query('SHOW TABLE STATUS LIKE "' . $this->_table . '"');
+		$row = mysql_fetch_assoc($r);
+		return $row['Auto_increment'];
+	}
+
 }

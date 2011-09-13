@@ -175,6 +175,8 @@ class Oops_Sql_Selector {
 		if($returnSql) return $sql;
 		
 		$r = Oops_Sql::Query($sql);
+		if(!is_resource($r)) return false;
+		
 		list($result) = mysql_fetch_row($r);
 		return $result;
 	}
@@ -190,6 +192,7 @@ class Oops_Sql_Selector {
 		
 		if($returnSql) return $sql;
 		$r = Oops_Sql::Query($sql);
+		if(!is_resource($r)) return false;
 		
 		return $this->_fetchResults($r);
 	}

@@ -28,7 +28,7 @@ class Oops_Debug {
 	 */
 	public static function Dump($value, $name = null, $fullTrace = false) {
 		if(!Oops_Debug::allow()) return;
-		?><div class="oops-debug" style="border: 1px solid #FF0000"><?
+		echo '<div class="oops-debug" style="border: 1px solid #FF0000">';
 		
 		if(!is_null($name)) echo "<b>" . $name . "</b>=";
 		
@@ -37,15 +37,14 @@ class Oops_Debug {
 		$count = count($data);
 		$start = $count == 1 ? 0 : 1;
 		$start = 0;
-		?><div style="border: 1px solid #00FF00"><?
+		echo '<div style="border: 1px solid #00FF00">';
 		for($i = $start; $i < $count; $i++) {
 			$obj = $data[$i];
 			?><span
 	style="font: 'Courier New', Courier, mono; color: #0000FF; font-size: 14px;"><?=@$obj['class'] . '->' . $obj['function'];?></span>::<b><?=@$obj['line'];?></b><small>(<?=@$obj['file'];?>)</small><br><?
 			if(!$fullTrace) break;
 		}
-		?></div><?
-		?></div><?
+		echo "</div>\n</div>";
 	}
 
 	public static function allow() {

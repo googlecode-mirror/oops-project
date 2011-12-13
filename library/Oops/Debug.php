@@ -15,11 +15,11 @@ class Oops_Debug {
 	 * Dumps a given value with optional name and backtrace if dump is allowed for current user state
 	 *
 	 * Usage:
-	 * <code><?php
+	 * <code>
 	 * Oops_Debug::Dump($var);
 	 * Oops_Debug::Dump($thatvar,"That var");
 	 * Oops_Debug::Dump($var,"Some label",true); //will output complete backtrace
-	 * ?></code>
+	 * </code>
 	 *
 	 * @param mixed Value to dump
 	 * @param string Label
@@ -40,8 +40,8 @@ class Oops_Debug {
 		echo '<div style="border: 1px solid #00FF00">';
 		for($i = $start; $i < $count; $i++) {
 			$obj = $data[$i];
-			?><span
-	style="font: 'Courier New', Courier, mono; color: #0000FF; font-size: 14px;"><?=@$obj['class'] . '->' . $obj['function'];?></span>::<b><?=@$obj['line'];?></b><small>(<?=@$obj['file'];?>)</small><br><?
+			echo '<span style="font: Courier New, Courier, mono; color: #0000FF; font-size: 14px;">';
+			echo "{$obj['class']}->{$obj['function']}</span>::<b>{$obj['line']}</b><small>({$obj['file']})</small><br>";
 			if(!$fullTrace) break;
 		}
 		echo "</div>\n</div>";

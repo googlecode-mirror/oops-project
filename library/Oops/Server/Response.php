@@ -17,7 +17,7 @@
 class Oops_Server_Response {
 	protected $_code;
 	protected $_message;
-	protected $_version = '1.x';
+	protected $_version = '1.0';
 	protected $_headers = array();
 	
 	/**

@@ -26,10 +26,12 @@ class Oops_File_Utils {
 	 * @return unknown_type
 	 */
 	public static function autoCreateDir($path, $mode = 0777) {
-		self::initOpenBasedir();
 		if(is_dir($path)) return true;
 		if(is_file($path)) throw new Exception("$path is a file");
+		mkdir($path, $mode, TRUE);
+		if(is_dir($path)) return true;
 		
+		self::initOpenBasedir();
 		switch(DIRECTORY_SEPARATOR) {
 			case '/':
 				$path = str_replace('\\', DIRECTORY_SEPARATOR, $path);
@@ -83,4 +85,19 @@ class Oops_File_Utils {
 		return rtrim($ret, DIRECTORY_SEPARATOR);
 	}
 
+	/**
+	 * 
+	 * Remove non-empty dir
+	 * @param string $dirname
+	 */
+	public static function removeDirRecursive($dirname) {
+		$files = glob($dirname . "/*");
+		foreach($files as $file) {
+			if(is_dir($file))
+				self::removeDirRecursive($file);
+			else
+				unlink($file);
+		}
+		rmdir($dirname);
+	}
 }

@@ -21,7 +21,7 @@ class Oops_File_Temporary extends Oops_File {
 			if(is_file($this->_filename))
 				unlink($this->_filename);
 			elseif(is_dir($this->_filename)) {
-				Oops_File::removeDirRecursive($this->_filename);
+				Oops_File_Utils::removeDirRecursive($this->_filename);
 			}
 		}
 	}

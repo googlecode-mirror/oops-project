@@ -26,6 +26,7 @@ class Oops_Server_Response_Http extends Oops_Server_Response {
 
 	function _sendHeaders() {
 		header($this->getStatusLine());
+		$this->setHeader('Content-length', strlen($this->body));
 		foreach($this->headers as $name=>$value) {
 			$name = str_replace(' ', '-', ucwords(str_replace('-',' ',$name)));
 			if(!is_array($value)) {

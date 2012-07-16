@@ -11,7 +11,7 @@
  * Class for reading DBF and attached FTP (memo) files
  * 
  * @property-read array $header
- * @property-read string $_memoFile
+ * @property-read string $memoFile
  * @property-read array $fields
  * @property-read int $numRecords
  * @property-read int $numFields

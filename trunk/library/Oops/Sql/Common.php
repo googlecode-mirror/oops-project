@@ -1,6 +1,7 @@
 <?php
 
-require_once ("Oops/Sql.php");
+require_once "Oops/Sql.php";
+require_once "Oops/Sql/Exception.php";
 
 class Oops_Sql_Common {
 
@@ -15,14 +16,8 @@ class Oops_Sql_Common {
 	 * @throws Oops_Sql_Exception
 	 */
 	public static function insert($table, $data, $returnQuery = false, $ignore = false) {
-		if(!strlen($table)) {
-			require_once ("Oops/Sql/Exception.php");
-			throw new Oops_Sql_Exception("Invalid table name");
-		}
-		if(!is_array($data)) {
-			require_once ("Oops/Sql/Exception.php");
-			throw new Oops_Sql_Exception("Invalid row data");
-		}
+		if(!strlen($table)) throw new Oops_Sql_Exception("Invalid table name");
+		if(!is_array($data)) throw new Oops_Sql_Exception("Invalid row data");
 		
 		$keys = array();
 		$values = array();
@@ -34,6 +29,43 @@ class Oops_Sql_Common {
 		
 		$ignore = $ignore ? " IGNORE" : "";
 		$query = "INSERT$ignore INTO " . self::escapeIdentifiers(str_ireplace(' ', '', $table)) . " (" . join(', ', $keys) . ") VALUES (" . join(', ', $values) . ")";
+		if($returnQuery) return $query;
+		Oops_Sql::Query($query, OOPS_SQL_EXCEPTION);
+		return mysql_affected_rows(Oops_Sql::getLink());
+	}
+
+	public static function insertUpdate($table, $data, $keyFields = null, $returnQuery = false) {
+		if(!strlen($table)) throw new Oops_Sql_Exception("Invalid table name");
+		if(!is_array($data) || !($fieldsCount = count($data))) throw new Oops_Sql_Exception("Invalid row data");
+		
+		$keys = array();
+		$values = array();
+		
+		foreach($data as $k => $v) {
+			$keys[] = self::escapeIdentifiers($k);
+			$values[] = self::quoteValue($v);
+		}
+		
+		$query = "INSERT INTO " . self::escapeIdentifiers(str_ireplace(' ', '', $table)) . " (" . join(', ', $keys) . ") VALUES (" . join(', ', $values) . ")";
+		$query .= ' ON DUPLICATE KEY UPDATE ';
+		
+		// Build 'on duplicate key update' sets
+		if(is_string($keyFields))
+			$keyFields = array($keyFields);
+		elseif(!is_array($keyFields))
+			$keyFields = array();
+		
+		// Should throw warning here:
+		if(count($keyFields) >= $fieldsCount) $keyFields = array();
+		
+		for($i = 0; $i < $fieldsCount; $i++) {
+			if(in_array($keys[$i], $keyFields)) continue;
+			$query .= $keys[$i] . ' = ' . $values[$i] . ', ';
+		}
+		
+		// Remove trailing ', ' placed inside the loop ^^^ 
+		$query = substr($query, 0, -2);
+		
 		if($returnQuery) return $query;
 		Oops_Sql::Query($query, OOPS_SQL_EXCEPTION);
 		return mysql_affected_rows(Oops_Sql::getLink());
@@ -194,13 +226,12 @@ class Oops_Sql_Common {
 		// return numeric as is
 		if(is_numeric($v) && strlen($v) == strlen((int) $v)) return $v;
 		
-		if(is_bool($v)){
-		   if($v)
-		    	return 1;
-		   else 
-		    	return 0;
-	    }
-		
+		if(is_bool($v)) {
+			if($v)
+				return 1;
+			else
+				return 0;
+		}
 		
 		// it's a string
 		return "'" . Oops_Sql::Escape((string) $v) . "'";

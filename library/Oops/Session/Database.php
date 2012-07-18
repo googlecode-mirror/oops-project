@@ -16,7 +16,7 @@ class Oops_Session_Database extends Oops_Session_Abstract implements Oops_Sessio
 	private $_tableSessions = 'sessions';
 	
 	public function _read($ses_id) {
-		$ses_id=preg_replace("/\W+$/","",$ses_id);
+		$ses_id=preg_replace('/\W+/','',$ses_id);
 		if(!strlen($ses_id)) return;
 		$result = Oops_Sql::Query("SELECT ses_value FROM {$this->_tableSessions} WHERE ses_id = '$ses_id'", true);
 		list($ses_data) = mysql_fetch_row($result);
@@ -26,9 +26,10 @@ class Oops_Session_Database extends Oops_Session_Abstract implements Oops_Sessio
   
 	public function _write($ses_id, $data) {
 		if($data == $this->_savedData) return;
-		$ses_id = preg_replace("/\W+$/","",$ses_id);
+		$ses_id = preg_replace('/\W+/','',$ses_id);
 		if (!strlen($ses_id)) return;
 
+		// @todo use User::setId algo here
 		if(Oops_Loader::load("Oops_User_Helper")) {
 			$user_id = Oops_User_Helper::GetID();
 		} else $user_id = 0;
@@ -41,7 +42,6 @@ class Oops_Session_Database extends Oops_Session_Abstract implements Oops_Sessio
 				VALUES ('$ses_id', '$ses_time', '$ses_time', '$data', '$user_id')
 				ON DUPLICATE KEY UPDATE ses_time = '$ses_time', ses_value='$data', user_id = '$user_id'";
 			Oops_Sql::Query($query);
-			debugPrint(mysql_error(), 'mysql_error');
 		} else {
 			Oops_Sql::Query("DELETE FROM {$this->_tableSessions} WHERE ses_id='$ses_id'");
 		}
@@ -50,7 +50,7 @@ class Oops_Session_Database extends Oops_Session_Abstract implements Oops_Sessio
 	}
   
 	public function _destroy($ses_id) {
-		$ses_id=preg_replace("/\W+$/","",$ses_id);
+		$ses_id=preg_replace('/\W+/','',$ses_id);
 		Oops_Sql::Query("DELETE FROM {$this->_tableSessions} WHERE ses_id = '$ses_id'");
 		return true;
 	}

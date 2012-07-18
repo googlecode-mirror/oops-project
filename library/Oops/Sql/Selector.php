@@ -15,6 +15,7 @@ class Oops_Sql_Selector {
 	protected $_table;
 	protected $_alias;
 	protected $_primaryKey;
+	protected $_distinct = false;
 	protected $_selectFields = array();
 	
 	protected $_where = array();
@@ -158,6 +159,8 @@ class Oops_Sql_Selector {
 				return $this->_alias;
 			case 'hasJoined':
 				return count($this->_joined) ? true : false;
+			case 'distinct':
+				return $this->_distinct;
 			default:
 				if(isset($this->_joinedAliases[$name])) return $this->_joinedAliases[$name];
 				return null;
@@ -278,6 +281,7 @@ class Oops_Sql_Selector {
 		$this->resetLimit();
 		$this->resetJoins();
 		$this->resetOrder();
+		$this->setDistinct(false);
 	}
 
 	public function resetWhere() {
@@ -541,6 +545,7 @@ class Oops_Sql_Selector {
 
 	protected function _getCountSql() {
 		$this->_setQueryAliases();
+		// @todo distinct
 		$sql = "SELECT COUNT(*) FROM " . $this->_sqlFrom();
 		if(strlen($where = $this->_sqlWhere())) $sql .= " WHERE " . $where;
 		return $sql;
@@ -549,8 +554,10 @@ class Oops_Sql_Selector {
 	protected function _getSelectSql() {
 		$this->_setQueryAliases();
 		$this->_setFieldPositions();
-		$sql = "SELECT " . $this->_sqlFields() . " FROM " . $this->_sqlFrom();
-		if(strlen($where = $this->_sqlWhere())) $sql .= " WHERE " . $where;
+		$sql = 'SELECT ';
+		if($this->_distinct) $sql .= 'DISTINCT ';
+		$sql .= $this->_sqlFields() . ' FROM ' . $this->_sqlFrom();
+		if(strlen($where = $this->_sqlWhere())) $sql .= ' WHERE ' . $where;
 		$sql .= $this->_sqlGroupBy() . $this->_sqlOrderBy() . $this->_sqlLimit();
 		return $sql;
 	}
@@ -667,6 +674,14 @@ class Oops_Sql_Selector {
 		$r = Oops_Sql::Query('SHOW TABLE STATUS LIKE "' . $this->_table . '"');
 		$row = mysql_fetch_assoc($r);
 		return $row['Auto_increment'];
+	}
+
+	public function setDistinct($state = true) {
+		$this->_distinct = (bool) $state;
+	}
+
+	public function getDistinct() {
+		return $this->_distinct;
 	}
 
 }

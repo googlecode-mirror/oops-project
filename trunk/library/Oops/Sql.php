@@ -59,6 +59,7 @@ class Oops_Sql {
 
 	protected static function _initError($message) {
 		require_once 'Oops/Sql/Exception.php';
+		error_log("Mysql connection error (" . mysql_errno() . ": " . mysql_error());
 		throw new Oops_Sql_Exception("Mysql connection error (" . mysql_errno() . ": " . mysql_error());
 	}
 
@@ -71,6 +72,7 @@ class Oops_Sql {
 			throw new Oops_Sql_Exception($errStr, $errCode, $query);
 		}
 		trigger_error("MySQL/QueryError/$errCode - $errStr/$query", E_USER_ERROR);
+		error_log('MySQL Error #' . $errCode . ': ' . $query);
 		if($dieOnError) die();
 		return false;
 	}

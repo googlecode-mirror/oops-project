@@ -214,27 +214,25 @@ class Oops_Sql_Common {
 		/**
 		 * Check if value is a MySQL user variable
 		 */
-		if($v instanceof Oops_Sql_Variable) {
-			return (string) $v;
+		
+		switch(gettype($v)) {
+			case 'boolean':
+				return $v ? 1 : 0;
+			case 'integer':
+			case 'double':
+				return $v;
+			case 'object':
+				switch(get_class($v)) {
+					case 'Oops_Sql_Variable':
+					case 'Oops_Sql_Expression':
+						return (string) $v;
+					case 'Oops_Sql_Value_String':
+						break;
+				}
+			// no break here
+			default:
+				return "'" . Oops_Sql::Escape((string) $v) . "'";
 		}
-		
-		if($v instanceof Oops_Sql_Expression) {
-			return (string) $v;
-		}
-		
-		// @todo correct for floats
-		// return numeric as is
-		if(is_numeric($v) && strlen($v) == strlen((int) $v)) return $v;
-		
-		if(is_bool($v)) {
-			if($v)
-				return 1;
-			else
-				return 0;
-		}
-		
-		// it's a string
-		return "'" . Oops_Sql::Escape((string) $v) . "'";
 	}
 
 }

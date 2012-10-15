@@ -30,12 +30,12 @@ abstract class Oops_Session_Abstract {
 		}
 		
 		return session_set_save_handler(
-			array(&$this, '_open'),
-			array(&$this, '_close'),
-			array(&$this, '_read'),
-			array(&$this, '_write'),
-			array(&$this, '_destroy'),
-			array(&$this, '_gc')
+			array($this, '_open'),
+			array($this, '_close'),
+			array($this, '_read'),
+			array($this, '_write'),
+			array($this, '_destroy'),
+			array($this, '_gc')
 		);
 	}
 

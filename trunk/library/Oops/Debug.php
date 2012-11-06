@@ -51,13 +51,17 @@ class Oops_Debug {
 		if(!isset(self::$_allow)) {
 			self::$_allow = false;
 			
+			$requestKeyValue = (string) Oops_Server::getConfig()->oops->debug_key;
+			if(strlen($requestKeyValue) && isset($_REQUEST['debug']) && $_REQUEST['debug'] == $requestKeyValue) {
+				return self::$_allow = true;
+			}
+			
 			$debug_ip = (string) Oops_Server::getConfig()->oops->debug_ip;
 			if(!strlen($debug_ip)) $debug_ip = '127.0.0.1/24';
 			
 			$remote = ip2long($_SERVER['REMOTE_ADDR']);
 			if($remote === false) {
-				self::$_allow = false;
-				return self::$_allow;
+				return self::$_allow = false;
 			}
 			
 			$ips = explode(',', $debug_ip);

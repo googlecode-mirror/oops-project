@@ -161,6 +161,8 @@ class Oops_Sql_Selector {
 				return count($this->_joined) ? true : false;
 			case 'distinct':
 				return $this->_distinct;
+			case 'primaryKey':
+				return $this->_primaryKey;
 			default:
 				if(isset($this->_joinedAliases[$name])) return $this->_joinedAliases[$name];
 				return null;

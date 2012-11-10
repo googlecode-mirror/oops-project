@@ -8,6 +8,12 @@ require_once 'Oops/Sql/Selector/Exception.php';
  * 
  * Select statesment constructor and mysql results fetcher
  * @author DI
+ * 
+ * @property-read array $selectFields array of fields for select
+ * @property-read string $alias table alias
+ * @property-read string $primaryKey Primary key field
+ * @property-read boolean $hasJoined Flag set true if selector has joined selectors
+ * @property-read boolean $distinct True if distinct option is set
  *
  */
 class Oops_Sql_Selector {

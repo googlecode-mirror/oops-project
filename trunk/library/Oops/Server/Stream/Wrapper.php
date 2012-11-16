@@ -207,6 +207,7 @@ class Oops_Server_Response {
 	 * @return boolean
 	 */
 	public function isRedirect() {
+		if(!isset($this->_code)) return false;
 		$restype = floor($this->_code / 100);
 		if($restype == 3) {
 			return true;

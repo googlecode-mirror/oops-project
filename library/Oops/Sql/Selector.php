@@ -276,7 +276,11 @@ class Oops_Sql_Selector {
 	}
 
 	public function orderBy($field, $direction = self::ORDER_ASC) {
-		$this->_orderBy[$field] = $direction;
+		if(is_array($field)) {
+			foreach($field as $f)
+				$this->_orderBy[$f] = $direction;
+		} else
+			$this->_orderBy[$field] = $direction;
 	}
 
 	public function limit($limit, $offset = 0) {

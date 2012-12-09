@@ -126,7 +126,7 @@ class Oops_Sql_Selector {
 		if(is_string($this->_primaryKey)) {
 			if(!in_array($this->_primaryKey, $this->_selectFields)) array_unshift($this->_selectFields, $this->_primaryKey);
 		} elseif(is_array($this->_primaryKey)) {
-			foreach($this->_primaryKeys as $p) {
+			foreach($this->_primaryKey as $p) {
 				if(!in_array($p, $this->_selectFields)) array_unshift($this->_selectFields, $p);
 			}
 		}

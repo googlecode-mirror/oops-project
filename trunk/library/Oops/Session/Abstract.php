@@ -1,15 +1,23 @@
 <?php
 
 abstract class Oops_Session_Abstract {
+	protected $_cookieLifetime = 0;
+	protected $_cookiePath = '/';
+	protected $_cookieDomain = null;
 
 	public function __construct($config) {
 		if(!is_object($config)) {
 			require_once("Oops/Config.php");
 			$config = new Oops_Config();
 		}
-
+		// @todo make it better
+		if(strlen($config->domain)) $this->_cookieDomain = $config->domain;
+		if(strlen($config->path)) $this->_cookiePath = $config->path;
+		if(strlen($config->lifetime)) $this->_cookieLifetime = $config->lifetime;
+		session_set_cookie_params($this->_cookieLifetime, $this->_cookiePath, $this->_cookieDomain);				
+		
+		
 		if(strlen($config->name)) session_name($config->name);
-
 		if(strlen($config->cache_limiter)) {
 			session_cache_limiter($config->cache_limiter);
 		} else {

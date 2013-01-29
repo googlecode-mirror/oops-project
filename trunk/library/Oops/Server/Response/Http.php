@@ -14,7 +14,7 @@ require_once("Oops/Server/Response.php");
 * Oops server response corresponding to incoming (first) HTTP request
 */
 class Oops_Server_Response_Http extends Oops_Server_Response {
-	function toString() {
+	public function toString() {
 		$this->getReady();
 		if(headers_sent()) {
 			trigger_error("Server_Response_Http/HeadersAlreadySent", E_USER_WARNING);
@@ -24,7 +24,7 @@ class Oops_Server_Response_Http extends Oops_Server_Response {
 		return $this->body;
 	}
 
-	function _sendHeaders() {
+	protected function _sendHeaders() {
 		header($this->getStatusLine());
 		$this->setHeader('Content-length', strlen($this->body));
 		foreach($this->headers as $name=>$value) {
@@ -38,5 +38,30 @@ class Oops_Server_Response_Http extends Oops_Server_Response {
 				}
 			}
 		}
+	}
+	
+	public function sendFile($file, $name = null) {
+		if(!file_exists($file)) $this->setCode(404);
+		if(!is_readable(file)) $this->setCode(403);
+		if(!strlen($name)) $name = basename($file);
+		
+		// @todo try to use webserver for serving file 
+		$this->setHeader('Content-type', Oops_File_Utils::getMimeType($name));
+			
+		switch(true) {
+			case strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE') !== false:
+				$name = mb_convert_encoding($name, 'windows-1251', 'utf-8');
+			case strpos(strtolower($_SERVER['HTTP_USER_AGENT']), 'opera') !== false:
+				break;
+			default:
+				$name = '=?utf-8?B?' . base64_encode($name) . '?=';
+		}
+		$contentDisposition = 'attachment; filename="' . $name . '"';
+			
+		$this->_response->setHeader('Content-Disposition', $contentDisposition);
+		$this->_response->getReady();
+		$this->_sendHeaders();
+		readfile($file);
+		die;
 	}
 }

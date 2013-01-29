@@ -1,11 +1,12 @@
 <?php
 
 class Oops_File_Utils {
-	
 	private static $openBasedir;
 
 	/**
-	 * Reads ini setting open_basedir and stores open real paths in class static array 
+	 * Reads ini setting open_basedir and stores open real paths in class static
+	 * array
+	 * 
 	 * @return unknown_type
 	 */
 	public static function initOpenBasedir() {
@@ -21,8 +22,9 @@ class Oops_File_Utils {
 	/**
 	 * Create path with a given permissions if path not already exists
 	 *
-	 * @param $path string
-	 * @param $mode integer Permissions mode to set on created directories
+	 * @param $path string        	
+	 * @param $mode integer
+	 *        	Permissions mode to set on created directories
 	 * @return unknown_type
 	 */
 	public static function autoCreateDir($path, $mode = 0777) {
@@ -62,12 +64,17 @@ class Oops_File_Utils {
 	}
 
 	/**
-	 * Splits file path for efficient storing large amounts of file named by ny kind of ID
-	 * 
-	 * @param string $prefix File path prefix (i.e. /var/www/myfiles)
-	 * @param string $splitable File name to split (1234567)
-	 * @param int $chunkLength Chunk size (defaults to 2)
-	 * @param int $skipLeading How much leading symbols to skip in $spitable (defaults to 0)
+	 * Splits file path for efficient storing large amounts of file named by ny
+	 * kind of ID
+	 *
+	 * @param string $prefix
+	 *        	File path prefix (i.e. /var/www/myfiles)
+	 * @param string $splitable
+	 *        	File name to split (1234567)
+	 * @param int $chunkLength
+	 *        	Chunk size (defaults to 2)
+	 * @param int $skipLeading
+	 *        	How much leading symbols to skip in $spitable (defaults to 0)
 	 * @return string Splitted file path (i.e. /var/www/myfiles/12/34/56/7)
 	 */
 	public static function splitPath($prefix, $splitable, $chunkLength = 2, $skipLeading = 0) {
@@ -86,9 +93,11 @@ class Oops_File_Utils {
 	}
 
 	/**
-	 * 
+	 *
+	 *
 	 * Remove non-empty dir
-	 * @param string $dirname
+	 * 
+	 * @param string $dirname        	
 	 */
 	public static function removeDirRecursive($dirname) {
 		$files = glob($dirname . "/*");
@@ -99,5 +108,76 @@ class Oops_File_Utils {
 				unlink($file);
 		}
 		rmdir($dirname);
+	}
+
+	/**
+	 * Get file's myme type by name
+	 *
+	 * @param string $filename        	
+	 * @return string Ambigous
+	 */
+	public static function getMimeType($filename, $default = 'application/octet-stream') {
+		if(function_exists('mime_content_type')) return mime_content_type($filename);
+		$types = array(
+			
+			'txt' => 'text/plain', 
+			'htm' => 'text/html', 
+			'html' => 'text/html', 
+			'php' => 'text/html', 
+			'css' => 'text/css', 
+			'js' => 'application/javascript', 
+			'json' => 'application/json', 
+			'xml' => 'application/xml', 
+			'swf' => 'application/x-shockwave-flash', 
+			'flv' => 'video/x-flv', 
+			
+			// images
+			'png' => 'image/png', 
+			'jpe' => 'image/jpeg', 
+			'jpeg' => 'image/jpeg', 
+			'jpg' => 'image/jpeg', 
+			'gif' => 'image/gif', 
+			'bmp' => 'image/bmp', 
+			'ico' => 'image/vnd.microsoft.icon', 
+			'tiff' => 'image/tiff', 
+			'tif' => 'image/tiff', 
+			'svg' => 'image/svg+xml', 
+			'svgz' => 'image/svg+xml', 
+			
+			// archives
+			'zip' => 'application/zip', 
+			'rar' => 'application/x-rar-compressed', 
+			'exe' => 'application/x-msdownload', 
+			'msi' => 'application/x-msdownload', 
+			'cab' => 'application/vnd.ms-cab-compressed', 
+			
+			// audio/video
+			'mp3' => 'audio/mpeg', 
+			'qt' => 'video/quicktime', 
+			'mov' => 'video/quicktime', 
+			
+			// adobe
+			'pdf' => 'application/pdf', 
+			'psd' => 'image/vnd.adobe.photoshop', 
+			'ai' => 'application/postscript', 
+			'eps' => 'application/postscript', 
+			'ps' => 'application/postscript', 
+			
+			// ms office
+			'doc' => 'application/msword', 
+			'rtf' => 'application/rtf', 
+			'xls' => 'application/vnd.ms-excel', 
+			'ppt' => 'application/vnd.ms-powerpoint', 
+			
+			// open office
+			'odt' => 'application/vnd.oasis.opendocument.text', 
+			'ods' => 'application/vnd.oasis.opendocument.spreadsheet');
+		
+		$ext = strtolower(array_pop(explode('.', basename($filename))));
+		if(array_key_exists($ext, $types)) {
+			return $types[$ext];
+		} else {
+			return $default;
+		}
 	}
 }

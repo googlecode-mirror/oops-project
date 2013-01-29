@@ -8,7 +8,7 @@
 
 /**
  * Oops server response representation
- * 
+ *
  * @property integer $code Response code (HTTP)
  * @property-read string $message Response message according to code
  * @property string $version Protocol version
@@ -22,10 +22,10 @@ class Oops_Server_Response {
 	
 	/**
 	 * Response body
+	 * 
 	 * @var string
 	 */
 	public $body = '';
-	
 	protected static $_messages = array(
 		// Informational 1xx
 		100 => 'Continue', 
@@ -79,7 +79,6 @@ class Oops_Server_Response {
 		505 => 'HTTP Version Not Supported', 
 		509 => 'Bandwidth Limit Exceeded');
 
-		
 	public function __get($name) {
 		switch($name) {
 			case 'code':
@@ -125,7 +124,7 @@ class Oops_Server_Response {
 	public function setHeaders($headers) {
 		$this->_headers = $headers;
 	}
-	
+
 	public function setVersion($version) {
 		if(preg_match('/^1\.[x\d]$/', $version)) $this->_version = $version;
 	}
@@ -155,8 +154,9 @@ class Oops_Server_Response {
 	/**
 	 * Get header identified by name
 	 *
-	 * @param string
-	 * @return string|array
+	 * @param
+	 *        	string
+	 * @return string array
 	 */
 	public function getHeader($name) {
 		$name = strtolower($name);
@@ -176,8 +176,10 @@ class Oops_Server_Response {
 	/**
 	 * Get all headers as string
 	 *
-	 * @param boolean $status_line Whether to return the first status line (IE "HTTP 200 OK")
-	 * @param string $br Line breaks (eg. "\n", "\r\n", "<br />")
+	 * @param boolean $status_line
+	 *        	Whether to return the first status line (IE "HTTP 200 OK")
+	 * @param string $br
+	 *        	Line breaks (eg. "\n", "\r\n", "<br />")
 	 * @return string
 	 */
 	public function getHeadersAsString($status_line = true, $br = "\n") {
@@ -189,7 +191,7 @@ class Oops_Server_Response {
 		
 		// Iterate over the headers and stringify them
 		foreach($this->_headers as $name => $value) {
-			$name = str_replace(' ', '-', ucwords(str_replace('-',' ',$name)));
+			$name = str_replace(' ', '-', ucwords(str_replace('-', ' ', $name)));
 			if(!is_array($value))
 				$str .= "{$name}: {$value}{$br}";
 			
@@ -247,5 +249,13 @@ class Oops_Server_Response {
 			$this->setHeader("Oops-Notice", $err, false);
 		foreach($errorHandler->getPhps() as $err)
 			$this->setHeader("PHP-Errors", $err, false);
+	}
+
+	public function sendFile($file, $name = null) {
+		if(!file_exists($file)) $this->setCode(404);
+		if(!is_readable(file)) $this->setCode(403);
+		
+		$this->setBody(file_get_contents($file));
+		$this->setCode(200);
 	}
 }

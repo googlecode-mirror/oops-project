@@ -6,16 +6,20 @@
  */
 
 /**
- * Application server object is used to proceed incoming request, init coresponding controller
- * and format the resulting output according to internal settings, data and defined rules
+ * Application server object is used to proceed incoming request, init
+ * coresponding controller
+ * and format the resulting output according to internal settings, data and
+ * defined rules
  *
  * @property-read string $uri Request URI
  * @property-read array $uri_parts Request URI path parts (exploded path)
  * @property-read string $ext Request extension (view)
  * @property-read string $extension Request extension (view)
  * @property-read string $action Requested action
- * @property-read array $controller_params Controller params (not routed parts of the request path)
- * @property-read string $controller_ident Controller identification (routed path substring)
+ * @property-read array $controller_params Controller params (not routed parts
+ *                of the request path)
+ * @property-read string $controller_ident Controller identification (routed
+ *                path substring)
  * @property-read string $controllerClass Router controller class name
  * @property-read Oops_Server_Router $router Router instance
  * @property-read Oops_Controller $controller_instance Controller instance
@@ -23,35 +27,42 @@
  */
 class Oops_Server {
 	/**
+	 *
 	 * @var string Server instance number, reserved for future needs
-	 * @protected
+	 *      @protected
 	 */
 	protected $_app;
 	
 	/**
-	 * @var string Definition of any filter to proceed the value returned by controller
-	 * @protected
+	 *
+	 * @var string Definition of any filter to proceed the value returned by
+	 *      controller
+	 *      @protected
 	 */
 	protected $_view;
 	
 	/**
+	 *
 	 * @var string Requested action, default is 'index'
-	 * @protected
+	 *      @protected
 	 */
 	protected $_action;
 	
 	/**
+	 *
 	 * @var string extension of requested script, 'php' by default
-	 * @protected
+	 *      @protected
 	 */
 	protected $_extension;
 	
 	/**
+	 *
 	 * @var Oops_Controller Associated controller instance
 	 */
 	protected $_controller_instance;
 	
 	/**
+	 *
 	 * @var Oops_Config
 	 */
 	protected $_config;
@@ -63,6 +74,7 @@ class Oops_Server {
 	protected $_errorHandler;
 	
 	/**
+	 *
 	 * @todo Make this interface
 	 * @var Oops_Server_Router_Interface
 	 */
@@ -73,7 +85,9 @@ class Oops_Server {
 
 	/**
 	 * Singleton pattern implementation
-	 * @return Oops_Server The current server object which is the last server in stack
+	 * 
+	 * @return Oops_Server The current server object which is the last server in
+	 *         stack
 	 */
 	public static function getInstance() {
 		require_once 'Oops/Server/Stack.php';
@@ -83,8 +97,11 @@ class Oops_Server {
 	}
 
 	/**
-	 * Use this static method to invoke a new server instance. Note that constructor is private.
-	 * @param Oops_Config Config for the new server instance
+	 * Use this static method to invoke a new server instance.
+	 * Note that constructor is private.
+	 * 
+	 * @param
+	 *        	Oops_Config Config for the new server instance
 	 * @return Oops_Server
 	 */
 	public static function newInstance($config = null) {
@@ -134,18 +151,21 @@ class Oops_Server {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return Oops_Server_Router
 	 */
 	public static function getRouter() {
 		$server = Oops_Server::getInstance();
+		if(!isset($server->_router)) $server->_initRouter();
 		return $server->_router;
 	}
 
 	/**
 	 *
-	 * @param Oops_Config new configuration
-	 * @param boolean replace current config or merge with new one (default)
+	 * @param
+	 *        	Oops_Config new configuration
+	 * @param
+	 *        	boolean replace current config or merge with new one (default)
 	 * @return void
 	 */
 	public function configure($config, $replace = false) {
@@ -157,6 +177,7 @@ class Oops_Server {
 	}
 
 	/**
+	 *
 	 * @todo Move to _Import.php
 	 * @return unknown_type
 	 */
@@ -187,9 +208,11 @@ class Oops_Server {
 	/**
 	 * Run the application and output the response
 	 *
-	 * @todo return the Response object, use special function to return a Response for additional processing of error codes (404, 415, 501)
-	 *
-	 * @param Oops_Server_Request Request to dispatch
+	 * @todo return the Response object, use special function to return a
+	 *       Response for additional processing of error codes (404, 415, 501)
+	 *      
+	 * @param
+	 *        	Oops_Server_Request Request to dispatch
 	 * @return void
 	 */
 	public function Run($request = null) {
@@ -222,9 +245,9 @@ class Oops_Server {
 			
 			$data = $this->_controller_instance->Run();
 			
-			//@todo Let the view handler use getRequest and getResponse as it need it
+			// @todo Let the view handler use getRequest and getResponse as it
+			// need it
 			
-
 			$this->_view->In($data);
 			$this->_view->Set('controller', $this->_router->controller);
 			$this->_view->Set('uri', $this->_request->getUri());
@@ -234,7 +257,6 @@ class Oops_Server {
 			
 			$this->_response->setHeader("Content-type", $this->_view->getContentType());
 			$this->_response->setBody($this->_view->Out());
-		
 		} catch(Oops_Server_Exception $e) {
 			switch($e->getCode()) {
 				case OOPS_SERVER_EXCEPTION_RESPONSE_READY:
@@ -258,15 +280,15 @@ class Oops_Server {
 	}
 
 	/**
-	 * Parses URI into parts, action and extension, also checks spelling using 301 to the right location
-	 *
+	 * Parses URI into parts, action and extension, also checks spelling using
+	 * 301 to the right location
 	 */
 	protected function _parseRequest() {
-		
 		$oopsConfig = $this->_config->get("oops");
 		$parts = explode("/", $this->_request->path);
 		$coolparts = array();
-		//Let's remove any empty parts. path//to/something/ should be turned into path/to/something
+		// Let's remove any empty parts. path//to/something/ should be turned
+		// into path/to/something
 		for($i = 0, $cnt = count($parts); $i < $cnt; $i++) {
 			if(strlen($parts[$i])) $coolparts[] = strtolower($parts[$i]);
 		}
@@ -284,16 +306,18 @@ class Oops_Server {
 		}
 		
 		if(!isset($this->_action)) {
-			//action should be index, content-type - php
+			// action should be index, content-type - php
 			$this->_action = $oopsConfig->get('default_action');
 			$this->_extension = $oopsConfig->get('default_extension');
 		}
 		
-		//Let's compile the one-and-only expected request_uri for this kind of request
+		// Let's compile the one-and-only expected request_uri for this kind of
+		// request
 		$expectedPath = sizeof($coolparts) ? '/' . join('/', $coolparts) . '/' : '/';
 		if($this->_action != $oopsConfig->get('default_action') || $this->_extension != $oopsConfig->get('default_extension')) $expectedPath .= "{$this->_action}.{$this->_extension}";
 		
-		//If given path mismatch the one-and-only expected one, make a redirect to the expected
+		// If given path mismatch the one-and-only expected one, make a redirect
+		// to the expected
 		if($this->_request->path != $expectedPath) {
 			$correctRequest = clone ($this->_request);
 			$correctRequest->path = $expectedPath;
@@ -307,8 +331,9 @@ class Oops_Server {
 
 	/**
 	 * Initializes router object using server's config
-	 * 
+	 *
 	 * @ignore
+	 *
 	 * @return void
 	 */
 	protected function _initRouter() {
@@ -325,29 +350,34 @@ class Oops_Server {
 	}
 
 	/**
-	 * Routes the contoroller for a given URI, and places contoller class name into $this->_controller var
-	 * Found path is set into $this->_controller_ident, and all remaining parts into $this->_controller_params
+	 * Routes the contoroller for a given URI, and places contoller class name
+	 * into $this->_controller var
+	 * Found path is set into $this->_controller_ident, and all remaining parts
+	 * into $this->_controller_params
 	 *
 	 * @todo Move controller_ident and controller_params to the Request object
-	 *
+	 *      
 	 * @uses Oops_Server_Router
 	 */
 	function _routeRequest() {
 		$this->_initRouter();
 		if($this->_router->route($this->_request)) {
-			//Routed OK
+			// Routed OK
 			$this->_controller_ident = trim($this->_router->foundPath, '/');
 			$this->_controller_params = strlen($this->_router->notFoundPath) ? explode('/', $this->_router->notFoundPath) : array();
 		} else {
-			//We got 404 here, let's work it out
+			// We got 404 here, let's work it out
 			$this->_response->setCode(404);
 		}
 	}
 
 	/**
-	 * @todo Set error response code if there's controller class not found
 	 *
-	 * Controller instantiation. Uses $this->_controller as a class name (detected in DetectController), or starts default controller Oops_Controller
+	 * @todo Set error response code if there's controller class not found
+	 *      
+	 *       Controller instantiation. Uses $this->_controller as a class name
+	 *       (detected in DetectController), or starts default controller
+	 *       Oops_Controller
 	 */
 	function _initController() {
 		$ctrl = $this->_router->controller;
@@ -360,9 +390,11 @@ class Oops_Server {
 	}
 
 	/**
-	 * @deprecated Use magic method __get
 	 *
-	 * Method is used to get private application params, decoration pattern here i think
+	 * @deprecated Use magic method __get
+	 *            
+	 *             Method is used to get private application params, decoration
+	 *             pattern here i think
 	 */
 	public function get($what) {
 		switch($what) {
@@ -388,7 +420,6 @@ class Oops_Server {
 				return $this->_router;
 			case 'config':
 				return $this->_config;
-		
 		}
 		return null;
 	}
@@ -406,14 +437,15 @@ class Oops_Server {
 		$this->_view = Oops_Server_View::getInstance($this->_extension);
 		
 		if(!is_object($this->_view)) {
-			//suggested view is not available
+			// suggested view is not available
 			$this->_response->setCode(415);
 		}
 	}
 
 	/**
 	 * Initial server run using http request and processing http response
-	 * Uses default config location of ./application/config/oops.ini
+	 * Uses default config location of .
+	 * /application/config/oops.ini
 	 * Outputs the response
 	 *
 	 * @return void
@@ -424,5 +456,4 @@ class Oops_Server {
 		$response = $server->Run();
 		echo $response->toString();
 	}
-
 }

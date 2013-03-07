@@ -4,7 +4,8 @@
  * @subpackage Server
  */
 
-require_once ("Oops/Server/View.php");
+require_once 'Oops/Server/View.php';
+require_once 'Oops/Template.php';
 
 /**
  * Server HTML output View
@@ -20,7 +21,9 @@ class Oops_Server_View_Php extends Oops_Server_View {
 	}
 
 	/**
-	 * HTML filtration. Expects Oops_Controller as an Input. and ext, action and uri_parts as params
+	 * HTML filtration.
+	 * Expects Oops_Controller as an Input. and ext, action and uri_parts as
+	 * params
 	 *
 	 * @return string HTML output
 	 */
@@ -35,7 +38,9 @@ class Oops_Server_View_Php extends Oops_Server_View {
 	}
 
 	/**
-	 * Instantiates content template for current path, action, view and router controller 
+	 * Instantiates content template for current path, action, view and router
+	 * controller
+	 * 
 	 * @return Oops_Template
 	 */
 	function _getContentTemplate() {
@@ -44,13 +49,14 @@ class Oops_Server_View_Php extends Oops_Server_View {
 		if(sizeof($this->_params['uri_parts'])) $templateName .= '/' . join('/', $this->_params['uri_parts']);
 		$templateName .= "/" . $this->_params['action'] . ".php";
 		
-		require_once ("Oops/Template.php");
 		$template = Oops_Template::getInstance($templateName);
 		return $template;
 	}
 
 	/**
-	 * Instantiates content template for current path, action, view and router controller 
+	 * Instantiates content template for current path, action, view and router
+	 * controller
+	 * 
 	 * @return Oops_Template
 	 */
 	function _getFilterTemplate() {
@@ -59,7 +65,6 @@ class Oops_Server_View_Php extends Oops_Server_View {
 		if(sizeof($this->_params['uri_parts'])) $templateName .= '/' . join('/', $this->_params['uri_parts']);
 		$templateName .= "/" . $this->_params['action'] . ".php";
 		
-		require_once ("Oops/Template.php");
 		$template = Oops_Template::getInstance($templateName);
 		return $template;
 	}

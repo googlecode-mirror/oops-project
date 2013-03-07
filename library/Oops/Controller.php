@@ -5,41 +5,41 @@
  */
 
 /**
- * Abstract controller class
- * 
- * @abstract
+ * Basic controller class
  */
 class Oops_Controller {
 	/**
 	 * Current server instance
-	 * 
+	 *
 	 * @var Oops_Server
 	 */
 	protected $_server;
 	
 	/**
 	 * Request object instance
-	 * 
+	 *
 	 * @var Oops_Server_Request
 	 */
 	protected $_request;
 	
 	/**
 	 * Response object instance
-	 * 
+	 *
 	 * @var Oops_Server_Response
 	 */
 	protected $_response;
-
+	
 	/**
 	 * Current config instance
-	 * 
+	 *
 	 * @var Oops_Config
 	 */
 	protected $_config;
-	
+
 	/**
-	 * @todo Consider using request and response as controller constructor params?
+	 *
+	 * @todo Consider using request and response as controller constructor
+	 *       params?
 	 */
 	function __construct() {
 		$this->_server = Oops_Server::getInstance();
@@ -51,9 +51,13 @@ class Oops_Controller {
 	/**
 	 * Get requested value, modified to the requested type
 	 *
-	 * @param string Request key
-	 * @param string Required value type
-	 * @return mixed 
+	 * @param string $key
+	 *        	request key
+	 * @param string $type
+	 *        	required value type
+	 * @param mixed $default
+	 *        	default value
+	 * @return mixed
 	 * @tutorial Oops/Oops/Controller.cls#handling_request
 	 */
 	function Request($key, $type = null, $default = null) {
@@ -74,19 +78,19 @@ class Oops_Controller {
 			case 'decimal':
 				return (float) $value;
 			case 'array':
-				require_once ("Oops/Utils.php");
+				require_once 'Oops/Utils.php';
 				Oops_Utils::ToArray($value);
 				return $value;
 			case 'arrayint':
-				require_once ("Oops/Utils.php");
+				require_once 'Oops/Utils.php';
 				Oops_Utils::ToIntArray($value);
 				return $value;
 			case 'arraysql':
-				require_once ("Oops/Utils.php");
+				require_once 'Oops/Utils.php';
 				Oops_Utils::ToIntArray($value);
 				return $value;
 			case 'sql':
-				require_once ("Oops/Sql.php");
+				require_once 'Oops/Sql.php';
 				return Oops_Sql::Escape($value);
 			case 'words':
 				return preg_replace('/[^\s\w]/', '', $value);
@@ -94,7 +98,6 @@ class Oops_Controller {
 				return trim(preg_replace('/[^\s\w]/', '', $value));
 			default:
 				return $value;
-		
 		}
 	}
 
@@ -106,7 +109,9 @@ class Oops_Controller {
 	}
 
 	/**
-	 * @todo Move controller params and controller_ident to the request object (fill 'em woth router)
+	 *
+	 * @todo Move controller params and controller_ident to the request object
+	 *       (fill 'em woth router)
 	 */
 	function getControllerParams() {
 		if(is_object($this->_server)) return $this->_server->get('controller_params');
@@ -114,6 +119,7 @@ class Oops_Controller {
 	}
 
 	/**
+	 *
 	 * @return boolean True on successful request handling
 	 */
 	function Run() {

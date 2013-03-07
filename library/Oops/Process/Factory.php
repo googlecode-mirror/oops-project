@@ -1,5 +1,8 @@
 <?php
 
+require_once 'Oops/Process/Exception.php';
+require_once 'Oops/Process/Storage.php';
+
 class Oops_Process_Factory {
 	private static $_storage;
 	
@@ -16,7 +19,7 @@ class Oops_Process_Factory {
 		Oops_Loader::load($processClass);
 		$reflectionClass = new ReflectionClass($processClass);
 		if(!($reflectionClass->isSubclassOf('Oops_Process_Abstract'))) {
-			require_once ("Oops/Process/Exception.php");
+
 			throw new Oops_Process_Exception("Invalid process class $processClass");
 		}
 		
@@ -27,7 +30,6 @@ class Oops_Process_Factory {
 		$process = $reflectionClass->newInstance();
 		$process->init($inputValues);
 		if(!$process->pid) {
-			require_once ("Oops/Process/Exception.php");
 			throw new Oops_Process_Exception("Process init error, no pid for instance of $processClass", OOPS_PROCESS_EXCEPTION_NO_PID);
 		}
 		self::$_processes[$process->pid] = $process;
@@ -58,7 +60,7 @@ class Oops_Process_Factory {
 	static public function getStorage() {
 		if(!is_object(self::$_storage)) {
 			// @todo Use config
-			require_once ("Oops/Process/Storage.php");
+			
 			self::$_storage = new Oops_Process_Storage();
 		}
 		return self::$_storage;

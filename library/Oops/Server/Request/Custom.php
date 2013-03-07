@@ -8,7 +8,7 @@
 /**
 * Load required classes
 */
-require_once("Oops/Server/Request.php");
+require_once 'Oops/Server/Request.php';
 
 /**
 * Internal (sub)request representation object (oops://local/path/to/resource/action.view)

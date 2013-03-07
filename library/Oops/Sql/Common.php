@@ -1,18 +1,21 @@
 <?php
 
-require_once "Oops/Sql.php";
-require_once "Oops/Sql/Exception.php";
+require_once 'Oops/Sql.php';
+require_once 'Oops/Sql/Exception.php';
 
 class Oops_Sql_Common {
 
 	/**
 	 * Inserts data row into the table
-	 * 
-	 * @param string $table Table
-	 * @param array $data Row fields and values ('field' => 'value')
-	 * @param bool $returnQuery whenever to return query or run it. Default is false.
+	 *
+	 * @param string $table
+	 *        	Table
+	 * @param array $data
+	 *        	Row fields and values ('field' => 'value')
+	 * @param bool $returnQuery
+	 *        	whenever to return query or run it. Default is false.
 	 * @return number of affected rows or sql query string
-	 * 
+	 *        
 	 * @throws Oops_Sql_Exception
 	 */
 	public static function insert($table, $data, $returnQuery = false, $ignore = false) {
@@ -54,8 +57,8 @@ class Oops_Sql_Common {
 			$keyFields = array($keyFields);
 		elseif(!is_array($keyFields))
 			$keyFields = array();
-		
-		// Should throw warning here:
+			
+			// Should throw warning here:
 		if(count($keyFields) >= $fieldsCount) $keyFields = array();
 		
 		for($i = 0; $i < $fieldsCount; $i++) {
@@ -63,7 +66,7 @@ class Oops_Sql_Common {
 			$query .= $keys[$i] . ' = ' . $values[$i] . ', ';
 		}
 		
-		// Remove trailing ', ' placed inside the loop ^^^ 
+		// Remove trailing ', ' placed inside the loop ^^^
 		$query = substr($query, 0, -2);
 		
 		if($returnQuery) return $query;
@@ -73,12 +76,15 @@ class Oops_Sql_Common {
 
 	/**
 	 * Inserts data row into the table (with ignore)
-	 * 
-	 * @param string $table Table
-	 * @param array $data Row fields and values ('field' => 'value')
-	 * @param bool $returnQuery whenever to return query or run it. Default is false.
+	 *
+	 * @param string $table
+	 *        	Table
+	 * @param array $data
+	 *        	Row fields and values ('field' => 'value')
+	 * @param bool $returnQuery
+	 *        	whenever to return query or run it. Default is false.
 	 * @return number of affected rows or sql query string
-	 * 
+	 *        
 	 * @throws Oops_Sql_Exception
 	 */
 	public static function insertIgnore($table, $data, $returnQuery = false) {
@@ -87,19 +93,20 @@ class Oops_Sql_Common {
 
 	/**
 	 * Replaces data row into the table
-	 * 
-	 * @param string $table Table
-	 * @param array $data Row fields and values ('field' => 'value')
-	 * @param bool $returnQuery whenever to return query or run it. Default is false.
+	 *
+	 * @param string $table
+	 *        	Table
+	 * @param array $data
+	 *        	Row fields and values ('field' => 'value')
+	 * @param bool $returnQuery
+	 *        	whenever to return query or run it. Default is false.
 	 * @return number of affected rows or sql query string
 	 */
 	public static function replace($table, $data, $returnQuery = false) {
 		if(!strlen($table)) {
-			require_once ("Oops/Sql/Exception.php");
 			throw new Oops_Sql_Exception("Invalid table name");
 		}
 		if(!is_array($data)) {
-			require_once ("Oops/Sql/Exception.php");
 			throw new Oops_Sql_Exception("Invalid row data");
 		}
 		
@@ -119,31 +126,32 @@ class Oops_Sql_Common {
 
 	/**
 	 * Updates table row with values from $data array
-	 * 
-	 * @param string $table Database table
-	 * @param array $data New row values
-	 * @param string|array Match definitions as array of field=>value, or string field from $data
-	 * @param bool $returnQuery whenever to return query or run it. Default is false.
+	 *
+	 * @param string $table
+	 *        	Database table
+	 * @param array $data
+	 *        	New row values
+	 * @param
+	 *        	string|array Match definitions as array of field=>value, or
+	 *        	string field from $data
+	 * @param bool $returnQuery
+	 *        	whenever to return query or run it. Default is false.
 	 * @return int number of affected rows or sql query string
 	 */
 	public static function update($table, $data, $match, $returnQuery = false) {
 		if(!strlen($table)) {
-			require_once ("Oops/Sql/Exception.php");
 			throw new Oops_Sql_Exception("Invalid table name");
 		}
 		if(!is_array($data)) {
-			require_once ("Oops/Sql/Exception.php");
 			throw new Oops_Sql_Exception("Invalid row data");
 		}
 		
 		if(is_string($match)) {
 			if(!isset($data[$match])) {
-				require_once ("Oops/Sql/Exception.php");
 				throw new Oops_Sql_Exception("Invalid match conditions");
 			}
 			$where = self::escapeIdentifiers($match) . " = " . self::quoteValue($data[$match]);
 			unset($data[$match]);
-		
 		} elseif(is_array($match)) {
 			$wheres = array();
 			foreach($match as $k => $v) {
@@ -174,19 +182,20 @@ class Oops_Sql_Common {
 
 	/**
 	 * Deletes row or rows from table matching given values
-	 * 
-	 * @param string $table Table name
-	 * @param array $match Rows match criterias as 'field'=>'value'
-	 * @param bool $returnQuery whenever to return query or run it. Default is false.
+	 *
+	 * @param string $table
+	 *        	Table name
+	 * @param array $match
+	 *        	Rows match criterias as 'field'=>'value'
+	 * @param bool $returnQuery
+	 *        	whenever to return query or run it. Default is false.
 	 * @return int Number of affected rows or sql query string
 	 */
 	public static function delete($table, $match, $returnQuery = false) {
 		if(!strlen($table)) {
-			require_once ("Oops/Sql/Exception.php");
 			throw new Oops_Sql_Exception("Invalid table name");
 		}
 		if(!is_array($match)) {
-			require_once ("Oops/Sql/Exception.php");
 			throw new Oops_Sql_Exception("Invalid match condition");
 		}
 		
@@ -234,5 +243,4 @@ class Oops_Sql_Common {
 				return "'" . Oops_Sql::Escape((string) $v) . "'";
 		}
 	}
-
 }

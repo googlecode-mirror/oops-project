@@ -8,7 +8,7 @@
 /**
  * Load required classes
  */
-require_once("Oops/Server/Request.php");
+require_once 'Oops/Server/Request.php';
 
 /**
  * HTTP request object representation
@@ -27,7 +27,7 @@ class Oops_Server_Request_Http extends Oops_Server_Request {
 		/**
 		 * strip slashes if magic_quotes is enabled
 		 */
-		if(get_magic_quotes_gpc()) {
+		if(function_exists('get_magic_quotes_gpc') && get_magic_quotes_gpc()) {
 			$this->_stripSlashesRecursive($this->_get);
 			$this->_stripSlashesRecursive($this->_post);
 			$this->_stripSlashesRecursive($this->_cookie);

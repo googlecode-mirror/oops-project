@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package Oops
  * @author Dmitry Ivanov
@@ -6,18 +7,19 @@
  */
 
 /**
- * 
- * Session factory. Session handler and params are defined by server config.
- *
+ * Session factory.
+ * Session handler and params are defined by server config.
  */
 class Oops_Session {
 	/**
+	 *
 	 * @var Session handler object
 	 */
 	public static $session;
-	
+
 	/**
 	 * Init session handler
+	 *
 	 * @return unknown_type
 	 */
 	public static function init() {
@@ -27,22 +29,12 @@ class Oops_Session {
 		self::_initHandler();
 		session_start();
 	}
-	
+
 	private static function _initHandler() {
 		// @todo merge given config to the default one to avoid missing fields
-		require_once("Oops/Server.php");
 		$sessCfg = Oops_Server::getConfig()->session;
-		if($sessCfg->handler) {
-			$handlerClass = 'Oops_Session_' . $sessCfg->handler;
-			if(Oops_Loader::find($handlerClass)) {
-				self::$session = new $handlerClass($sessCfg);
-				return;
-			}
-			require_once("Oops/Session/Native.php");
-			self::$session = new Oops_Session_Native($sessCfg);
-			return;
-		}
-		require_once("Oops/Session/Native.php");
-		self::$session = new Oops_Session_Native($sessCfg); 
+		$handlerClass = 'Oops_Session_' . $sessCfg->handler;
+		if(!class_exists($handlerClass)) $handlerClass = 'Oops_Session_Native';
+		self::$session = new Oops_Session_Native($sessCfg);
 	}
 }

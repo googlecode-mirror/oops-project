@@ -5,6 +5,8 @@
 
 
 require_once 'Oops/Pattern/Identifiable/Factored/Interface.php';
+require_once 'Oops/Process/Exception.php';
+require_once 'Oops/Process/Factory.php';
 
 /**
  * 
@@ -129,7 +131,6 @@ abstract class Oops_Process_Abstract implements Oops_Pattern_Identifiable_Factor
 			case 'pid':
 			case 'state':
 			case 'currentState':
-				require_once ("Oops/Process/Exception.php");
 				throw new Oops_Process_Exception("Restricted", OOPS_PROCESS_EXCEPTION_RESTRICTED_SETTER);
 		}
 	}
@@ -139,7 +140,6 @@ abstract class Oops_Process_Abstract implements Oops_Pattern_Identifiable_Factor
 		 * Check if it's a valid 
 		 */
 		if(!isset($this->_pid)) {
-			require_once ("Oops/Process/Exception.php");
 			throw new Oops_Process_Exception("Can not tick process without pid", OOPS_PROCESS_EXCEPTION_NO_PID);
 		}
 		
@@ -147,7 +147,6 @@ abstract class Oops_Process_Abstract implements Oops_Pattern_Identifiable_Factor
 		 * Ambigous check, this should be checked on setting pid
 		 */
 		if(!isset($this->_currentState)) {
-			require_once ("Oops/Process/Exception.php");
 			throw new Oops_Process_Exception("Process state is undefined", OOPS_PROCESS_EXCEPTION_NO_STATE);
 		}
 		
@@ -195,7 +194,6 @@ abstract class Oops_Process_Abstract implements Oops_Pattern_Identifiable_Factor
 				 * This indicates a conflict in decision makers, or missing some 'crash' state.
 				 * Developer must eliminate conflicting decision maker.
 				 */
-				require_once ("Oops/Process/Exception.php");
 				throw new Oops_Process_Exception('No way to go from state $state', OOPS_PROCESS_EXCEPTION_NO_WAY);
 			}
 		
@@ -212,12 +210,10 @@ abstract class Oops_Process_Abstract implements Oops_Pattern_Identifiable_Factor
 	 */
 	protected final function _setState($newState) {
 		if(!isset($this->_currentState)) {
-			require_once ("Oops/Process/Exception.php");
 			throw new Oops_Process_Exception('Process was not started, use Init', OOPS_PROCESS_EXCEPTION_INIT_REQUIRED);
 		}
 		
 		if(!$this->isValidState($newState)) {
-			require_once ("Oops/Process/Exception.php");
 			throw new Oops_Process_Exception("Invalid state $newState", OOPS_PROCESS_EXCEPTION_INVALID_STATE);
 		}
 		
@@ -257,7 +253,6 @@ abstract class Oops_Process_Abstract implements Oops_Pattern_Identifiable_Factor
 		 * This can't be run if process already initialized
 		 */
 		if(isset($this->_currentState)) {
-			require_once ("Oops/Process/Exception.php");
 			throw new Oops_Process_Exception("Process already initialized", OOPS_PROCESS_EXCEPTION_INIT_COMPLETE);
 		}
 		/**
@@ -266,7 +261,6 @@ abstract class Oops_Process_Abstract implements Oops_Pattern_Identifiable_Factor
 		
 		foreach($inputValues as $key => $value) {
 			if($key == 'currentState' || key == 'pid') {
-				require_once ("Oops/Process/Exception.php");
 				throw new Oops_Process_Exception("Invalid input value", OOPS_PROCESS_EXCEPTION_INVALID_INPUT);
 			}
 			if(in_array($key, $this->_variables)) {
@@ -320,7 +314,7 @@ abstract class Oops_Process_Abstract implements Oops_Pattern_Identifiable_Factor
 			/**
 			 * This process is being restored, get process data from Storage
 			 */
-			require_once ("Oops/Process/Factory.php");
+
 			$storage = & Oops_Process_Factory::getStorage();
 			$data = $storage->get($pid);
 			
@@ -328,7 +322,6 @@ abstract class Oops_Process_Abstract implements Oops_Pattern_Identifiable_Factor
 				/**
 				 * There's no data in storage
 				 */
-				require_once ("Oops/Process/Exception.php");
 				throw new Oops_Process_Exception("Process data not found in storage", OOPS_PROCESS_EXCEPTION_NOT_FOUND);
 			}
 			
@@ -341,7 +334,6 @@ abstract class Oops_Process_Abstract implements Oops_Pattern_Identifiable_Factor
 				/**
 				 * There's a wrong class being constructed 
 				 */
-				require_once ("Oops/Process/Exception.php");
 				throw new Oops_Process_Exception("Constructing " . get_class($this) . " for a $class process", OOPS_PROCESS_EXCEPTION_INVALID_CLASS);
 			}
 			
@@ -350,7 +342,6 @@ abstract class Oops_Process_Abstract implements Oops_Pattern_Identifiable_Factor
 				/**
 				 * stored state is invalid
 				 */
-				require_once ("Oops/Process/Exception.php");
 				throw new Oops_Process_Exception("Unable to restore $class process in invalid state $currentState", OOPS_PROCESS_EXCEPTION_INVALID_STATE);
 			}
 			$this->_currentState = $currentState;
@@ -359,7 +350,6 @@ abstract class Oops_Process_Abstract implements Oops_Pattern_Identifiable_Factor
 				if(array_key_exists($name, $this->_variables)) {
 					$this->{'_' . $name} = $value;
 				} else {
-					require_once ("Oops/Process/Exception.php");
 					throw new Oops_Process_Exception("Invalid variable name", OOPS_PROCESS_EXCEPTION_INVALID_INPUT);
 				}
 			}
@@ -397,8 +387,6 @@ abstract class Oops_Process_Abstract implements Oops_Pattern_Identifiable_Factor
 		foreach($this->_variables as $name => $access) {
 			$data['variables'][$name] = $this->{'_' . $name};
 		}
-		
-		require_once ("Oops/Process/Factory.php");
 		
 		/**
 		 * 

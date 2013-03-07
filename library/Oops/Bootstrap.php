@@ -1,14 +1,11 @@
 <?php
 
-$libPath = dirname(dirname(__FILE__));
-
-error_reporting(E_ALL);
 define("DS", DIRECTORY_SEPARATOR);
 
-set_include_path(
-	$libPath . PATH_SEPARATOR . get_include_path()
-);
-
+$libPath = dirname(dirname(__FILE__));
+if(!in_array($libPath, explode(PATH_SEPARATOR, get_include_path()))) {
+	set_include_path($libPath . PATH_SEPARATOR . get_include_path());
+}
 
 /**
  * Some system checks
@@ -16,6 +13,8 @@ set_include_path(
 @set_magic_quotes_runtime(0);
 @ini_set('zend.ze1_compatibility_mode', '0');
 
+$tz = defined('TIMEZONE') ? constant('TIMEZONE') : 'Europe/Moscow';
+date_default_timezone_set($tz);
 
 require_once 'Oops/Loader.php';
 spl_autoload_register(array('Oops_Loader', 'load'));

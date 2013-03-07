@@ -135,7 +135,7 @@ class Oops_Server_Response {
 			$this->_headers[$name] = $value;
 		} else {
 			if(!is_array($this->_headers[$name])) {
-				require_once ("Oops/Utils.php");
+				require_once 'Oops/Utils.php';
 				Oops_Utils::toArray($this->_headers[$name]);
 			}
 			$this->_headers[$name][] = $value;

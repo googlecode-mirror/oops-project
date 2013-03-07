@@ -4,7 +4,7 @@
 * @subpackage Server
 */
 
-require_once("Oops/Server/View/Php.php");
+require_once 'Oops/Server/View/Php.php';
 /**
 * Server HTML (for popup) output View
 */

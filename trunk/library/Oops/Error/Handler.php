@@ -5,42 +5,43 @@
  */
 
 /**
- * Class for handling user errors
  *
- * Usage:
- * <code>
- *   require_once("Oops/Error/Handler");
- *   $eh = new Oops_Error_Hander();
- *
- *   // ... your code ...
- *
- *   trigger_error("Some error occured", E_USER_ERROR);
- *   trigger_error("Warning here", E_USER_WARNING);
- *   trigger_error("Sending a notice", E_USER_NOTICE);
- *
- *   //... your code ...
- *
- *   if($eh->isClear()) {
- *      //there were no errors/warnings/notices in your code
- *   }
- *
- *   if($eh->isError()) {
- *      //there were user errors
- *      Oops_Debug::Dump($eh->getErrors(),"Errors occured"));
- *   }
- *
- *   if($eg->isWarning()) {
- *      //there were warnings
- *      Oops_Debug::Dump($eh->getWarnings(),"Warnings occured"));
- *   }
- *
- *   if($eg->isNotice()) {
- *      //there were notices
- *      Oops_Debug::Dump($eh->getNotices(),"Notices sent"));
- *   }
- *   restore_error_handler();
- *   	
- * </code>
+ * @deprecated Class for handling user errors
+ *            
+ *             Usage:
+ *             <code>
+ *             require_once 'Oops/Error/Handler.php';
+ *             $eh = new Oops_Error_Hander();
+ *            
+ *             // ... your code ...
+ *            
+ *             trigger_error("Some error occured", E_USER_ERROR);
+ *             trigger_error("Warning here", E_USER_WARNING);
+ *             trigger_error("Sending a notice", E_USER_NOTICE);
+ *            
+ *             //... your code ...
+ *            
+ *             if($eh->isClear()) {
+ *             //there were no errors/warnings/notices in your code
+ *             }
+ *            
+ *             if($eh->isError()) {
+ *             //there were user errors
+ *             Oops_Debug::Dump($eh->getErrors(),"Errors occured"));
+ *             }
+ *            
+ *             if($eg->isWarning()) {
+ *             //there were warnings
+ *             Oops_Debug::Dump($eh->getWarnings(),"Warnings occured"));
+ *             }
+ *            
+ *             if($eg->isNotice()) {
+ *             //there were notices
+ *             Oops_Debug::Dump($eh->getNotices(),"Notices sent"));
+ *             }
+ *             restore_error_handler();
+ *            
+ *             </code>
  */
 class Oops_Error_Handler {
 	
@@ -58,7 +59,6 @@ class Oops_Error_Handler {
 	 * Catched notices stack
 	 */
 	var $_notices = array();
-	
 	var $_phps = array();
 	
 	/**
@@ -70,14 +70,14 @@ class Oops_Error_Handler {
 	 * Constructor, sets the constructed object as error handler
 	 */
 	function __construct() {
-		set_error_handler(array($this, 'handle' ));
+		set_error_handler(array($this, 'handle'));
 	}
 
 	/**
 	 * Error handling function
 	 */
 	function handle($errno, $errstr, $errfile = null, $errline = null, $errcontext = null) {
-		//echo $errstr;
+		// echo $errstr;
 		switch($errno) {
 			
 			case E_USER_ERROR:
@@ -131,5 +131,4 @@ class Oops_Error_Handler {
 	function isClear() {
 		return $this->_clear;
 	}
-
 }

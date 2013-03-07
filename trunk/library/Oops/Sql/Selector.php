@@ -526,6 +526,7 @@ class Oops_Sql_Selector {
 	}
 
 	protected function _sqlOrderBy() {
+		// @todo use Oops_Sql_Expressions as well, check if field exists
 		$orderBy = '';
 		foreach($this->_orderBy as $f => $direction) {
 			if(strpos($f, '.') !== false) {

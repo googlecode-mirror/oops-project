@@ -18,12 +18,12 @@ class Oops_Process_Controller extends Oops_Controller {
 			switch ($i) {
 				case 0:
 					$this->_processClass = $value;
-					require_once("Oops/Process/Helper.php");
+					require_once 'Oops/Process/Helper.php';
 					$this->_processClassHelper = Oops_Process_Helper::getInstance($this->_processClass);
 					break;
 				case 1:
 					$this->_processId = $value;
-					require_once("Oops/Process/Factory.php");
+					require_once 'Oops/Process/Factory.php';
 					$this->_processObject = Oops_Process_Factory::getProcess($this->_processId);
 					if(strtolower(get_class($this->_processObject)) != $this->_processClass) {
 						require_once 'Oops/Process/Exception.php';

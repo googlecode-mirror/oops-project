@@ -12,7 +12,7 @@ class Oops_Kcaptcha_Storage {
 	*/
 	public function __construct($config =  null) {
 		if(!is_object($config)) {
-			require_once("Oops/Kcaptcha/Config.php");
+			require_once 'Oops/Kcaptcha/Config.php';
 			$config = new Oops_Kcaptcha_Config();
 		}
 		$this->config = $config;

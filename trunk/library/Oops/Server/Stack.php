@@ -4,7 +4,7 @@
 * @subpackage Server
 */
 
-require_once("Oops/Server.php");
+require_once 'Oops/Server.php';
 
 /**
 * Application servers stack

@@ -4,6 +4,7 @@
  * @package Oops
  * @subpackage Event_Dispatcher
  */
+require_once 'Oops/Event/Notification.php';
 
 /**
  * Event dispatcher class
@@ -20,7 +21,9 @@ class Oops_Event_Dispatcher {
 	/**
 	 * Returns a notification dispatcher singleton
 	 *
-	 * @param string $name Name of the notification dispatcher. Default notification dispatcher is named __default.
+	 * @param string $name
+	 *        	Name of the notification dispatcher. Default notification
+	 *        	dispatcher is named __default.
 	 * @return Oops_Event_Dispatcher
 	 */
 	public static function getInstance($name = '__default') {
@@ -38,16 +41,18 @@ class Oops_Event_Dispatcher {
 					}
 				}
 			}
-		
 		}
 		return $dispatchers[$name];
 	}
 
 	/**
-	 * Reads config from ini file ./application/config/events.ini
-	 *  returns section according to passed name
-	 *  
-	 * @param string $name Dispatcher name
+	 * Reads config from ini file .
+	 *
+	 * /application/config/events.ini
+	 * returns section according to passed name
+	 *
+	 * @param string $name
+	 *        	Dispatcher name
 	 */
 	protected static function _getConfig($name) {
 		static $config = null;
@@ -66,9 +71,11 @@ class Oops_Event_Dispatcher {
 	 *
 	 * Return false if the callback is already registered for the given event
 	 *
-	 * @param mixed		A PHP Callback
-	 * @param string	Event name
-	 * @return bool		True if the observer has been registered, false otherwise
+	 * @param
+	 *        	mixed		A PHP Callback
+	 * @param
+	 *        	string	Event name
+	 * @return bool if the observer has been registered, false otherwise
 	 */
 	public function addObserver($callback, $event) {
 		if(!is_string($event)) {
@@ -102,7 +109,7 @@ class Oops_Event_Dispatcher {
 
 	protected function _identifyCallback($callback) {
 		static $objectsCounter = 0;
-		//Let's identify the callback
+		// Let's identify the callback
 		if(is_array($callback)) {
 			if(is_object($callback[0])) {
 				// @todo make another objects numeration
@@ -126,21 +133,24 @@ class Oops_Event_Dispatcher {
 
 	/**
 	 * Creates notification object and notifies registered observers
-	 * @param string   Event name
-	 * @param mixed    Event information of any kind
-	 * @return object  The notification object
+	 *
+	 * @param
+	 *        	string Event name
+	 * @param
+	 *        	mixed Event information of any kind
+	 * @return object The notification object
 	 */
 	public function post($event, $info = array()) {
-		require_once ("Oops/Event/Notification.php");
 		$notification = new Oops_Event_Notification($event, $info);
 		return $this->postNotification($notification);
-	
 	}
 
 	/**
 	 * Notifies registered observers and nested dispatchers (if implemented)
-	 * @param object   The notification object
-	 * @return object  The notification object //!!!! not necessary
+	 *
+	 * @param
+	 *        	object The notification object
+	 * @return object The notification object //!!!! not necessary
 	 */
 	public function postNotification($notification) {
 		$event = strtolower($notification->getEvent());
@@ -148,7 +158,7 @@ class Oops_Event_Dispatcher {
 		foreach($this->_ro[$event] as $callback) {
 			if($notification->isCancelled()) return $notification;
 			if(is_array($callback) && !is_object($callback[0])) {
-				require_once ("Oops/Loader.php");
+				require_once 'Oops/Loader.php';
 				Oops_Loader::load($callback[0]);
 			}
 			call_user_func_array($callback, array($notification));
@@ -178,7 +188,8 @@ class Oops_Event_Dispatcher {
 
 	/**
 	 * Removes nested dispatcher
-	 * @param unknown_type $dispatcher
+	 *
+	 * @param unknown_type $dispatcher        	
 	 */
 	public function removeNestedDispatcher($dispatcher) {
 		$dispatcherName = (string) $dispatcher;
@@ -191,6 +202,7 @@ class Oops_Event_Dispatcher {
 
 	/**
 	 * Returns dispatcher name
+	 *
 	 * @return string
 	 */
 	public function getName() {
@@ -200,5 +212,4 @@ class Oops_Event_Dispatcher {
 	public function __toString() {
 		return $this->_name;
 	}
-
 }

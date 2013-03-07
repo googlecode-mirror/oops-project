@@ -16,7 +16,6 @@
 # You can remove it, but I would be pleased if you left it. ;)
 
  */
-
 class Oops_Kcaptcha_Image {
 
 	function __construct($config = null) {
@@ -26,10 +25,9 @@ class Oops_Kcaptcha_Image {
 		}
 		$this->config = $config;
 	}
-
+	
 	// generates keystring and image
 	function action() {
-		
 		$fonts = array();
 		$fontsdir_absolute = dirname(__FILE__) . '/fonts';
 		if(($handle = opendir($fontsdir_absolute)) !== false) {
@@ -41,17 +39,17 @@ class Oops_Kcaptcha_Image {
 			closedir($handle);
 		}
 		
-		//we need some constants to be used as variables (ex. $a{1})
+		// we need some constants to be used as variables (ex. $a{1})
 		$alphabet = $this->config->alphabet;
 		$allowed_symbols = $this->config->allowed_symbols;
 		$foreground_color = array(
-									$this->config->foreground->red, 
-									$this->config->foreground->green, 
-									$this->config->foreground->blue );
+			$this->config->foreground->red, 
+			$this->config->foreground->green, 
+			$this->config->foreground->blue);
 		$background_color = array(
-									$this->config->background->red, 
-									$this->config->background->green, 
-									$this->config->background->blue );
+			$this->config->background->red, 
+			$this->config->background->green, 
+			$this->config->background->blue);
 		
 		$alphabet_length = strlen($alphabet);
 		
@@ -80,7 +78,7 @@ class Oops_Kcaptcha_Image {
 				$transparent = (imagecolorat($font, $i, 0) >> 24) == 127;
 				
 				if(!$reading_symbol && !$transparent) {
-					$font_metrics[$alphabet{$symbol}] = array('start' => $i );
+					$font_metrics[$alphabet{$symbol}] = array('start' => $i);
 					$reading_symbol = true;
 					continue;
 				}
@@ -112,7 +110,7 @@ class Oops_Kcaptcha_Image {
 					if($i > 0) {
 						$shift = 1000;
 						for($sy = 7; $sy < $fontfile_height - 20; $sy += 1) {
-							//for($sx=$m['start']-1;$sx<$m['end'];$sx+=1){
+							// for($sx=$m['start']-1;$sx<$m['end'];$sx+=1){
 							for($sx = $m['start'] - 1; $sx < $m['end']; $sx += 1) {
 								$rgb = imagecolorat($font, $sx, $sy);
 								$opacity = $rgb >> 24;
@@ -136,7 +134,6 @@ class Oops_Kcaptcha_Image {
 						if($shift == 1000) {
 							$shift = mt_rand(4, 6);
 						}
-					
 					}
 				} else {
 					$shift = 1;
@@ -145,8 +142,6 @@ class Oops_Kcaptcha_Image {
 				$x += $m['end'] - $m['start'] - $shift;
 			}
 			if($x < $this->config->width - 10) break; // fit in canvas
-		
-
 		}
 		$center = $x / 2;
 		
@@ -174,9 +169,8 @@ class Oops_Kcaptcha_Image {
 		$rand9 = mt_rand(330, 420) / 110;
 		$rand10 = mt_rand(330, 450) / 110;
 		
-		//wave distortion
+		// wave distortion
 		
-
 		for($x = 0; $x < $this->config->width; $x++) {
 			for($y = 0; $y < $this->config->height; $y++) {
 				$sx = $x + (sin($x * $rand1 + $rand5) + sin($y * $rand3 + $rand6)) * $rand9 - $this->config->width / 2 + $center + 1;
@@ -222,15 +216,15 @@ class Oops_Kcaptcha_Image {
 		
 		return $img2;
 	}
-
+	
 	// returns keystring
 	function getKeyString() {
 		return $this->keystring;
 	}
-
-	//PHP5 private
+	
+	// PHP5 private
 	function saveKeyString() {
-		require_once ("Oops/Kcaptcha/Storage.php");
+		require_once 'Oops/Kcaptcha/Storage.php';
 		$storage = new Oops_Kcaptcha_Storage();
 		$storage->Store($this->keystring);
 	}

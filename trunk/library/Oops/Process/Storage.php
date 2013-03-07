@@ -1,7 +1,10 @@
 <?php
 
-require_once ("Oops/Storage/Interface.php");
-require_once ("Oops/Sql.php");
+require_once 'Oops/Storage/Interface.php';
+require_once 'Oops/Sql.php';
+require_once 'Oops/Sql/Common.php';
+require_once 'Oops/Process/Exception.php';
+
 
 // @todo refactor to Oops_Process_Storage_Database, or use it, or extend Oops_Storage_Database
 // @todo use stdClass or Oops_Process_Storage_Element instead of array in _composeData and _decomposeData methods
@@ -32,13 +35,11 @@ class Oops_Process_Storage implements Oops_Storage_Interface {
 		if(isset($this->_cached[$pid])) return $this->_cached[$pid];
 		
 		if(preg_match('/[^a-zA-Z0-9_]/', $pid)) {
-			require_once ("Oops/Process/Exception.php");
 			throw new Oops_Process_Exception("Invalid pid", OOPS_PROCESS_EXCEPTION_INVALID_PID);
 		}
 		$r = Oops_Sql::Query("SELECT `class`, `currentState` FROM {$this->_tableProcesses} WHERE pid = '$pid'");
 		switch(mysql_num_rows($r)) {
 			case 0:
-				require_once ("Oops/Process/Exception.php");
 				throw new Oops_Process_Exception("Process not found", OOPS_PROCESS_EXCEPTION_NOT_FOUND);
 			case 1:
 				$ret = mysql_fetch_assoc($r);
@@ -60,7 +61,6 @@ class Oops_Process_Storage implements Oops_Storage_Interface {
 				$this->_cached[$pid] = $ret;
 				return $ret;
 			default:
-				require_once ("Oops/Process/Exception.php");
 				throw new Oops_Process_Exception("Process storage error", OOPS_PROCESS_EXCEPTION_NOT_FOUND);
 		}
 	}
@@ -73,11 +73,9 @@ class Oops_Process_Storage implements Oops_Storage_Interface {
 	 */
 	public function set($pid, $data) {
 		if(!strlen($pid)) {
-			require_once ("Oops/Process/Exception.php");
 			throw new Oops_Process_Exception("Can not store process without id", OOPS_PROCESS_EXCEPTION_NO_PID);
 		}
 		if(!isset($data['class'])) {
-			require_once ("Oops/Process/Exception.php");
 			throw new Oops_Process_Exception("Proceess class not defined", OOPS_PROCESS_EXCEPTION_NO_CLASS);
 		}
 		
@@ -86,7 +84,7 @@ class Oops_Process_Storage implements Oops_Storage_Interface {
 		/**
 		 * First store process class and state
 		 */
-		require_once ("Oops/Sql/Common.php");
+
 		Oops_Sql_Common::replace($this->_tableProcesses, array(
 			'pid' => $pid, 
 			'class' => $data['class'], 

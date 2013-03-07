@@ -75,8 +75,7 @@ class Oops_Server {
 	
 	/**
 	 *
-	 * @todo Make this interface
-	 * @var Oops_Server_Router_Interface
+	 * @var Oops_Server_Router
 	 */
 	protected $_router;
 
@@ -85,7 +84,7 @@ class Oops_Server {
 
 	/**
 	 * Singleton pattern implementation
-	 * 
+	 *
 	 * @return Oops_Server The current server object which is the last server in
 	 *         stack
 	 */
@@ -99,7 +98,7 @@ class Oops_Server {
 	/**
 	 * Use this static method to invoke a new server instance.
 	 * Note that constructor is private.
-	 * 
+	 *
 	 * @param
 	 *        	Oops_Config Config for the new server instance
 	 * @return Oops_Server
@@ -179,7 +178,6 @@ class Oops_Server {
 	/**
 	 *
 	 * @todo Move to _Import.php
-	 * @return unknown_type
 	 */
 	protected function _useConfig() {
 		if($this->_config->used) return;
@@ -187,19 +185,19 @@ class Oops_Server {
 		
 		$oopsConfig = $this->_config->oops;
 		if(is_object($oopsConfig)) {
-			if((bool) @$oopsConfig->register_autoload) {
-				require_once ("Oops/Loader.php");
+			if((bool) $oopsConfig->register_autoload) {
+				require_once 'Oops/Loader.php';
 				spl_autoload_register(array("Oops_Loader", "load"));
 			}
 			
-			if(strlen($incPath = @$oopsConfig->include_path)) {
+			if(strlen($incPath = $oopsConfig->include_path)) {
 				$currentIncludePath = get_include_path();
 				if(!in_array($incPath, explode(PATH_SEPARATOR, $currentIncludePath))) {
 					set_include_path($incPath . PATH_SEPARATOR . get_include_path());
 				}
 			}
 			
-			if(strlen($default_timezone = @$oopsConfig->default_timezone)) {
+			if(strlen($default_timezone = $oopsConfig->default_timezone)) {
 				date_default_timezone_set($default_timezone);
 			}
 		}
@@ -216,21 +214,22 @@ class Oops_Server {
 	 * @return void
 	 */
 	public function Run($request = null) {
-		require_once ("Oops/Error/Handler.php");
+		// @todo skip hander and use error log?
+		require_once 'Oops/Error/Handler.php';
 		$this->_errorHandler = new Oops_Error_Handler();
 		
 		try {
 			
 			if(!is_object($request)) {
-				require_once ("Oops/Server/Request/Http.php");
+				require_once 'Oops/Server/Request/Http.php';
 				$this->_request = new Oops_Server_Request_Http();
 				
-				require_once ("Oops/Server/Response/Http.php");
+				require_once 'Oops/Server/Response/Http.php';
 				$this->_response = new Oops_Server_Response_Http();
 			} else {
 				$this->_request = $request;
 				
-				require_once ("Oops/Server/Response.php");
+				require_once 'Oops/Server/Response.php';
 				$this->_response = new Oops_Server_Response();
 			}
 			
@@ -296,8 +295,8 @@ class Oops_Server {
 			$last = $coolparts[$cnt - 1];
 			if(($dotpos = strrpos($last, '.')) !== FALSE) {
 				$ext = substr($last, $dotpos + 1);
-				require_once ("Oops/Server/View.php");
-				if(Oops_Server_View::isValidView($ext) || $oopsConfig->get('strict_views')) {
+				require_once 'Oops/Server/View.php';
+				if(Oops_Server_View::isValidView($ext) || $oopsConfig->strict_views) {
 					$this->_action = substr($last, 0, $dotpos);
 					$this->_extension = $ext;
 					array_pop($coolparts);
@@ -307,8 +306,8 @@ class Oops_Server {
 		
 		if(!isset($this->_action)) {
 			// action should be index, content-type - php
-			$this->_action = $oopsConfig->get('default_action');
-			$this->_extension = $oopsConfig->get('default_extension');
+			$this->_action = $oopsConfig->default_action;
+			$this->_extension = $oopsConfig->default_extension;
 		}
 		
 		// Let's compile the one-and-only expected request_uri for this kind of
@@ -334,17 +333,16 @@ class Oops_Server {
 	 *
 	 * @ignore
 	 *
-	 * @return void
 	 */
 	protected function _initRouter() {
 		$routerConfig = $this->_config->router;
 		if(is_object($routerConfig)) {
 			$routerClass = $routerConfig->class;
-			require_once 'Oops/Loader.php';
-			if(Oops_Loader::find($routerClass)) $this->_router = new $routerClass($routerConfig->source);
+			if(class_exists($routerClass)) $this->_router = new $routerClass($routerConfig->source);
 		}
+		
 		if(!is_object($this->_router)) {
-			require_once ("Oops_Server_Router");
+			require_once 'Oops/Server/Router.php';
 			$this->_router = new Oops_Server_Router();
 		}
 	}
@@ -433,7 +431,7 @@ class Oops_Server {
 	 * Uses $this->_extension (from ParseURI) to choose a view class.
 	 */
 	protected function _initView() {
-		require_once ("Oops/Server/View.php");
+		require_once 'Oops/Server/View.php';
 		$this->_view = Oops_Server_View::getInstance($this->_extension);
 		
 		if(!is_object($this->_view)) {
@@ -444,15 +442,14 @@ class Oops_Server {
 
 	/**
 	 * Initial server run using http request and processing http response
-	 * Uses default config location of .
-	 * /application/config/oops.ini
+	 * Uses default config location of application/config/oops.ini
 	 * Outputs the response
 	 *
 	 * @return void
 	 */
 	public static function RunHttpDefault() {
-		require_once ("Oops/Config/Ini.php");
-		$server = Oops_Server::newInstance(new Oops_Config_Ini('application/config/oops.ini'));
+		require_once 'Oops/Config/Ini.php';
+		$server = Oops_Server::newInstance(new Oops_Config_Ini('./application/config/oops.ini'));
 		$response = $server->Run();
 		echo $response->toString();
 	}

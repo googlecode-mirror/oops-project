@@ -4,7 +4,7 @@
 * @subpackage Server
 */
 
-require_once("Oops/Server/View.php");
+require_once 'Oops/Server/View.php';
 /**
 * Server view HTML output
 */

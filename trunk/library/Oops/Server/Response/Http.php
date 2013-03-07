@@ -8,7 +8,7 @@
 /**
 * Load required classes
 */
-require_once("Oops/Server/Response.php");
+require_once 'Oops/Server/Response.php';
 
 /**
 * Oops server response corresponding to incoming (first) HTTP request
@@ -16,11 +16,7 @@ require_once("Oops/Server/Response.php");
 class Oops_Server_Response_Http extends Oops_Server_Response {
 	public function toString() {
 		$this->getReady();
-		if(headers_sent()) {
-			trigger_error("Server_Response_Http/HeadersAlreadySent", E_USER_WARNING);
-		} else {
-			$this->_sendHeaders();
-		}
+		$this->_sendHeaders();
 		return $this->body;
 	}
 

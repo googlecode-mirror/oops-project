@@ -6,20 +6,22 @@
  * @license GNUv3
  */
 
-require_once ("Oops/Config.php");
+require_once 'Oops/Config.php';
 
 /**
- * Configuration based on .ini files
- *
+ * Configuration based on ini files
  */
 class Oops_Config_Ini extends Oops_Config {
 	protected $_parseError = false;
 
 	/**
-	 * @param string Ini file name
+	 *
+	 * @param string $filename        	
+	 * @param string $keyDelimiter        	
+	 * @param boolean $allowModifications        	
 	 */
 	function __construct($filename, $keyDelimiter = '.', $allowModifications = false) {
-		set_error_handler(array($this, "_parseIniErrorHandler" ));
+		set_error_handler(array($this, "_parseIniErrorHandler"));
 		$data = parse_ini_file($filename, true);
 		restore_error_handler();
 		if($this->_parseError) {

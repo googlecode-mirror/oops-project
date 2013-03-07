@@ -22,11 +22,12 @@ $pathParts = explode(DIRECTORY_SEPARATOR, OOPS_PATH);
 array_pop($pathParts);
 set_include_path(get_include_path() . PATH_SEPARATOR . join('/', $pathParts));
 
-require_once ("Oops/Server/Stream/Wrapper.php");
+require_once 'Oops/Server/Stream/Wrapper.php';
 stream_wrapper_register("oops", "Oops_Server_Stream_Wrapper");
 
 /**
- * Just like mysql_query, but connects to mysql server on demand and dies on mysql error
+ * Just like mysql_query, but connects to mysql server on demand and dies on
+ * mysql error
  *
  * @deprecated Use Oops_Sql::Query instead
  */
@@ -41,20 +42,30 @@ function db_query($query, $skiperrors = false) {
  * @deprecated Use Oops_Debug::Dump instead
  *
  * Usage:
- * <code><?php
- * debugPrint($var); //will output complete backtrace
- * debugPrint($thatvar,"That var"); //will output complete backtrace
- * debugPrint($var,"Some label",__CLASS__,__FUNCTION__,__FILE__,__LINE__);
- * ?></code>
+ * <code><?php/**
+ * Debugging function, a user-friendly print_r
  *
- *
- *
- * @param mixed Any variable to output
- * @param string Label
- * @param boolean show full backtrace or not
+ * @deprecated Use Oops_Debug::Dump instead
+ *            
+ *             Usage:
+ *             <code><?php
+ *             debugPrint($var); //will output complete backtrace
+ *             debugPrint($thatvar,"That var"); //will output complete backtrace
+ *             debugPrint($var,"Some
+ *             label",__CLASS__,__FUNCTION__,__FILE__,__LINE__);
+ *             ?></code>
+ *            
+ *            
+ *            
+ * @param
+ *        	mixed Any variable to output
+ * @param
+ *        	string Label
+ * @param
+ *        	boolean show full backtrace or not
  * @return void
  */
 function debugPrint($value, $name = null, $fullTrace = false) {
-	require_once ("Oops/Debug.php");
+	require_once 'Oops/Debug.php';
 	Oops_Debug::Dump($value, $name, $fullTrace);
 }

@@ -4,7 +4,7 @@
 * @subpackage Server
 */
 
-require_once("Oops/Server/Router.php");
+require_once 'Oops/Server/Router.php';
 
 class Oops_Server_Router_Ini extends Oops_Server_Router {
 	private $_parseError = false;

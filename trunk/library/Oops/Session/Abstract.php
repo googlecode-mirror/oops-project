@@ -10,8 +10,10 @@ abstract class Oops_Session_Abstract {
 			require_once 'Oops/Config.php';
 			$config = new Oops_Config();
 		}
-		// @todo make it better
-		if(strlen($config->domain)) $this->_cookieDomain = $config->domain;
+
+		if(strlen($config->domain) && strpos($_SERVER['HTTP_HOST'], (string) $config->domain) !== false) {
+			$this->_cookieDomain = $config->domain;
+		}
 		if(strlen($config->path)) $this->_cookiePath = $config->path;
 		if(strlen($config->lifetime)) $this->_cookieLifetime = $config->lifetime;
 		session_set_cookie_params($this->_cookieLifetime, $this->_cookiePath, $this->_cookieDomain);

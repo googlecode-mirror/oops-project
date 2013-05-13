@@ -101,6 +101,7 @@ class Oops_File_Utils {
 	 */
 	public static function removeDirRecursive($dirname) {
 		$files = glob($dirname . "/*");
+		if($files === FALSE) return;
 		foreach($files as $file) {
 			if(is_dir($file))
 				self::removeDirRecursive($file);

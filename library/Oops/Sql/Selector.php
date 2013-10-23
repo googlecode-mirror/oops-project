@@ -38,6 +38,7 @@ class Oops_Sql_Selector {
 	protected $_orderBy = array();
 	
 	protected $_skipPostParseRow = false;
+	protected $_skipPostParseSet = false;
 	
 	/**
 	 * != '$value'
@@ -252,9 +253,11 @@ class Oops_Sql_Selector {
 		$reservedSelectFields = $this->_selectFields;
 		$this->_selectFields = array($this->_primaryKey);
 		$this->_skipPostParseRow = true;
+		$this->_skipPostParseSet = true;
 		$res = $this->select();
 		$this->_selectFields = $reservedSelectFields;
 		$this->_skipPostParseRow = false;
+		$this->_skipPostParseSet = false;
 		return array_keys($res);
 	}
 
@@ -632,6 +635,8 @@ class Oops_Sql_Selector {
 			else
 				$results[$row[$pkPos]] = $this->_parseRow($row);
 		}
+		
+		if(!$this->_skipPostParseSet) $this->__postParseSet($results);
 		return $results;
 	}
 
@@ -651,6 +656,9 @@ class Oops_Sql_Selector {
 	}
 
 	protected function __postParseRow(&$row) {
+	}
+	
+	protected function __postParseSet(&$set) {		
 	}
 
 	public function getSelectFields() {

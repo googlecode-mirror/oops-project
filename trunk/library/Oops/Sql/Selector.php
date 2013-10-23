@@ -636,7 +636,15 @@ class Oops_Sql_Selector {
 				$results[$row[$pkPos]] = $this->_parseRow($row);
 		}
 		
-		if(!$this->_skipPostParseSet) $this->__postParseSet($results);
+		if(!$this->_skipPostParseSet) {
+			foreach($this->_joined as $joined) {
+				/* @var $joinedSelector Oops_Sql_Selector */
+				$joinedSelector = $joined[0];
+				$alias = $joined[4];
+				$joinedSelector->__postParseSet($this->_joinedSets[$alias]);
+			}
+			$this->__postParseSet($results);
+		}
 		return $results;
 	}
 
@@ -648,7 +656,9 @@ class Oops_Sql_Selector {
 		foreach($this->_joined as $joined) {
 			list($selector, $joinedKey, $foreignKey, $joinType, $alias) = $joined;
 			if(!strlen($alias) || isset($result[$alias])) $alias = $selector->alias;
+			$joined[4] = $alias;
 			$result[$alias] = $selector->_parseRow($row);
+			$this->_joinedSets[$alias][] =& $result[$alias];
 		}
 		
 		if(!$this->_skipPostParseRow) $this->__postParseRow($result);

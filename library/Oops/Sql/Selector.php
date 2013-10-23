@@ -34,6 +34,7 @@ class Oops_Sql_Selector {
 	
 	protected $_selectFieldPositions = array();
 	protected $_joinedAliases = array();
+	protected $_joinedSets = array();
 	
 	protected $_orderBy = array();
 	

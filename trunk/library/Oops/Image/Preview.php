@@ -67,8 +67,8 @@ class Oops_Image_Preview {
 		$resizeCoeffY = $this->_config->height / $sourceHeight;
 		
 		if(!$this->_config->enlarge) {
-			if($resizeCoeffX > 1) $resizeCoeffX = 1;
-			if($resizeCoeffY > 1) $resizeCoeffY = 1;
+			if($resizeCoeffX > 1 || $resizeCoeffX <= 0) $resizeCoeffX = 1;
+			if($resizeCoeffY > 1 || $resizeCoeffY <= 0) $resizeCoeffY = 1;
 		}
 		
 		if($this->_config->crop) {
@@ -122,17 +122,6 @@ class Oops_Image_Preview {
 		 *  	whenever to fill and fill color
 		 *  And result image width and height
 		 */
-		print_r(array(
-			'$sourceWidth' => $sourceWidth, 
-			'previewWidth' => $previewWidth, 
-			'previewHeight' => $previewHeight, 
-			'resizeWidth' => $resizeWidth, 
-			'resizeHeight' => $resizeHeight, 
-			'resizeCoeff' => $resizeCoeff, 
-			'resizeCoeffX' => $resizeCoeffX, 
-			'resizeCoeffY' => $resizeCoeffY, 
-			'rotate' => $rotate, 
-			'crop' => $crop));
 		// Read source image to new Imagick object
 		$mgkSource = new Imagick();
 		$mgkSource->readImage($source->filename);
@@ -148,12 +137,9 @@ class Oops_Image_Preview {
 				$frame->thumbnailImage($resizeWidth, $resizeHeight);
 				$frame->setImagePage($previewWidth, $previewWidth, $previewPositionX, $previewPositionY);
 			
-		//$frame->cropImage($previewWidth, $previewHeight, 0, 0);
 			}
 			$mgkPreview->cropImage($previewWidth, $previewHeight, 0, 0);
 		
-		//$mgkPreview->resetIterator();
-		//$mgkPreview = $mgkPreview->deconstructImages();
 		} else {
 			$mgkSource->resizeImage($resizeWidth, $resizeHeight, Imagick::FILTER_LANCZOS, 1);
 			
@@ -165,7 +151,6 @@ class Oops_Image_Preview {
 		
 		$mgkPreview->stripImage();
 		
-		require_once 'Oops/File/Temporary.php';
 		$previewFile = new Oops_File_Temporary();
 		
 		$mgkPreview->setImageFormat($mgkSource->getImageFormat());

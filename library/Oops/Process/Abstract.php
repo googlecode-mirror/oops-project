@@ -302,7 +302,7 @@ abstract class Oops_Process_Abstract implements Oops_Pattern_Identifiable_Factor
 	 * 
 	 * @param string $pid
 	 */
-	public final function __construct(string $pid = null) {
+	public final function __construct($pid = null) {
 		if(is_null($pid)) {
 			/**
 			 * This is a newly created process, just wait for input values passed to init method
@@ -315,7 +315,7 @@ abstract class Oops_Process_Abstract implements Oops_Pattern_Identifiable_Factor
 			 * This process is being restored, get process data from Storage
 			 */
 
-			$storage = & Oops_Process_Factory::getStorage();
+			$storage = Oops_Process_Factory::getStorage();
 			$data = $storage->get($pid);
 			
 			if($data === false) {
@@ -392,7 +392,7 @@ abstract class Oops_Process_Abstract implements Oops_Pattern_Identifiable_Factor
 		 * 
 		 * @var Oops_Process_Storage $storage
 		 */
-		$storage =& Oops_Process_Factory::getStorage();
+		$storage = Oops_Process_Factory::getStorage();
 		return $storage->set($this->_pid, $data);
 	}
 

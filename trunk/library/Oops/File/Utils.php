@@ -174,7 +174,7 @@ class Oops_File_Utils {
 			'odt' => 'application/vnd.oasis.opendocument.text', 
 			'ods' => 'application/vnd.oasis.opendocument.spreadsheet');
 		
-		$ext = strtolower(array_pop(explode('.', basename($filename))));
+		$ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
 		if(array_key_exists($ext, $types)) {
 			return $types[$ext];
 		} else {

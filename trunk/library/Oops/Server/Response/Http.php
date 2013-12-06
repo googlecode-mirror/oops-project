@@ -55,8 +55,8 @@ class Oops_Server_Response_Http extends Oops_Server_Response {
 		}
 		$contentDisposition = 'attachment; filename="' . $name . '"';
 		
-		$this->_response->setHeader('Content-Disposition', $contentDisposition);
-		$this->_response->getReady();
+		$this->setHeader('Content-Disposition', $contentDisposition);
+		$this->getReady();
 		$this->_sendHeaders();
 		readfile($file);
 		die();

@@ -23,7 +23,7 @@ class Oops_Server_Response_Http extends Oops_Server_Response {
 
 	protected function _sendHeaders() {
 		header($this->getStatusLine());
-		$this->setHeader('Content-length', strlen($this->body));
+		//$this->setHeader('Content-length', strlen($this->body));
 		foreach($this->headers as $name => $value) {
 			$name = str_replace(' ', '-', ucwords(str_replace('-', ' ', $name)));
 			if(!is_array($value)) {
@@ -56,6 +56,7 @@ class Oops_Server_Response_Http extends Oops_Server_Response {
 		$contentDisposition = 'attachment; filename="' . $name . '"';
 		
 		$this->setHeader('Content-Disposition', $contentDisposition);
+		$this->setHeader('Content-length', filesize($file));
 		$this->getReady();
 		$this->_sendHeaders();
 		readfile($file);

@@ -1,7 +1,5 @@
 <?php
 
-require_once 'Oops/File.php';
-
 /**
  * 
  * @author Dmitry Ivanov <rockmagic@yandex.ru>

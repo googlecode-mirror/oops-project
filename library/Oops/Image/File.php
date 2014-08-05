@@ -32,7 +32,6 @@ class Oops_Image_File extends Oops_File {
 		parent::_stat();
 
 		if(($info = getimagesize($this->_filename)) === false) {
-			require_once 'Oops/Image/Exception.php';
 			throw new Oops_Image_Exception("Invalid image file {$this->_filename}");
 		}
 		$this->_width = $info[0];

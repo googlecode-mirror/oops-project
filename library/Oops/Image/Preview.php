@@ -3,7 +3,6 @@
 class Oops_Image_Preview {
 
 	protected function __construct($previewType) {
-		require_once 'Oops/Image/Preview/Config.php';
 		$this->_config = Oops_Image_Preview_Config::getInstance($previewType);
 	}
 

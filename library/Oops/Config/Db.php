@@ -14,7 +14,6 @@ class Oops_Config_Db extends Oops_Config {
 	 * @param string $keyDelimiter Explode keys by this delimiter and group values for each exploded part  
 	 */
 	public function __construct($table, $keyFields = null, $valueFields = null, $keyDelimiter = '.', $allowModifications = false) {
-		require_once 'Oops/Sql/Common.php';
 		$table = Oops_Sql_Common::escapeIdentifiers($table);
 		
 		if(is_null($keyFields)) {
@@ -25,7 +24,6 @@ class Oops_Config_Db extends Oops_Config {
 			}
 		
 		} else {
-			require_once 'Oops/Utils.php';
 			Oops_Utils::ToArray($keyFields);
 		}
 		
@@ -34,7 +32,6 @@ class Oops_Config_Db extends Oops_Config {
 		if(is_null($valueFields)) {
 			$sql = "SELECT * FROM $table";
 		} else {
-			require_once 'Oops/Utils.php';
 			Oops_Utils::ToArray($valueFields);
 			$select = array_merge($keyFields, $valueFields);
 			foreach($select as $k => $v)

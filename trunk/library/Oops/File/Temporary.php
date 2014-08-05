@@ -1,7 +1,5 @@
 <?php
 
-require_once 'Oops/File.php';
-
 class Oops_File_Temporary extends Oops_File {
 	protected $_isTemp = true;
 

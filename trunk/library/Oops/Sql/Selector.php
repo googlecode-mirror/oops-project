@@ -509,10 +509,14 @@ class Oops_Sql_Selector {
 
 	protected function _sqlFields() {
 		$sqlFields = '';
-		
-		foreach($this->_selectFields as $f) {
-			$sqlFields .= $this->_useAlias ? Oops_Sql_Common::escapeIdentifiers($this->_alias . '.' . $f) : "`$f`";
-			$sqlFields .= ', ';
+
+		if(count($this->_selectFields)) {
+			foreach($this->_selectFields as $f) {
+				$sqlFields .= $this->_useAlias ? Oops_Sql_Common::escapeIdentifiers($this->_alias . '.' . $f) : "`$f`";
+				$sqlFields .= ', ';
+			}
+		} else {
+			$sqlFields = $this->_useAlias ? Oops_Sql_Common::escapeIdentifiers($this->_alias) . '.*, ' : '*, ';
 		}
 		
 		foreach($this->_joined as $joined) {

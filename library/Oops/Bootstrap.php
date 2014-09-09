@@ -1,6 +1,10 @@
 <?php
 
-define("DS", DIRECTORY_SEPARATOR);
+if(!defined("DS")) define("DS", DIRECTORY_SEPARATOR);
+
+if(!defined("OOPS_PATH")) define("OOPS_PATH", dirname(__FILE__));
+if(!defined("OOPS_Loaded")) define("OOPS_Loaded", true);
+
 
 $libPath = dirname(dirname(__FILE__));
 if(!in_array($libPath, explode(PATH_SEPARATOR, get_include_path()))) {

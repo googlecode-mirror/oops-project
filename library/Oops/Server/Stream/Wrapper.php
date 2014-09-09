@@ -19,7 +19,6 @@ class Oops_Server_Stream_Wrapper {
 	private $_isHandled = false;
 
 	function stream_open($path, $mode, $options, &$opened_path) {
-		require_once 'Oops/Server/Request/Custom.php';
 		$this->_request = new Oops_Server_Request_Custom($path);
 		$this->_isHandled = false;
 		$this->_position = 0;
@@ -87,7 +86,6 @@ class Oops_Server_Stream_Wrapper {
 	 */
 	function _handle() {
 		if($this->_isHandled) return;
-		require_once 'Oops/Server.php';
 		$server = Oops_Server::newInstance();
 		$response = $server->Run($this->_request);
 		
@@ -101,8 +99,7 @@ class Oops_Server_Stream_Wrapper {
 		
 		$this->_content = $response->body;
 		
-		require_once 'Oops/Server/Stack.php';
-		Oops_Server_Stack::pop();
+		Oops_Server::popInstance();
 		$server = null;
 		
 		$this->_isHandled = true;

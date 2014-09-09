@@ -164,10 +164,10 @@ class Oops_Server {
 
 	/**
 	 *
-	 * @param
-	 *        	Oops_Config new configuration
-	 * @param
-	 *        	boolean replace current config or merge with new one (default)
+	 * @param Oops_Config $config
+	 *        	new configuration
+	 * @param boolean $replace
+	 *        	replace current config or merge with new one (default)
 	 * @return void
 	 */
 	public function configure($config, $replace = false) {
@@ -175,36 +175,6 @@ class Oops_Server {
 			$this->_config->mergeConfig($config);
 		else
 			$this->_config = $config;
-		$this->_useConfig();
-	}
-
-	/**
-	 * @todo consider deprecating
-	 */
-	protected function _useConfig() {
-		if($this->_config->used) return;
-		$this->_config->used = true;
-		
-		$oopsConfig = $this->_config->oops;
-		if(is_object($oopsConfig)) {
-			/*
-			 * must be registered in bootstrap
-			if((bool) $oopsConfig->register_autoload) {
-				spl_autoload_register(array("Oops_Loader", "load"));
-			}
-			*/
-			
-			if(strlen($incPath = $oopsConfig->include_path)) {
-				$currentIncludePath = get_include_path();
-				if(!in_array($incPath, explode(PATH_SEPARATOR, $currentIncludePath))) {
-					set_include_path($incPath . PATH_SEPARATOR . get_include_path());
-				}
-			}
-			
-			if(strlen($default_timezone = $oopsConfig->default_timezone)) {
-				date_default_timezone_set($default_timezone);
-			}
-		}
 	}
 
 	/**
@@ -366,6 +336,7 @@ class Oops_Server {
 	 * Initializes router object using server's config
 	 *
 	 * @ignore
+	 *
 	 *
 	 *
 	 *

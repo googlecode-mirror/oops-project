@@ -179,8 +179,7 @@ class Oops_Server {
 	}
 
 	/**
-	 *
-	 * @todo Move to _Import.php or bootstrap
+	 * @todo consider deprecating
 	 */
 	protected function _useConfig() {
 		if($this->_config->used) return;
@@ -188,9 +187,12 @@ class Oops_Server {
 		
 		$oopsConfig = $this->_config->oops;
 		if(is_object($oopsConfig)) {
+			/*
+			 * must be registered in bootstrap
 			if((bool) $oopsConfig->register_autoload) {
 				spl_autoload_register(array("Oops_Loader", "load"));
 			}
+			*/
 			
 			if(strlen($incPath = $oopsConfig->include_path)) {
 				$currentIncludePath = get_include_path();

@@ -28,6 +28,12 @@
 class Oops_Server {
 	
 	/**
+	 * 
+	 * @var array[Oops_Server] servers stack
+	 */
+	private static $_stack = array();
+	
+	/**
 	 *
 	 * @var string Definition of any filter to proceed the value returned by
 	 *      controller
@@ -95,9 +101,11 @@ class Oops_Server {
 	 *         stack
 	 */
 	public static function getInstance() {
-		$instance = Oops_Server_Stack::last();
-		if(!is_object($instance)) $instance = new Oops_Server();
-		return $instance;
+		if(!count(self::$_stack)) {
+			// consider throwing exception instead of newInstance
+			return self::newInstance();
+		}
+		return end(self::$_stack);
 	}
 
 	/**
@@ -111,8 +119,8 @@ class Oops_Server {
 	public static function newInstance($config = null) {
 		$new = new Oops_Server();
 		
-		if(Oops_Server_Stack::size()) {
-			$last = Oops_Server_Stack::last();
+		if(count(self::$_stack)) {
+			$last = end(self::$_stack);
 			$new->_config = $last->_config;
 		} else {
 			$new->_config = new Oops_Config_Default();
@@ -120,9 +128,15 @@ class Oops_Server {
 		
 		$new->configure($config);
 		
-		Oops_Server_Stack::push($new);
-		
+		array_push(self::$_stack, $new);
 		return $new;
+	}
+	
+	public static function popInstance() {
+		if(count(self::$_stack)) {
+			array_pop(self::$_stack);
+		}
+		return count(self::$_stack) ? end(self::$_stack) : null;
 	}
 
 	/**

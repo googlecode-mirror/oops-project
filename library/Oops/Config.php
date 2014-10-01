@@ -110,6 +110,14 @@ class Oops_Config implements Countable, Iterator {
 		}
 		return $this->_data[$key];
 	}
+	
+	public function __isset($key) {
+		// Check if init complete here to avoid numerous method calls
+		if(!$this->_initComplete) $this->_init();
+		if(!isset($this->_data[$key])) return false;
+		if($this->_data[$key] instanceof Oops_Config_Fake) return false;
+		return true;
+	} 
 
 	/**
 	 * Setter

@@ -1,6 +1,6 @@
 <?php
 
-class Oops_Cache_Driver_Apc {
+class Oops_Cache_Driver_Apc extends Oops_Cache_Driver_Abstract {
 
 	/**
 	 *

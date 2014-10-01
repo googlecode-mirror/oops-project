@@ -40,7 +40,8 @@ class Oops_Cache_Manager_Cascade {
 	 * 
 	 * @param Oops_Config $config
 	 */
-	public function __construct($config) {
+	public function __construct($config = null) {
+		if(!$config instanceof Oops_Config) $config = new Oops_Cache_Defconf();
 		$this->_config = $config;
 		$this->_initDriver();
 	}

@@ -58,14 +58,11 @@ class Oops_Cache_Box {
 	}
 
 	public function set($key, $value, $ttl = null) {
-		apc_store($key, $value, $ttl);
 
 		// nothing to do if we're not mapping now, just return
-		if(!$this->_isMapping) return;
-
 		// find all keys touched after this one to store them
 		// 1. if this key is the last touched, there's no map, so skip to cleanup
-		if($key != end($this->_touched))  {
+		if($this->_isMapping && $key != end($this->_touched))  {
 
 			// 2. find this key position in touch history
 			$keyPos = array_search($key, $this->_touched);
@@ -81,7 +78,10 @@ class Oops_Cache_Box {
 			// Store the dependencies map
 			$this->_collection->save(array('_id' => $key, 'source' => $sources));
 		}
-
+		
+		// Store now
+		apc_store($key, $value, $ttl);
+		
 		// 5. Cleanup _missing and _touched
 		// 5a. it was set, it's not missing anymore
 		unset($this->_missing[$key]);
@@ -119,7 +119,8 @@ class Oops_Cache_Box {
 
 	private function _initMapstoreCollection() {
 		$cli = new MongoClient();
-		$this->_collection = $cli->cascashe->mapstore;
+		$this->_collection = $cli->cascache->mapstore;
+		$this->_collection->ensureIndex(array('source' => 1));
 	}
 	
 	static public function g($k) {

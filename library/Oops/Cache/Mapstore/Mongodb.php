@@ -33,7 +33,7 @@ class Oops_Cache_Mapstore_Mongodb extends Oops_Cache_Mapstore_Abstract {
 			if(!isset($coll)) $coll = 'mapstore';
 			
 			$this->_collection = $client->$db->$coll;
-			$this->_collection->ensureIndex('source');
+			$this->_collection->ensureIndex(array('source' => 1));
 		}
 	}
 	

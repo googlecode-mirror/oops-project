@@ -245,21 +245,18 @@ class Oops_Server {
 					// init response code handler here
 					$responseCodeHandler = $this->loadResponseCodeHandler();
 					$responseCodeHandler->handle($this->_response);
-					if(strlen($e->getMessage())) {
-						// @todo log exception
-					}
 					
 					break;
 				default:
+					// @todo refactor unknown exceptions catching to log and 500
 					throw $e;
 			}
 		} catch(Exception $e) {
 			trigger_error($e->getMessage(), E_USER_ERROR);
-		}
-		
+		} 
+
+		// @todo refactor error logging etc
 		if((string) $this->_config->oops->errors2Headers && Oops_Debug::allow()) $this->_response->reportErrors($this->_errorHandler);
-		
-		// @todo refactor
 		if((string) $this->_config->oops->errorlog->enabled) {
 			Oops_Log_Error::report($this->_errorHandler, $this->_config->oops->errorlog->path);
 		}
@@ -402,6 +399,7 @@ class Oops_Server {
 		$ctrl = $this->_router->controller;
 		if(!Oops_Loader::find($ctrl)) {
 			trigger_error("Controller $ctrl not found", E_USER_ERROR);
+			$this->_response->setHeader("Oops-Error", "Controller $ctrl not found");
 			$this->_response->setCode(500);
 			return;
 		}

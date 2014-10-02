@@ -64,6 +64,7 @@ class Oops_Cache_Manager_Cascade {
 		$this->_missing[$key] = $this->touch($key);
 		// set isMapping flag as we started to map this key's dependencies
 		$this->_isMapping = true;
+		return false;
 	}
 
 	public function set($key, $value, $ttl = null) {

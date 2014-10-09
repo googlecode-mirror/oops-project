@@ -2,10 +2,6 @@
 
 if(!defined("DS")) define("DS", DIRECTORY_SEPARATOR);
 
-if(!defined("OOPS_PATH")) define("OOPS_PATH", dirname(__FILE__));
-if(!defined("OOPS_Loaded")) define("OOPS_Loaded", true);
-
-
 $libPath = dirname(dirname(__FILE__));
 if(!in_array($libPath, explode(PATH_SEPARATOR, get_include_path()))) {
 	set_include_path($libPath . PATH_SEPARATOR . get_include_path());
@@ -23,7 +19,7 @@ date_default_timezone_set($tz);
 require_once 'Oops/Loader.php';
 spl_autoload_register(array('Oops_Loader', 'load'));
 
-require_once 'Oops/Server/Stream/Wrapper.php';
+//require_once 'Oops/Server/Stream/Wrapper.php';
 stream_wrapper_register('oops', 'Oops_Server_Stream_Wrapper');
 
 

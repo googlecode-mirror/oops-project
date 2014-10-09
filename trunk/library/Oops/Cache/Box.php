@@ -89,7 +89,7 @@ class Oops_Cache_Box {
 		// 5b. full chain from the very first missing was finished, clear the
 		// touched chain
 		// @todo consider checking _missing array is empty
-		if($key == $this->_touched[0]) {
+		if($this->_isMapping && $key == $this->_touched[0]) {
 			$this->_touched = array();
 			$this->_missing = array();
 			$this->_isMapping = false;

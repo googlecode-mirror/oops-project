@@ -17,6 +17,7 @@ class Oops_Loader {
 	 *
 	 *
 	 *
+	 *
 	 * @access public
 	 * @param
 	 *        	string Oops library Class name or php file name
@@ -43,12 +44,8 @@ class Oops_Loader {
 	}
 
 	public static function load($class) {
-		if(class_exists($class) || interface_exists($class)) return true; // ????
-		if(($found = self::find($class))!== false) {
-			require_once $found;
-			return $class;
-		}
-		return false;
+		if(class_exists($class) || interface_exists($class)) return;
+		if(($found = self::find($class)) !== false) require $found;
 	}
 
 	public static function resolvePath($file) {

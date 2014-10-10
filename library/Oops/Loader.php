@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package Oops
  * @author Dmitry Ivanov rockmagic@yandex.ru
@@ -11,12 +12,22 @@
 class Oops_Loader {
 
 	/**
+	 *
 	 * @static
+	 *
+	 *
+	 *
 	 * @access public
-	 * @param string Oops library Class name or php file name
+	 * @param
+	 *        	string Oops library Class name or php file name
 	 */
 	public static function find($class) {
-		if(class_exists($class) || interface_exists($class)) return true;
+		
+		/* try requested case */
+		$fname = str_replace('_', '/', $class) . '.php';
+		if(($found = self::resolvePath($fname)) !== false) return $found;
+		
+		/* requested case not found, trying canonical (Some_Classname) */
 		
 		$c = strtolower($class);
 		$parts = explode('_', $c);
@@ -26,18 +37,28 @@ class Oops_Loader {
 			$fname .= (ucfirst($parts[$i]) . DIRECTORY_SEPARATOR);
 		$fname .= (ucfirst($parts[$i]) . '.php');
 		
-		$incPaths = explode(PATH_SEPARATOR, get_include_path());
-		foreach($incPaths as $incPath) {
-			if(file_exists($incPath . DIRECTORY_SEPARATOR . $fname)) {
-				require_once ($incPath . DIRECTORY_SEPARATOR . $fname);
-				return true;
-			}
-		}
+		if(($found = self::resolvePath($fname)) !== false) return $found;
+		
 		return false;
 	}
 
 	public static function load($class) {
-		if(Oops_Loader::find($class)) return $class;
+		if(class_exists($class) || interface_exists($class)) return true; // ????
+		if(($found = self::find($class))!== false) {
+			require_once $found;
+			return $class;
+		}
 		return false;
+	}
+
+	public static function resolvePath($file) {
+		if(function_exists('stream_resolve_include_path'))
+			return stream_resolve_include_path($file);
+		else {
+			$include_path = explode(PATH_SEPARATOR, get_include_path());
+			foreach($include_path as $path)
+				if(file_exists($path . DIRECTORY_SEPARATOR . $file)) return true;
+			return false;
+		}
 	}
 }

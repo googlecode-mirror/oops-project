@@ -53,8 +53,10 @@ class Oops_Loader {
 			return stream_resolve_include_path($file);
 		else {
 			$include_path = explode(PATH_SEPARATOR, get_include_path());
-			foreach($include_path as $path)
-				if(file_exists($path . DIRECTORY_SEPARATOR . $file)) return true;
+			foreach($include_path as $path) {
+				$tryFile = $path . DIRECTORY_SEPARATOR . $file;
+				if(file_exists($tryFile)) return $tryFile;
+			}
 			return false;
 		}
 	}

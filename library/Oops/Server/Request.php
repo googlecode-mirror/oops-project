@@ -28,6 +28,10 @@ class Oops_Server_Request implements ArrayAccess, Countable, Iterator {
 	public function __get($key) {
 		return $this->get($key);
 	}
+	
+	public function __isset($key) {
+		return isset($this->_params[$key]);
+	}
 
 	public function get($key) {
 		return isset($this->_params[$key]) ? $this->_params[$key] : null;

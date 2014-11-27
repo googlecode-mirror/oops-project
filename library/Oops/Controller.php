@@ -113,7 +113,7 @@ class Oops_Controller {
 	 * @todo Move controller params and controller_ident to the request object
 	 *       (fill 'em woth router)
 	 */
-	function getControllerParams() {
+	public function getControllerParams() {
 		if(is_object($this->_server)) return $this->_server->get('controller_params');
 		return array();
 	}
@@ -122,7 +122,11 @@ class Oops_Controller {
 	 *
 	 * @return boolean True on successful request handling
 	 */
-	function Run() {
+	public function Run() {
 		return true;
+	}
+	
+	public function backRoute() {
+		return '/' . $this->_server->controller_ident;
 	}
 }

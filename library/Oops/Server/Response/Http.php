@@ -6,11 +6,6 @@
 */
 
 /**
- * Load required classes
- */
-require_once 'Oops/Server/Response.php';
-
-/**
  * Oops server response corresponding to incoming (first) HTTP request
  */
 class Oops_Server_Response_Http extends Oops_Server_Response {
@@ -23,7 +18,9 @@ class Oops_Server_Response_Http extends Oops_Server_Response {
 
 	protected function _sendHeaders() {
 		header($this->getStatusLine());
-		//$this->setHeader('Content-length', strlen($this->body));
+		$len = ini_get('mbstring.func_overload') ? mb_strlen($this->body, 'latin1') : strlen($this->body);
+		header("Content-Length: $len");
+		unset($this->_headers['content-length']);
 		foreach($this->headers as $name => $value) {
 			$name = str_replace(' ', '-', ucwords(str_replace('-', ' ', $name)));
 			if(!is_array($value)) {

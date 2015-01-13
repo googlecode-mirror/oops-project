@@ -7,7 +7,7 @@
  * Class for cache operations, incapsulating dependencies
  *
  */
-class Oops_Cache_Manager_Cascade {
+class Oops_Cache_Manager_Cascade implements Oops_Cache_Manager_Interface {
 	
 	/**
 	 *
@@ -34,6 +34,7 @@ class Oops_Cache_Manager_Cascade {
 	private $_isMapping = false;
 	private $_missing = array();
 	private $_touched = array();
+	private $_nocache = array();
 
 	/**
 	 *
@@ -42,9 +43,13 @@ class Oops_Cache_Manager_Cascade {
 	public function __construct($config = null) {
 		if(!$config instanceof Oops_Config) $config = new Oops_Cache_Defconf();
 		$this->_config = $config;
-		$this->_initDriver();
+		$this->_driver = Oops_Cache_Factory::getDriver($config->driver);
 	}
-
+	
+	private function _initMapstore() {
+		$this->_mapstore = Oops_Cache_Factory::getMapstore($this->_config->mapstore);
+	}
+	
 	/**
 	 *
 	 * @param string $key        	
@@ -57,7 +62,7 @@ class Oops_Cache_Manager_Cascade {
 		                       // this one for stats
 			if($this->_isMapping) $this->touch($key);
 			// finally return the value
-			return $this->_tmp[$key];
+			return $value;
 		}
 		
 		// remember key is missing and touch it for harvesting needs
@@ -68,6 +73,12 @@ class Oops_Cache_Manager_Cascade {
 	}
 
 	public function set($key, $value, $ttl = null) {
+		
+		// nothing to do if $key exists in '_nocache' list
+		if(isset($this->_nocache[$key])) {
+			unset($this->_nocache[$key]);
+			return false;
+		}
 		
 		// nothing to do if we're not mapping now, just return
 		// find all keys touched after this one to store them
@@ -93,7 +104,6 @@ class Oops_Cache_Manager_Cascade {
 		
 		// write cache after storing the map
 		$this->_driver->set($key, $value, $ttl);
-		
 		
 		// 5. Cleanup _missing and _touched
 		// 5a. it was set, it's not missing anymore
@@ -130,19 +140,11 @@ class Oops_Cache_Manager_Cascade {
 		return array_push($this->_touched, $key) - 1;
 	}
 
-	private function _initDriver() {
-		$name = $this->_config->driver;
-		$class = 'Oops_Cache_Driver_' . ucfirst($name);
-		if(!class_exists($class)) $class = $name;
-		if(!class_exists($class)) throw new Oops_Exception("Cache driver class '$class' (name '$name') not found");
-		$this->_driver = new $class($this->_config->$name);
-	}
-
-	private function _initMapstore() {
-		$name = $this->_config->mapstore;
-		$class = 'Oops_Cache_Mapstore_' . ucfirst($name);
-		if(!class_exists($class)) $class = $name;
-		if(!class_exists($class)) throw new Oops_Exception("Cache mapstore class '$class' (name '$name') not found");
-		$this->_mapstore = new $class($this->_config->$name);
+	public function nocache() {
+		foreach(array_keys($this->_missing) as $key)
+			$this->_nocache[$key] = true;
+		$this->_touched = array();
+		$this->_missing = array();
+		$this->_isMapping = false;
 	}
 }

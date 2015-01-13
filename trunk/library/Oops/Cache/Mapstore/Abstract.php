@@ -2,6 +2,10 @@
 
 abstract class Oops_Cache_Mapstore_Abstract {
 	
+	public function __construct(Oops_Config $config) {
+		
+	}
+	
 	/**
 	 * 
 	 * @param string $target Target key, depending on sources

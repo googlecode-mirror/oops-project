@@ -6,7 +6,8 @@ abstract class Oops_Cache_Driver_Abstract {
 	 *
 	 * @param Oops_Config $config        	
 	 */
-	abstract public function __construct($config);
+	public function __construct(Oops_Config $config) {
+	}
 
 	/**
 	 *

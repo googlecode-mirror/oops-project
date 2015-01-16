@@ -118,7 +118,7 @@ class Oops_File_Utils {
 	 * @return string Ambigous
 	 */
 	public static function getMimeType($filename, $default = 'application/octet-stream') {
-		if(function_exists('mime_content_type')) return mime_content_type($filename);
+		if(function_exists('mime_content_type') && file_exists($filename)) return mime_content_type($filename);
 		$types = array(
 			
 			'txt' => 'text/plain', 

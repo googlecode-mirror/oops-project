@@ -18,9 +18,10 @@ class Oops_Server_Response_Http extends Oops_Server_Response {
 
 	protected function _sendHeaders() {
 		header($this->getStatusLine());
-		$len = ini_get('mbstring.func_overload') ? mb_strlen($this->body, 'latin1') : strlen($this->body);
-		header("Content-Length: $len");
-		unset($this->_headers['content-length']);
+		if(!isset($this->_headers['content-length'])) {
+			$len = ini_get('mbstring.func_overload') ? mb_strlen($this->body, 'latin1') : strlen($this->body);
+			$this->_headers['content-length'] = $len;
+		}
 		foreach($this->headers as $name => $value) {
 			$name = str_replace(' ', '-', ucwords(str_replace('-', ' ', $name)));
 			if(!is_array($value)) {
@@ -34,6 +35,10 @@ class Oops_Server_Response_Http extends Oops_Server_Response {
 		}
 	}
 
+	/**
+	 * @param Oops_File|string $file
+	 * @param string $name
+	 */
 	public function sendFile($file, $name = null) {
 		if(!file_exists($file)) $this->setCode(404);
 		if(!is_readable($file)) $this->setCode(403);
@@ -53,6 +58,8 @@ class Oops_Server_Response_Http extends Oops_Server_Response {
 		$contentDisposition = 'attachment; filename="' . $name . '"';
 		
 		$this->setHeader('Content-Disposition', $contentDisposition);
+		clearstatcache();
+		$this->setHeader('Content-length', filesize($file));
 		$this->getReady();
 		$this->_sendHeaders();
 		readfile($file);

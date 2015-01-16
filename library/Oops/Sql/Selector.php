@@ -275,7 +275,7 @@ class Oops_Sql_Selector {
 	}
 
 	public function where($field, $compare = null, $value = null) {
-		if($value === null) $compare = $compare == self::CMP_EQ ? self::CMP_NULL : self::CMP_NOTNULL;
+		if($value === null && $compare != self::CMP_NULL) $compare = $compare == self::CMP_EQ ? self::CMP_NULL : self::CMP_NOTNULL;
 		$this->_where[] = array($field, $compare, $value);
 	}
 

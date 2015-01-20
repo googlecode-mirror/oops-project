@@ -117,7 +117,6 @@ class Oops_Server_Response {
 		$this->_code = $code;
 		$this->_message = self::$_messages[$code];
 		if($dontThrowException) return true;
-		require_once 'Oops/Server/Exception.php';
 		throw new Oops_Server_Exception("Done", OOPS_SERVER_EXCEPTION_RESPONSE_READY);
 	}
 
@@ -134,10 +133,7 @@ class Oops_Server_Response {
 		if($replace || !isset($this->_headers[$name])) {
 			$this->_headers[$name] = $value;
 		} else {
-			if(!is_array($this->_headers[$name])) {
-				require_once 'Oops/Utils.php';
-				Oops_Utils::toArray($this->_headers[$name]);
-			}
+			Oops_Utils::toArray($this->_headers[$name]);
 			$this->_headers[$name][] = $value;
 		}
 	}

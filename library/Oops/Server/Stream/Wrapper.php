@@ -12,9 +12,7 @@
 class Oops_Server_Stream_Wrapper {
 	private $_position = 0;
 	private $_content = '';
-	
 	private $_redirectLimit = 2;
-	
 	private $_request;
 	private $_isHandled = false;
 
@@ -97,10 +95,26 @@ class Oops_Server_Stream_Wrapper {
 			$response = $server->Run($this->_request);
 		}
 		
-		$this->_content = $response->body;
-		
 		Oops_Server::popInstance();
 		$server = null;
+
+		if(!$response->isRedirect()) {
+			$this->_content = $response->body;
+			/* translate headers in order to deliver control headers like 'X-Accel-Expires' */
+			$childHeaders = $response->getHeaders();
+			if(count($childHeaders)) {
+				$parentHeaders = Oops_Server::getResponse()->getHeaders();
+				foreach($childHeaders as $k => $v) {
+					if(!isset($parentHeaders[$k])) {
+						Oops_Server::getResponse()->setHeader($k, $v);
+					} elseif(is_array($parentHeaders[$k])) {
+						Oops_Utils::ToArray($v);
+						foreach($v as $vv)
+							Oops_Server::getResponse()->setHeader($k, $vv, false);
+					}
+				}
+			}
+		}
 		
 		$this->_isHandled = true;
 		$this->_position = 0;
